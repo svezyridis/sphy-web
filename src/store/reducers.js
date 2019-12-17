@@ -14,3 +14,12 @@ export const account = (state = {}, action) => {
       return state
   }
 }
+
+export const open = (state = true, action) => {
+  switch (action.type) {
+    case C.TOOGLE_DRAWER:
+      return !state
+    default:
+      return state
+  }
+}

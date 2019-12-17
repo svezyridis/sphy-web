@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Divider from '@material-ui/core/Divider'
 import Drawer from '@material-ui/core/Drawer'
 import Typography from '@material-ui/core/Typography'
@@ -17,11 +17,13 @@ import classNames from 'classnames'
 
 const loginURL = 'http://localhost:8080/login'
 
-const LoginDrawer = () => {
+const LoginDrawer = ({ account, addAccount }) => {
+  console.log(account)
   const classes = drawerStyle()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [isChecked, setIsChecked] = useState(false)
   const history = useHistory()
 
   const login = e => {
@@ -39,11 +41,13 @@ const LoginDrawer = () => {
           var decoded = jwt.decode(token, { complete: true })
           console.log(decoded.header)
           console.log(decoded.payload)
+          addAccount(token)
           history.push('/home')
         }
       })
       .catch(error => console.error(error))
   }
+
   return (
     <Drawer
       className={classes.drawer}
@@ -56,7 +60,7 @@ const LoginDrawer = () => {
       <div className={classes.toolbar} />
       <Divider />
       <div className={classes.paper}>
-        <Avatar className={classNames(classes.avatar)}>
+        <Avatar className={classNames(classes.avatar, error.length > 0 && classes.avatarError)}>
           <LockOutlinedIcon />
         </Avatar>
         <Typography component='h1' variant='h5'>
@@ -89,7 +93,7 @@ const LoginDrawer = () => {
             onChange={e => setPassword(e.target.value)}
           />
           <FormControlLabel
-            control={<Checkbox value='remember' color='primary' />}
+            control={<Checkbox value='remember' color='primary' onChange={(event, isChecked) => setIsChecked(isChecked)} />}
             label='Remember me'
           />
 

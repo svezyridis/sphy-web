@@ -1,15 +1,19 @@
 import { makeStyles } from '@material-ui/styles'
+import { drawerWidth } from './drawerStyle'
+
 const carouselStyles = makeStyles(theme => ({
   carousel: {
     padding: theme.spacing(3),
     marginLeft: 'auto',
-    marginRight: 'auto'
+    marginRight: 'auto',
+    maxWidth: 1000,
+    marginTop: '10%'
   },
   root: {
     flexGrow: 1,
     height: 'auto',
     overflow: 'hidden',
-    width: `calc(100% - ${300}px)`
+    width: `calc(100% - ${drawerWidth}px)`
   },
   content: {
     color: 'white',

@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/styles'
 
-const drawerWidth = 300
+export const drawerWidth = 400
 
 const drawerStyle = makeStyles(theme => ({
   root: {
@@ -22,10 +22,13 @@ const drawerStyle = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar,
   avatar: {
     margin: theme.spacing(1),
+    backgroundColor: theme.palette.primary.main
+  },
+  avatarError: {
     backgroundColor: theme.palette.secondary.main
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: '80%', // Fix IE 11 issue.
     marginTop: theme.spacing(1)
   },
   submit: {
@@ -47,6 +50,17 @@ const drawerStyle = makeStyles(theme => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     display: 'block'
+  },
+  paperClose: {
+    overflowX: 'hidden',
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    }),
+    width: theme.spacing(7),
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing(7)
+    }
   }
 }))
 

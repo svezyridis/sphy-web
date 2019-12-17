@@ -1,12 +1,13 @@
 import React from 'react'
 import { Typography, makeStyles, Paper } from '@material-ui/core'
 import Link from '@material-ui/core/Link'
+import { drawerWidth } from '../styles/drawerStyle'
 
 const useStyles = makeStyles(theme => {
   return {
     stickToBottom: {
       height: '2vh',
-      width: `calc(100% - ${300}px)`,
+      width: `calc(100% - ${drawerWidth}px)`,
       position: 'fixed',
       bottom: 0,
       backgroundColor: theme.palette.primary.dark,
