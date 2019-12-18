@@ -5,7 +5,6 @@ export const account = (state = {}, action) => {
     case C.ADD_ACCOUNT:
       return {
         token: action.token,
-        username: action.username,
         metadata: action.metadata
       }
     case C.DELETE_ACCOUNT:

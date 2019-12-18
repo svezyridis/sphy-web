@@ -16,17 +16,18 @@ const DefaultAppBar = ({ open, onClick }) => {
       position='absolute'
       className={classNames(classes.appBar, open && classes.appBarShift)}
     >
-      <Toolbar disableGutters={!open} className={classes.toolbar}>
-        <div>
+      <Toolbar className={classes.toolbar}>
+        <div className={classes.imageSpacer}>
           <img src={logo} className={classes.img} alt='logo' />
         </div>
         <IconButton
           color='inherit'
           onClick={() => onClick(true)}
           className={classNames(
-            classes.menuButton,
-            open && classes.menuButtonHidden
+            classes.menuIcon,
+            open && classes.menuIconHidden
           )}
+          edge='end'
         >
           <MenuIcon />
         </IconButton>

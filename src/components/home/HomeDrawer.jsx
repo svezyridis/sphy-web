@@ -1,36 +1,39 @@
 import React from 'react'
 import Divider from '@material-ui/core/Divider'
 import Drawer from '@material-ui/core/Drawer'
-import drawerStyle from '../../styles/drawerStyle'
+import List from '@material-ui/core/List'
 import classNames from 'classnames'
 import IconButton from '@material-ui/core/IconButton'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import Typography from '@material-ui/core/Typography'
+import { titleCase } from '../../general/helperFunctions'
+import homeStyle from '../../styles/homeStyle'
+import Grid from '@material-ui/core/Grid'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
 
-const HomeDrawer = ({ open, setOpen }) => {
-  console.log(open)
-  const classes = drawerStyle()
+const HomeDrawer = ({ open, setOpen, account, logout, classes }) => {
+  const { username, firstName, lastName, serialNumber } = account.metadata
   return (
     <Drawer
-      className={classes.drawer}
       variant='permanent'
       classes={{
-        paper: classNames(
-          classes.paper,
-          !open && classes.paperClose
-        )
+        paper: classNames(classes.paper, !open && classes.paperClose)
       }}
       open={open}
       anchor='right'
     >
-      <div className={classes.toolbarIcon}>
-        <IconButton onClick={() => setOpen(false)}>
-          <ChevronRightIcon />
-        </IconButton>
-      </div>
-      <div className={classes.toolbar} />
+      <IconButton
+        onClick={() => setOpen(false)}
+        className={classes.toolbarIcon}
+      >
+        <ChevronRightIcon />
+        <Typography color='primary' variant='h5'>
+          {titleCase(`${firstName} ${lastName}`)}
+        </Typography>
+      </IconButton>
+
       <Divider />
-      <div className={classes.paper} />
     </Drawer>
   )
 }

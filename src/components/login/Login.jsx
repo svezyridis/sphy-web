@@ -1,9 +1,9 @@
 import React from 'react'
-import HomeCarousel from './Carousel'
+import HomeCarousel from '../Carousel'
 import LoginDrawer from './LoginDrawer'
 import Copyright from '../Copyright'
 import SimpleAppBar from './SimpleAppBar'
-import items from './testimages'
+import items from '../../general/testimages'
 
 const Login = ({ account, addAccount }) => {
   return (

@@ -7,13 +7,15 @@ const carouselStyles = makeStyles(theme => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     maxWidth: 1000,
-    marginTop: '10%'
+    marginTop: '100px'
   },
   root: {
     flexGrow: 1,
     height: 'auto',
     overflow: 'hidden',
-    width: `calc(100% - ${drawerWidth}px)`
+    width: '90%',
+    marginLeft: 'auto',
+    marginRight: 'auto'
   },
   content: {
     color: 'white',
@@ -41,6 +43,7 @@ const carouselStyles = makeStyles(theme => ({
   media: {
     backgroundColor: 'white',
     height: '400px',
+    width: '100%',
     overflow: 'hidden',
     position: 'relative',
     transition: '300ms',

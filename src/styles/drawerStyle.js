@@ -20,6 +20,13 @@ const drawerStyle = makeStyles(theme => ({
     }
   },
   toolbar: theme.mixins.toolbar,
+  toolbarIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar
+  },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.main

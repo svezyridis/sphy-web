@@ -6,14 +6,11 @@ export const deleteAccount = () => ({
 })
 export const newAccount = token => {
   var decoded = jwt.decode(token, { complete: true })
-  console.log(decoded.header)
-  console.log(decoded.payload)
-  return ({
+  return {
     type: C.ADD_ACCOUNT,
     token: token,
-    username: decoded.payload.user,
-    metadata: decoded.payload
-  })
+    metadata: JSON.parse(decoded.payload.metadata)
+  }
 }
 
 export const toogleDrawer = toogle => ({

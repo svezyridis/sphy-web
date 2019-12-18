@@ -4,14 +4,13 @@ import Card from '@material-ui/core/Card'
 import CardMedia from '@material-ui/core/CardMedia'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
-import carouselStyles from '../../styles/carouselStyles'
+import carouselStyles from '../styles/carouselStyles'
 
-function Banner ({ classes, length, curItem }) {
+function Banner ({ classes, length, item }) {
   const totalItems = length || 3
   const items = []
 
   for (let i = 0; i < totalItems; i++) {
-    const item = curItem.Items[i]
     const media = (
       <Grid item xs={12 / totalItems} key={item.Name}>
         {/* <Link href={`/item/${item.Id}`} className="Link"> */}
@@ -19,6 +18,9 @@ function Banner ({ classes, length, curItem }) {
           className={classes.media}
           image={item.Image}
           title={item.Name}
+          classes={{
+            image: classes.image
+          }}
         >
           <Typography className={classes.mediaCaption}>{item.Name}</Typography>
         </CardMedia>
@@ -48,9 +50,7 @@ const HomeCarousel = ({ items }) => {
         className={classes.carousel}
       >
         {items.map((item, index) => {
-          return (
-            <Banner curItem={item} key={index} classes={classes} length={2} />
-          )
+          return <Banner item={item} key={index} classes={classes} length={1} />
         })}
       </Carousel>
     </div>
