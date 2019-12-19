@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/styles'
-import { drawerWidth } from './drawerStyle'
 
 const carouselStyles = makeStyles(theme => ({
   carousel: {
@@ -20,7 +19,7 @@ const carouselStyles = makeStyles(theme => ({
   content: {
     color: 'white',
     backgroundColor: 'red',
-    height: '100%',
+    height: '500px',
     cursor: 'pointer',
     padding: '30px',
     transition: '300ms',
@@ -42,7 +41,7 @@ const carouselStyles = makeStyles(theme => ({
   },
   media: {
     backgroundColor: 'white',
-    height: '400px',
+    height: '500px',
     width: '100%',
     overflow: 'hidden',
     position: 'relative',
@@ -66,7 +65,7 @@ const carouselStyles = makeStyles(theme => ({
     fontWeight: 200
   },
   banner: {
-    height: '400px',
+    height: '500px',
     position: 'relative'
   },
   bannerGrid: {

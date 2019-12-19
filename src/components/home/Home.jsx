@@ -10,9 +10,19 @@ import Announcments from '../Announcments'
 
 const Home = ({ open, toogleDrawer, account, deleteAccount }) => {
   const classes = homeStyle()
+  var docWidth = document.documentElement.offsetWidth;
+
+  [].forEach.call(
+    document.querySelectorAll('*'),
+    function (el) {
+      if (el.offsetWidth > docWidth) {
+        console.log(el)
+      }
+    }
+  )
   console.log(!open)
   return (
-    <div>
+    <div className={classes.root}>
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
       <HomeDrawer
         open={open}
@@ -22,10 +32,10 @@ const Home = ({ open, toogleDrawer, account, deleteAccount }) => {
         classes={classes}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
-        <HomeCarousel items={items} />
+        <HomeCarousel items={items} classes={classes} />
         <Announcments />
-        <Copyright open={open} />
       </div>
+      <Copyright open={open} />
     </div>
   )
 }

@@ -4,19 +4,20 @@ export const drawerWidth = 400
 const imageHeight = 40
 
 const homeStyle = makeStyles(theme => ({
+  root: {
+    overflowX: 'hidden'
+  },
   appBar: {
-    display: 'flex',
-    justifyContent: 'space-between',
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    marginBottom: '5vh'
+    marginBottom: '30vh'
   },
   appBarShift: {
     marginRight: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+    width: `calc(100% - ${drawerWidth + 1}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen
@@ -83,7 +84,7 @@ const homeStyle = makeStyles(theme => ({
     })
   },
   closed: {
-    width: '100%',
+    width: `calc(100% - ${theme.spacing(7)}px)`,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen

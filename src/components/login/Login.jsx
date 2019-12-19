@@ -4,14 +4,18 @@ import LoginDrawer from './LoginDrawer'
 import Copyright from '../Copyright'
 import SimpleAppBar from './SimpleAppBar'
 import items from '../../general/testimages'
+import loginStyle from '../../styles/loginStyle'
 
 const Login = ({ account, addAccount }) => {
+  const classes = loginStyle()
   return (
     <div>
       <SimpleAppBar />
       <LoginDrawer account={account} addAccount={addAccount} />
-      <HomeCarousel items={items} />
-      <Copyright />
+      <div className={classes.spacer}>
+        <HomeCarousel items={items} />
+      </div>
+      <Copyright open />
     </div>
   )
 }
