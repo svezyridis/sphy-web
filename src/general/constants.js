@@ -1,10 +1,9 @@
 export const actiontypes = {
   ADD_ACCOUNT: 'ADD_ACCOUNT',
   DELETE_ACCOUNT: 'DELETE_ACCOUNT',
-  TOOGLE_DRAWER: 'TOOGLE_DRAWER'
-}
-
-export const initialState = {
-  account: { name: 'savvas' },
-  open: true
+  TOOGLE_DRAWER: 'TOOGLE_DRAWER',
+  SET_CATEGORIES: 'SET_CATGORIES',
+  ADD_IMAGE: 'ADD_IMAGE',
+  SET_SUBJECTS: 'SET_SUBJECTS',
+  SET_IMAGES: 'SET_IMAGES'
 }

@@ -11,14 +11,12 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import drawerStyle from '../../styles/drawerStyle'
 import { fetch } from 'whatwg-fetch'
 import { objectToQueryString } from '../../general/helperFunctions'
-import jwt from 'jsonwebtoken'
 import { useHistory } from 'react-router-dom'
 import classNames from 'classnames'
 
 const loginURL = 'http://localhost:8080/login'
 
 const LoginDrawer = ({ account, addAccount }) => {
-  console.log(account)
   const classes = drawerStyle()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -35,14 +33,12 @@ const LoginDrawer = ({ account, addAccount }) => {
     fetch(loginURL + objectToQueryString(queryParams))
       .then(response => response.json())
       .then(data => {
-        const { status, token, message } = data
+        const { status, result, message } = data
+        console.log(data)
         if (status === 'error') setError(message)
         else {
-          var decoded = jwt.decode(token, { complete: true })
-          console.log(decoded.header)
-          console.log(decoded.payload)
-          addAccount(token)
-          history.push('/home')
+          addAccount(result)
+          history.push('/')
         }
       })
       .catch(error => console.error(error))

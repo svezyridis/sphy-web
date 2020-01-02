@@ -4,6 +4,7 @@ import './App.css'
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
 import LoginContainer from './components/containers/loginContainer'
 import HomeContainer from './components/containers/homeContainer'
+import InfoContainer, { WeaponContainer, CategoryContainer, SubjectContainer } from './components/containers/infoContainer'
 
 const theme = createMuiTheme({
   palette: {
@@ -25,8 +26,12 @@ function App () {
     <Router>
       <MuiThemeProvider theme={theme}>
         <Switch>
-          <Route exact path='/' component={LoginContainer} />
-          <Route exact path='/home' component={HomeContainer} />
+          <Route exact path='/login' component={LoginContainer} />
+          <Route exact path='/' component={HomeContainer} />
+          <Route exact path='/info' component={InfoContainer} />
+          <Route exact path='/info/:weapon' component={WeaponContainer} />
+          <Route exact path='/info/:weapon/:category' component={CategoryContainer} />
+          <Route exact path='/info/:weapon/:category/:subject' component={SubjectContainer} />
         </Switch>
       </MuiThemeProvider>
     </Router>

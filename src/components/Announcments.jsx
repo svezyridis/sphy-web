@@ -16,7 +16,7 @@ const Announcments = () => {
       })
       .catch(error => console.error(error))
   }
-  return <Typography>{text}</Typography>
+  return <Typography align='center'>{text}</Typography>
 }
 
 export default Announcments

@@ -17,3 +17,24 @@ export const toogleDrawer = toogle => ({
   type: C.TOOGLE_DRAWER,
   toogle: toogle
 })
+
+export const setCategories = categories => ({
+  type: C.SET_CATEGORIES,
+  categories: categories
+})
+
+export const setSubjects = subjects => ({
+  type: C.SET_SUBJECTS,
+  subjects: subjects
+})
+
+export const setImages = images => ({
+  type: C.SET_IMAGES,
+  images: images
+})
+
+export const addImage = (id, image) => ({
+  type: C.ADD_IMAGE,
+  id: id,
+  image: image
+})

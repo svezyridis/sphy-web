@@ -17,7 +17,7 @@ const homeStyle = makeStyles(theme => ({
   },
   appBarShift: {
     marginRight: drawerWidth,
-    width: `calc(100% - ${drawerWidth + 1}px)`,
+    width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen
@@ -78,6 +78,7 @@ const homeStyle = makeStyles(theme => ({
   },
   rest: {
     width: `calc(100% - ${drawerWidth}px)`,
+    paddingTop: imageHeight * 1.6,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -89,6 +90,27 @@ const homeStyle = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     })
+  },
+  logout: {
+    margin: theme.spacing(3, 0, 2),
+    width: '60%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display: 'block'
+  },
+  grid: {
+    paddingTop: '5%',
+    width: '100%',
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  },
+  link: {
+    display: 'flex'
+  },
+  icon: {
+    marginRight: theme.spacing(0.5),
+    width: 20,
+    height: 20
   }
 }))
 

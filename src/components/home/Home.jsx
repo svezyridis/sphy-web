@@ -7,20 +7,21 @@ import HomeCarousel from '../Carousel'
 import homeStyle from '../../styles/homeStyle'
 import classNames from 'classnames'
 import Announcments from '../Announcments'
+import isEmpty from 'lodash.isempty'
+import { useHistory } from 'react-router-dom'
 
 const Home = ({ open, toogleDrawer, account, deleteAccount }) => {
   const classes = homeStyle()
-  var docWidth = document.documentElement.offsetWidth;
-
-  [].forEach.call(
-    document.querySelectorAll('*'),
-    function (el) {
-      if (el.offsetWidth > docWidth) {
-        console.log(el)
-      }
+  const history = useHistory()
+  console.log(account)
+  if (isEmpty(account)) {
+    console.log('account is empty')
+    var tempAccount = window.sessionStorage.getItem('account')
+    if (isEmpty(tempAccount)) {
+      history.push('/login')
+      return null
     }
-  )
-  console.log(!open)
+  }
   return (
     <div className={classes.root}>
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
@@ -28,7 +29,7 @@ const Home = ({ open, toogleDrawer, account, deleteAccount }) => {
         open={open}
         setOpen={toogleDrawer}
         account={account}
-        logout={deleteAccount}
+        deleteAccount={deleteAccount}
         classes={classes}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>

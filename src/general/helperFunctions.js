@@ -5,11 +5,13 @@ export const objectToQueryString = obj =>
     .join('&')
 
 export const titleCase = str => {
-  str = str.toLowerCase().split(' ')
-  const final = []
-  for (const word of str) {
-    final.push(word.charAt(0).toUpperCase() + word.slice(1))
-  }
+  if (typeof str === 'string' || str instanceof String) {
+    str = str.toLowerCase().split(' ')
+    const final = []
+    for (const word of str) {
+      final.push(word.charAt(0).toUpperCase() + word.slice(1))
+    }
 
-  return final.join(' ')
+    return final.join(' ')
+  } else { return null }
 }
