@@ -33,21 +33,19 @@ const useStyles = makeStyles(theme => {
 function Copyright ({ open }) {
   const classes = useStyles()
   return (
-    <Paper elevation={5}>
-      <Typography
-        variant='body2'
-        color='textSecondary'
-        align='center'
-        className={classNames(classes.stickToBottom, !open && classes.closed)}
-      >
-        {'Copyright © '}
-        <Link color='inherit' href='https://sphy.army.gr/'>
+    <Typography
+      variant='body2'
+      color='textSecondary'
+      align='center'
+      className={classNames(classes.stickToBottom, !open && classes.closed)}
+    >
+      {'Copyright © '}
+      <Link color='inherit' href='https://sphy.army.gr/'>
           ΣΠΗΥ
-        </Link>{' '}
-        {new Date().getFullYear()}
-        {'.'}
-      </Typography>
-    </Paper>
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
   )
 }
 

@@ -26,12 +26,24 @@ export const open = (state = true, action) => {
 export const categoriesReducer = (state, action) => {
   switch (action.type) {
     case C.SET_CATEGORIES:
-      return action.categories
+      return action.categories.map(
+        category => ({
+          ...category,
+          checked: true
+        })
+      )
     case C.ADD_IMAGE:
       return state.map(
         category => (category.id === action.id ? {
           ...category,
           image: action.image
+        } : category)
+      )
+    case C.SET_CHECKED:
+      return state.map(
+        category => (category.id === action.id ? {
+          ...category,
+          checked: action.checked
         } : category)
       )
     default:

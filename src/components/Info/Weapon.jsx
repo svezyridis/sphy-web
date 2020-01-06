@@ -98,7 +98,7 @@ const Weapon = ({ open, toogleDrawer, account, deleteAccount, match, history }) 
             {titleCase(branch)}
           </Link>
         </Breadcrumbs>
-        <Typography variant='h2' align='center' color='textPrimary'>Επιλέξτε κατηγορία</Typography>
+        <Typography variant='h3' color='textPrimary'>Επιλέξτε κατηγορία</Typography>
         <Grid container alignItems='center' justify='center' spacing={5} className={classes.grid}>
           {
             categories.map((category, index) => {

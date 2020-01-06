@@ -1,11 +1,15 @@
 import { makeStyles } from '@material-ui/styles'
+import backgroundImage from '../images/background.png'
 
 export const drawerWidth = 400
 const imageHeight = 40
 
 const homeStyle = makeStyles(theme => ({
   root: {
-    overflowX: 'hidden'
+    margin: 0,
+    display: 'flex',
+    height: '90%',
+    flexDirection: 'column'
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -78,11 +82,16 @@ const homeStyle = makeStyles(theme => ({
   },
   rest: {
     width: `calc(100% - ${drawerWidth}px)`,
-    paddingTop: imageHeight * 1.6,
+    marginTop: imageHeight * 1.6,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
-    })
+    }),
+    // backgroundImage: `url(${backgroundImage})`,
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'contain',
+    flex: 1
   },
   closed: {
     width: `calc(100% - ${theme.spacing(7)}px)`,
@@ -99,10 +108,9 @@ const homeStyle = makeStyles(theme => ({
     display: 'block'
   },
   grid: {
-    paddingTop: '5%',
+    height: '80%',
     width: '100%',
-    marginLeft: 'auto',
-    marginRight: 'auto'
+    marginTop: '5%'
   },
   link: {
     display: 'flex'

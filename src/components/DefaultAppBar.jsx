@@ -13,7 +13,7 @@ const DefaultAppBar = ({ open, onClick }) => {
 
   return (
     <AppBar
-      position='absolute'
+      position='fixed'
       className={classNames(classes.appBar, open && classes.appBarShift)}
     >
       <Toolbar className={classes.toolbar}>

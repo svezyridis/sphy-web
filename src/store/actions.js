@@ -38,3 +38,9 @@ export const addImage = (id, image) => ({
   id: id,
   image: image
 })
+
+export const setChecked = (id, checked) => ({
+  type: C.SET_CHECKED,
+  id: id,
+  checked: checked
+})

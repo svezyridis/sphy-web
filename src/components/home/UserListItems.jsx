@@ -20,11 +20,11 @@ export const MainListItems = () => {
           primary='Information'
         />
       </ListItem>
-      <ListItem button>
+      <ListItem button onClick={() => history.push('/quiz')}>
         <ListItemIcon>
           <MoodIcon />
         </ListItemIcon>
-        <ListItemText primary='Self Assesment' />
+        <ListItemText primary='Quiz' />
       </ListItem>
       <ListItem>
         <ListItemIcon>

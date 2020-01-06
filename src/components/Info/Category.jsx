@@ -104,7 +104,7 @@ const Category = ({ open, toogleDrawer, account, deleteAccount, match, history }
             {titleCase(category)}
           </Link>
         </Breadcrumbs>
-        <Typography variant='h2' align='center' color='textPrimary'>Επιλέξτε θέμα</Typography>
+        <Typography variant='h3' color='textPrimary'>Επιλέξτε θέμα</Typography>
         <Grid container alignItems='center' justify='center' spacing={5} className={classes.grid}>
           {
             subjects.map((subject, index) => {

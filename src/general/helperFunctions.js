@@ -15,3 +15,29 @@ export const titleCase = str => {
     return final.join(' ')
   } else { return null }
 }
+
+export const getBranchInitials = branch => {
+  switch (branch) {
+    case 'army':
+      return 'ΣΞ'
+    case 'navy':
+      return 'ΠΝ'
+    case 'airforce':
+      return 'ΠΑ'
+    default:
+      return ''
+  }
+}
+
+export const getBranchName = branch => {
+  switch (branch) {
+    case 'army':
+      return 'Στρατός Ξηράς'
+    case 'navy':
+      return 'Πολεμικό Ναυτικό'
+    case 'airforce':
+      return 'Πολεμική Αεροπορία'
+    default:
+      return ''
+  }
+}

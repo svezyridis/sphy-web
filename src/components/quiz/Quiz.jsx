@@ -1,10 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
 import classNames from 'classnames'
-import isEmpty from 'lodash.isempty'
-import { useHistory } from 'react-router-dom'
 import HomeDrawer from '../home/HomeDrawer'
 import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
@@ -12,15 +10,16 @@ import Grid from '@material-ui/core/Grid'
 import armyImage from '../../images/army.jpg'
 import navyImage from '../../images/navy.jpg'
 import ariforceImage from '../../images/airforce.jpg'
-import WeaponCard from './WeaponCard'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
-import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
+import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
 import HomeIcon from '@material-ui/icons/Home'
+import QuizWeaponCard from './QuizWeaponCard'
+import isEmpty from 'lodash.isempty'
 
-const MainInfo = ({ open, toogleDrawer, account, deleteAccount }) => {
+const Quiz = ({ open, toogleDrawer, account, deleteAccount, history }) => {
   const classes = homeStyle()
-  const history = useHistory()
   if (isEmpty(account)) {
+    console.log('account is empty')
     var tempAccount = window.sessionStorage.getItem('account')
     if (isEmpty(tempAccount)) {
       history.push('/login')
@@ -44,21 +43,21 @@ const MainInfo = ({ open, toogleDrawer, account, deleteAccount }) => {
             Home
           </Link>
           <Link component='button' variant='body1' onClick={() => { history.push('/info') }} className={classes.link}>
-            <LocalLibraryIcon className={classes.icon} />
-            Info
+            <FormatListNumberedIcon className={classes.icon} />
+            Quiz
           </Link>
         </Breadcrumbs>
 
-        <Typography variant='h3' color='textPrimary'>Επιλέξτε σώμα</Typography>
-        <Grid container alignItems='center' justify='center' spacing={5} className={classes.grid}>
+        <Typography variant='h3' color='textPrimary'>Επιλέξτε κατηγοριες ερωτήσεων</Typography>
+        <Grid container alignItems='flex-start' justify='center' spacing={5} className={classes.grid}>
           <Grid item>
-            <WeaponCard image={armyImage} name='ARMY' />
+            <QuizWeaponCard image={armyImage} branch='army' account={account} />
           </Grid>
           <Grid item>
-            <WeaponCard image={navyImage} name='NAVY' />
+            <QuizWeaponCard image={navyImage} branch='navy' account={account} />
           </Grid>
           <Grid item>
-            <WeaponCard image={ariforceImage} name='AIRFORCE' />
+            <QuizWeaponCard image={ariforceImage} branch='airforce' account={account} />
           </Grid>
         </Grid>
       </div>
@@ -66,4 +65,4 @@ const MainInfo = ({ open, toogleDrawer, account, deleteAccount }) => {
     </div>
   )
 }
-export default MainInfo
+export default Quiz
