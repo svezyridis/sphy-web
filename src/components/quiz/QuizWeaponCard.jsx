@@ -19,9 +19,10 @@ import { categoriesReducer } from '../../store/reducers'
 import { fetch } from 'whatwg-fetch'
 import { getBranchInitials, titleCase, getBranchName } from '../../general/helperFunctions'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
+import { baseURL } from '../../general/constants'
 
-const categoriesURL = 'http://localhost:8080/category/'
-const imagesURL = 'http://localhost:8080/image/'
+const categoriesURL = baseURL + 'category/'
+const imagesURL = baseURL + 'image/'
 
 const useStyles = makeStyles(theme => ({
   card: {

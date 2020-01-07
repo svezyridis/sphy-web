@@ -17,9 +17,10 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import HomeIcon from '@material-ui/icons/Home'
 import { titleCase } from '../../general/helperFunctions'
+import { baseURL } from '../../general/constants'
 
-const categoriesURL = 'http://localhost:8080/category/'
-const imagesURL = 'http://localhost:8080/image/'
+const categoriesURL = baseURL + 'category/'
+const imagesURL = baseURL + 'image/'
 
 const Weapon = ({ open, toogleDrawer, account, deleteAccount, match, history }) => {
   const classes = homeStyle()

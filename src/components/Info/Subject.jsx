@@ -15,9 +15,10 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import HomeIcon from '@material-ui/icons/Home'
 import { titleCase } from '../../general/helperFunctions'
+import { baseURL } from '../../general/constants'
 
-const subjectsURL = 'http://localhost:8080/subject/'
-const imagesURL = 'http://localhost:8080/image/'
+const subjectsURL = baseURL + 'subject/'
+const imagesURL = baseURL + 'image/'
 
 const Subject = ({ open, toogleDrawer, account, deleteAccount, match, location, history }) => {
   const classes = homeStyle()

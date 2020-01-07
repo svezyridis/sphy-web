@@ -13,8 +13,9 @@ import { fetch } from 'whatwg-fetch'
 import { objectToQueryString } from '../../general/helperFunctions'
 import { useHistory } from 'react-router-dom'
 import classNames from 'classnames'
+import { baseURL } from '../../general/constants'
 
-const loginURL = 'http://localhost:8080/login'
+const loginURL = baseURL + 'login'
 
 const LoginDrawer = ({ account, addAccount }) => {
   const classes = drawerStyle()

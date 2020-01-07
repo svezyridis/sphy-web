@@ -8,3 +8,5 @@ export const actiontypes = {
   SET_IMAGES: 'SET_IMAGES',
   SET_CHECKED: 'SET_CHECKED'
 }
+
+export const baseURL = 'https://projectapi.ml/'
