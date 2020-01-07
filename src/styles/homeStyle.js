@@ -56,7 +56,6 @@ const homeStyle = makeStyles(theme => ({
     display: 'flex',
     whiteSpace: 'nowrap',
     flexDirection: 'column',
-    backgroundColor: '#D1D1D1',
     width: drawerWidth,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -119,6 +118,12 @@ const homeStyle = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
     width: 20,
     height: 20
+  },
+  infoPaper: {
+    width: '80%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    maxWidth: '800px'
   }
 }))
 

@@ -49,7 +49,6 @@ const drawerStyle = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#D1D1D1',
     width: drawerWidth
   },
   signup: {

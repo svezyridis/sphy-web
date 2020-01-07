@@ -5,6 +5,7 @@ import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
 import { useHistory } from 'react-router-dom'
+import { titleCase } from '../../general/helperFunctions'
 
 const cardStyle = makeStyles(theme => ({
   card: {
@@ -41,14 +42,18 @@ const WeaponCard = ({ image, name }) => {
   const classes = cardStyle()
   const history = useHistory()
   return (
-    <Link component='button' variant='body1' onClick={() => { history.push(`/info/${name.toLowerCase()}`) }}>
-      <Card raised className={classes.card}>
-        <CardMedia
-          className={classes.media}
-          image={image}
-          title={name}
-        >
-          <Typography className={classes.mediaCaption} align='center'>{name}</Typography>
+    <Link
+      component='button'
+      variant='body1'
+      onClick={() => {
+        history.push(`/info/${name.toLowerCase()}`)
+      }}
+    >
+      <Card elevation={8} raised className={classes.card}>
+        <CardMedia className={classes.media} image={image} title={name}>
+          <Typography className={classes.mediaCaption} align='center'>
+            {titleCase(name)}
+          </Typography>
         </CardMedia>
       </Card>
     </Link>

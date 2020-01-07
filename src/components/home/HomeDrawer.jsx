@@ -9,15 +9,21 @@ import { titleCase } from '../../general/helperFunctions'
 import { MainListItems } from './UserListItems'
 import { Button } from '@material-ui/core'
 import { useHistory } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { toogleDrawer } from '../../store/actions'
 
-const HomeDrawer = ({ open, setOpen, account, deleteAccount, classes }) => {
+const HomeDrawer = ({ account, deleteAccount, classes }) => {
   const { username, firstName, lastName, serialNumber } = account.metadata
   const history = useHistory()
+  const open = useSelector(state => state.open)
+  const dispatch = useDispatch()
   const logout = () => {
     deleteAccount()
     history.push('/login')
     return null
   }
+
+  const setOpen = open => dispatch(toogleDrawer(open))
   return (
     <Drawer
       variant='permanent'
@@ -40,7 +46,8 @@ const HomeDrawer = ({ open, setOpen, account, deleteAccount, classes }) => {
       <MainListItems />
       <Divider />
       <Button
-        variant='contained' color='primary'
+        variant='contained'
+        color='primary'
         className={classes.logout}
         onClick={logout}
       >

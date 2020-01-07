@@ -4,7 +4,6 @@ import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
 import classNames from 'classnames'
 import isEmpty from 'lodash.isempty'
-import { useHistory } from 'react-router-dom'
 import HomeDrawer from '../home/HomeDrawer'
 import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
@@ -22,7 +21,14 @@ import { baseURL } from '../../general/constants'
 const categoriesURL = baseURL + 'category/'
 const imagesURL = baseURL + 'image/'
 
-const Weapon = ({ open, toogleDrawer, account, deleteAccount, match, history }) => {
+const Weapon = ({
+  open,
+  toogleDrawer,
+  account,
+  deleteAccount,
+  match,
+  history
+}) => {
   const classes = homeStyle()
   const [error, setError] = useState('')
   const [categories, dispatchCategories] = useReducer(categoriesReducer, [])
@@ -56,13 +62,23 @@ const Weapon = ({ open, toogleDrawer, account, deleteAccount, match, history }) 
             if (!category.randomImage) {
               return
             }
-            const response = await fetch(imagesURL + branch + '/' + category.name.toLowerCase() + '/' + category.randomImage.subject + '/' + category.randomImage.filename, {
-              method: 'GET',
-              credentials: 'include',
-              headers: {
-                authorization: 'Bearer ' + account.token
+            const response = await fetch(
+              imagesURL +
+                branch +
+                '/' +
+                category.name.toLowerCase() +
+                '/' +
+                category.randomImage.subject +
+                '/' +
+                category.randomImage.filename,
+              {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                  authorization: 'Bearer ' + account.token
+                }
               }
-            })
+            )
             const image = await response.blob()
             var imageUrl = URL.createObjectURL(image)
             dispatchCategories(addImage(category.id, imageUrl))
@@ -70,9 +86,7 @@ const Weapon = ({ open, toogleDrawer, account, deleteAccount, match, history }) 
         }
       })
       .catch(error => console.error(error))
-    return () => {
-
-    }
+    return () => {}
   }, [])
 
   return (
@@ -87,28 +101,60 @@ const Weapon = ({ open, toogleDrawer, account, deleteAccount, match, history }) 
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs>
-          <Link component='button' variant='body1' onClick={() => { history.push('/') }} className={classes.link}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push('/')
+            }}
+            className={classes.link}
+          >
             <HomeIcon className={classes.icon} />
             Home
           </Link>
-          <Link component='button' variant='body1' onClick={() => { history.push('/info') }} className={classes.link}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push('/info')
+            }}
+            className={classes.link}
+          >
             <LocalLibraryIcon className={classes.icon} />
             Info
           </Link>
-          <Link component='button' variant='body1' onClick={() => { history.push(`/info/${branch}`) }}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push(`/info/${branch}`)
+            }}
+          >
             {titleCase(branch)}
           </Link>
         </Breadcrumbs>
-        <Typography variant='h3' color='textPrimary'>Επιλέξτε κατηγορία</Typography>
-        <Grid container alignItems='center' justify='center' spacing={5} className={classes.grid}>
-          {
-            categories.map((category, index) => {
-              return (
-                <Grid key={index} item>
-                  <CategoryCard key={index} image={category.image} name={category.name} weapon={branch} />
-                </Grid>)
-            })
-          }
+        <Typography variant='h3' color='textPrimary'>
+          Επιλέξτε κατηγορία
+        </Typography>
+        <Grid
+          container
+          alignItems='center'
+          justify='center'
+          spacing={5}
+          className={classes.grid}
+        >
+          {categories.map((category, index) => {
+            return (
+              <Grid key={index} item>
+                <CategoryCard
+                  key={index}
+                  image={category.image}
+                  name={category.name}
+                  weapon={branch}
+                />
+              </Grid>
+            )
+          })}
         </Grid>
       </div>
       <Copyright open={open} />

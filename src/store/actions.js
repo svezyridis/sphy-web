@@ -18,6 +18,10 @@ export const toogleDrawer = toogle => ({
   toogle: toogle
 })
 
+export const toogleDark = () => ({
+  type: C.TOOGLE_DARK
+})
+
 export const setCategories = categories => ({
   type: C.SET_CATEGORIES,
   categories: categories

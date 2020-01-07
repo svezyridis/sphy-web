@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => {
       width: `calc(100% - ${drawerWidth}px)`,
       position: 'fixed',
       bottom: 0,
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: theme.palette.primary.main,
       marginTop: '25px',
       boxShadow: '0px 7px 6px 9px rgba(0, 0, 0, 0.8)',
       color: theme.palette.grey[300],
@@ -41,7 +41,7 @@ function Copyright ({ open }) {
     >
       {'Copyright © '}
       <Link color='inherit' href='https://sphy.army.gr/'>
-          ΣΠΗΥ
+        ΣΠΗΥ
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}

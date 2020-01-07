@@ -6,7 +6,8 @@ export const actiontypes = {
   ADD_IMAGE: 'ADD_IMAGE',
   SET_SUBJECTS: 'SET_SUBJECTS',
   SET_IMAGES: 'SET_IMAGES',
-  SET_CHECKED: 'SET_CHECKED'
+  SET_CHECKED: 'SET_CHECKED',
+  TOOGLE_DARK: 'TOOGLE_DARK'
 }
 
 export const baseURL = 'https://projectapi.ml/'

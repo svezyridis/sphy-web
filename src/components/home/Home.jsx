@@ -24,10 +24,8 @@ const Home = ({ open, toogleDrawer, account, deleteAccount }) => {
   }
   return (
     <div className={classes.root}>
-      <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
+      <DefaultAppBar />
       <HomeDrawer
-        open={open}
-        setOpen={toogleDrawer}
         account={account}
         deleteAccount={deleteAccount}
         classes={classes}

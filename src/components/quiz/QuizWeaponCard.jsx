@@ -13,11 +13,14 @@ import Typography from '@material-ui/core/Typography'
 import { red } from '@material-ui/core/colors'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Checkbox from '@material-ui/core/Checkbox'
-import isEmpty from 'lodash.isempty'
 import { setCategories, addImage, setChecked } from '../../store/actions'
 import { categoriesReducer } from '../../store/reducers'
 import { fetch } from 'whatwg-fetch'
-import { getBranchInitials, titleCase, getBranchName } from '../../general/helperFunctions'
+import {
+  getBranchInitials,
+  titleCase,
+  getBranchName
+} from '../../general/helperFunctions'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import { baseURL } from '../../general/constants'
 
@@ -89,7 +92,11 @@ const QuizWeaponCard = ({ image, branch, account }) => {
     dispatchCategories(setChecked(id, event.target.checked))
   }
 
-  const noOfCheckedCategories = categories.reduce((accumulator, currentValue) => currentValue.checked ? accumulator + 1 : accumulator, 0)
+  const noOfCheckedCategories = categories.reduce(
+    (accumulator, currentValue) =>
+      currentValue.checked ? accumulator + 1 : accumulator,
+    0
+  )
 
   useEffect(() => {
     fetch(categoriesURL + branch, {
@@ -110,13 +117,23 @@ const QuizWeaponCard = ({ image, branch, account }) => {
             if (!category.randomImage) {
               return
             }
-            const response = await fetch(imagesURL + branch + '/' + category.name.toLowerCase() + '/' + category.randomImage.subject + '/' + category.randomImage.filename, {
-              method: 'GET',
-              credentials: 'include',
-              headers: {
-                authorization: 'Bearer ' + account.token
+            const response = await fetch(
+              imagesURL +
+                branch +
+                '/' +
+                category.name.toLowerCase() +
+                '/' +
+                category.randomImage.subject +
+                '/' +
+                category.randomImage.filename,
+              {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                  authorization: 'Bearer ' + account.token
+                }
               }
-            })
+            )
             const image = await response.blob()
             var imageUrl = URL.createObjectURL(image)
             dispatchCategories(addImage(category.id, imageUrl))
@@ -124,13 +141,11 @@ const QuizWeaponCard = ({ image, branch, account }) => {
         }
       })
       .catch(error => console.error(error))
-    return () => {
-
-    }
+    return () => {}
   }, [])
 
   return (
-    <Card className={classes.card}>
+    <Card elevation={8} className={classes.card}>
       <CardHeader
         avatar={
           <Avatar aria-label='recipe' className={classes.avatar}>
@@ -142,7 +157,10 @@ const QuizWeaponCard = ({ image, branch, account }) => {
             checked={noOfCheckedCategories > 0}
             onChange={handleChange}
             value={branch}
-            indeterminate={noOfCheckedCategories > 0 && noOfCheckedCategories < categories.length}
+            indeterminate={
+              noOfCheckedCategories > 0 &&
+              noOfCheckedCategories < categories.length
+            }
           />
         }
         title={getBranchName(branch)}
@@ -169,15 +187,24 @@ const QuizWeaponCard = ({ image, branch, account }) => {
           {categories.map((category, index) => {
             return (
               <Card key={index} className={classes.innerCard}>
-
                 <CardMedia
                   className={classes.innerMedia}
                   image={category.image}
                   title={titleCase(category.name)}
                 >
                   <FormControlLabel
-                    control={<Checkbox checked={category.checked} onChange={handleCategoryChecked(category.id)} value={category.id} />}
-                    label={<Typography variant='h5'>{titleCase(category.name)}</Typography>}
+                    control={
+                      <Checkbox
+                        checked={category.checked}
+                        onChange={handleCategoryChecked(category.id)}
+                        value={category.id}
+                      />
+                    }
+                    label={
+                      <Typography variant='h5'>
+                        {titleCase(category.name)}
+                      </Typography>
+                    }
                     labelPlacement='start'
                     className={classes.mediaCaption}
                   />

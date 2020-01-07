@@ -4,13 +4,11 @@ import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
 import classNames from 'classnames'
 import isEmpty from 'lodash.isempty'
-import { useHistory } from 'react-router-dom'
 import HomeDrawer from '../home/HomeDrawer'
 import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import { fetch } from 'whatwg-fetch'
 import Grid from '@material-ui/core/Grid'
-import CategoryCard from './CategoryCard'
 import { setSubjects, addImage } from '../../store/actions'
 import { subjectsReducer } from '../../store/reducers'
 import sample from 'lodash.sample'
@@ -24,7 +22,14 @@ import { baseURL } from '../../general/constants'
 const subjectsURL = baseURL + 'subject/'
 const imagesURL = baseURL + 'image/'
 
-const Category = ({ open, toogleDrawer, account, deleteAccount, match, history }) => {
+const Category = ({
+  open,
+  toogleDrawer,
+  account,
+  deleteAccount,
+  match,
+  history
+}) => {
   const classes = homeStyle()
   const [error, setError] = useState('')
   const [subjects, dispatchSubjects] = useReducer(subjectsReducer, [])
@@ -59,13 +64,23 @@ const Category = ({ open, toogleDrawer, account, deleteAccount, match, history }
             if (subject.images.length === 0) {
               return
             }
-            const response = await fetch(imagesURL + branch + '/' + category.toLowerCase() + '/' + subject.name + '/' + sample(subject.images).filename, {
-              method: 'GET',
-              credentials: 'include',
-              headers: {
-                authorization: 'Bearer ' + account.token
+            const response = await fetch(
+              imagesURL +
+                branch +
+                '/' +
+                category.toLowerCase() +
+                '/' +
+                subject.name +
+                '/' +
+                sample(subject.images).filename,
+              {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                  authorization: 'Bearer ' + account.token
+                }
               }
-            })
+            )
             const image = await response.blob()
             var imageUrl = URL.createObjectURL(image)
             dispatchSubjects(addImage(subject.id, imageUrl))
@@ -73,9 +88,7 @@ const Category = ({ open, toogleDrawer, account, deleteAccount, match, history }
         }
       })
       .catch(error => console.error(error))
-    return () => {
-
-    }
+    return () => {}
   }, [])
 
   return (
@@ -90,31 +103,64 @@ const Category = ({ open, toogleDrawer, account, deleteAccount, match, history }
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs>
-          <Link component='button' variant='body1' onClick={() => { history.push('/') }} className={classes.link}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push('/')
+            }}
+            className={classes.link}
+          >
             <HomeIcon className={classes.icon} />
             Home
           </Link>
-          <Link component='button' variant='body1' onClick={() => { history.push('/info') }} className={classes.link}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push('/info')
+            }}
+            className={classes.link}
+          >
             <LocalLibraryIcon className={classes.icon} />
             Info
           </Link>
-          <Link component='button' variant='body1' onClick={() => { history.push(`/info/${branch}`) }}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push(`/info/${branch}`)
+            }}
+          >
             {titleCase(branch)}
           </Link>
-          <Link component='button' variant='body1' onClick={() => { history.push(`/info/${branch}/${category}`) }}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push(`/info/${branch}/${category}`)
+            }}
+          >
             {titleCase(category)}
           </Link>
         </Breadcrumbs>
-        <Typography variant='h3' color='textPrimary'>Επιλέξτε θέμα</Typography>
-        <Grid container alignItems='center' justify='center' spacing={5} className={classes.grid}>
-          {
-            subjects.map((subject, index) => {
-              return (
-                <Grid key={index} item>
-                  <SubjectCard subject={subject} weapon={branch} />
-                </Grid>)
-            })
-          }
+        <Typography variant='h3' color='textPrimary'>
+          Επιλέξτε θέμα
+        </Typography>
+        <Grid
+          container
+          alignItems='center'
+          justify='center'
+          spacing={5}
+          className={classes.grid}
+        >
+          {subjects.map((subject, index) => {
+            return (
+              <Grid key={index} item>
+                <SubjectCard subject={subject} weapon={branch} />
+              </Grid>
+            )
+          })}
         </Grid>
       </div>
       <Copyright open={open} />
