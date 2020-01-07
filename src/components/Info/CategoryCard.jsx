@@ -50,7 +50,7 @@ const CategoryCard = ({ image, weapon, name }) => {
       }}
     >
       <Card elevation={8} raised className={classes.card}>
-        <CardMedia className={classes.media} image={image} title={name}>
+        <CardMedia className={classes.media} image={image} title={titleCase(name)}>
           <Typography className={classes.mediaCaption} align='center'>
             {titleCase(name)}
           </Typography>

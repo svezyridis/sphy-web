@@ -16,6 +16,7 @@ const HomeDrawer = ({ account, deleteAccount, classes }) => {
   const { username, firstName, lastName, serialNumber } = account.metadata
   const history = useHistory()
   const open = useSelector(state => state.open)
+  const dark = useSelector(state => state.dark)
   const dispatch = useDispatch()
   const logout = () => {
     deleteAccount()
@@ -38,21 +39,18 @@ const HomeDrawer = ({ account, deleteAccount, classes }) => {
         className={classes.toolbarIcon}
       >
         <ChevronRightIcon />
-        <Typography color='primary' variant='h5'>
+        <Typography color={dark ? 'secondary' : 'primary'} variant='h4'>
           {titleCase(`${firstName} ${lastName}`)}
         </Typography>
       </IconButton>
       <Divider />
       <MainListItems />
       <Divider />
-      <Button
-        variant='contained'
-        color='primary'
-        className={classes.logout}
-        onClick={logout}
-      >
-        Logout
-      </Button>
+      {
+        open ? <Button variant='contained' color={dark ? 'secondary' : 'primary'} className={classes.logout} onClick={logout}>Logout</Button>
+          : null
+      }
+
     </Drawer>
   )
 }

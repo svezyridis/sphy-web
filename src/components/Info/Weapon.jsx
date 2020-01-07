@@ -27,8 +27,11 @@ const Weapon = ({
   account,
   deleteAccount,
   match,
-  history
+  history,
+  dark
 }) => {
+  var controller = new window.AbortController()
+  var signal = controller.signal
   const classes = homeStyle()
   const [error, setError] = useState('')
   const [categories, dispatchCategories] = useReducer(categoriesReducer, [])
@@ -49,7 +52,8 @@ const Weapon = ({
       credentials: 'include',
       headers: {
         authorization: 'Bearer ' + account.token
-      }
+      },
+      signal: signal
     })
       .then(response => response.json())
       .then(data => {
@@ -62,31 +66,43 @@ const Weapon = ({
             if (!category.randomImage) {
               return
             }
-            const response = await fetch(
-              imagesURL +
-                branch +
-                '/' +
-                category.name.toLowerCase() +
-                '/' +
-                category.randomImage.subject +
-                '/' +
-                category.randomImage.filename,
-              {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                  authorization: 'Bearer ' + account.token
-                }
+            try {
+              const response = await fetch(
+                imagesURL +
+                  branch +
+                  '/' +
+                  category.name.toLowerCase() +
+                  '/' +
+                  category.randomImage.subject +
+                  '/' +
+                  category.randomImage.filename,
+                {
+                  method: 'GET',
+                  credentials: 'include',
+                  headers: {
+                    authorization: 'Bearer ' + account.token
+                  },
+                  signal: signal
+                })
+              const image = await response.blob()
+              var imageUrl = URL.createObjectURL(image)
+              dispatchCategories(addImage(category.id, imageUrl))
+            } catch (error) {
+              if (!controller.signal.aborted) {
+                console.error(error)
               }
-            )
-            const image = await response.blob()
-            var imageUrl = URL.createObjectURL(image)
-            dispatchCategories(addImage(category.id, imageUrl))
+            }
           })
         }
       })
-      .catch(error => console.error(error))
-    return () => {}
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+    return () => {
+      controller.abort()
+    }
   }, [])
 
   return (
@@ -107,7 +123,7 @@ const Weapon = ({
             onClick={() => {
               history.push('/')
             }}
-            className={classes.link}
+            className={classNames(classes.link, dark && classes.dark)}
           >
             <HomeIcon className={classes.icon} />
             Home
@@ -118,7 +134,7 @@ const Weapon = ({
             onClick={() => {
               history.push('/info')
             }}
-            className={classes.link}
+            className={classNames(classes.link, dark && classes.dark)}
           >
             <LocalLibraryIcon className={classes.icon} />
             Info
@@ -129,11 +145,12 @@ const Weapon = ({
             onClick={() => {
               history.push(`/info/${branch}`)
             }}
+            className={classNames(classes.link, dark && classes.dark)}
           >
             {titleCase(branch)}
           </Link>
         </Breadcrumbs>
-        <Typography variant='h3' color='textPrimary'>
+        <Typography variant='h3' color='textPrimary' align='center'>
           Επιλέξτε κατηγορία
         </Typography>
         <Grid

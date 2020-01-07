@@ -77,6 +77,8 @@ const QuizWeaponCard = ({ image, branch, account }) => {
   const [expanded, setExpanded] = useState(false)
   const [error, setError] = useState('')
   const [categories, dispatchCategories] = useReducer(categoriesReducer, [])
+  var controller = new window.AbortController()
+  var signal = controller.signal
 
   const handleChange = event => {
     categories.forEach(category => {
@@ -104,7 +106,8 @@ const QuizWeaponCard = ({ image, branch, account }) => {
       credentials: 'include',
       headers: {
         authorization: 'Bearer ' + account.token
-      }
+      },
+      signal: signal
     })
       .then(response => response.json())
       .then(data => {
@@ -117,31 +120,43 @@ const QuizWeaponCard = ({ image, branch, account }) => {
             if (!category.randomImage) {
               return
             }
-            const response = await fetch(
-              imagesURL +
-                branch +
-                '/' +
-                category.name.toLowerCase() +
-                '/' +
-                category.randomImage.subject +
-                '/' +
-                category.randomImage.filename,
-              {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                  authorization: 'Bearer ' + account.token
-                }
+            try {
+              const response = await fetch(
+                imagesURL +
+                  branch +
+                  '/' +
+                  category.name.toLowerCase() +
+                  '/' +
+                  category.randomImage.subject +
+                  '/' +
+                  category.randomImage.filename,
+                {
+                  method: 'GET',
+                  credentials: 'include',
+                  headers: {
+                    authorization: 'Bearer ' + account.token
+                  },
+                  signal: signal
+                })
+              const image = await response.blob()
+              var imageUrl = URL.createObjectURL(image)
+              dispatchCategories(addImage(category.id, imageUrl))
+            } catch (error) {
+              if (!controller.signal.aborted) {
+                console.error(error)
               }
-            )
-            const image = await response.blob()
-            var imageUrl = URL.createObjectURL(image)
-            dispatchCategories(addImage(category.id, imageUrl))
+            }
           })
         }
       })
-      .catch(error => console.error(error))
-    return () => {}
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+    return () => {
+      controller.abort()
+    }
   }, [])
 
   return (

@@ -28,7 +28,15 @@ const homeStyle = makeStyles(theme => ({
     })
   },
   menuIcon: {
-    marginLeft: `calc(100% - ${1.7 * imageHeight}px)`
+    position: 'absolute',
+    right: 10
+  },
+  darkIcon: {
+    position: 'absolute',
+    right: 60
+  },
+  darkIconHidden: {
+    right: 10
   },
   menuIconHidden: {
     display: 'none'
@@ -114,16 +122,89 @@ const homeStyle = makeStyles(theme => ({
   link: {
     display: 'flex'
   },
+  dark: {
+    color: theme.palette.secondary.main
+  },
   icon: {
     marginRight: theme.spacing(0.5),
     width: 20,
     height: 20
   },
   infoPaper: {
+    marginTop: '20px',
     width: '80%',
     marginLeft: 'auto',
     marginRight: 'auto',
-    maxWidth: '800px'
+    maxWidth: '800px',
+    maxHeight: '800px',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    height: '100%',
+    '&::-webkit-scrollbar': {
+      width: '0.6em'
+    },
+    '&::-webkit-scrollbar-track': {
+      boxShadow: 'inset 0 0 5px grey',
+      color: '#8a9c8a',
+      borderRadius: '10px',
+      backgroundColor: '#cbd3cb'
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.primary.light,
+      borderRadius: '10px',
+      outline: '3px solid black',
+      '&:hover': {
+        backgroundColor: theme.palette.primary.dark
+      }
+    }
+  },
+  infoPaperDark: {
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.secondary.light,
+      '&:hover': {
+        backgroundColor: theme.palette.secondary.dark
+      }
+    }
+  },
+  infoContent: {
+    position: 'relative'
+  },
+  gridList: {
+    flexWrap: 'nowrap',
+    transform: 'translateZ(0)',
+    margin: 0,
+    overflow: 'hidden'
+  },
+  tile: {
+    '&:hover': {
+      filter: 'brightness(115%)'
+    }
+  },
+  title: {
+    color: theme.palette.primary.light
+  },
+  darkTitle: {
+    color: theme.palette.secondary.main
+  },
+  titleBar: {
+    background:
+      'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)'
+  },
+  leftIcon: {
+    position: 'absolute',
+    zIndex: 1,
+    left: '10px',
+    top: '3%',
+    opacity: 0.8
+
+  },
+  rightIcon: {
+    position: 'absolute',
+    zIndex: 1,
+    right: '10px',
+    top: '3%',
+    opacity: 0.8
+
   }
 }))
 

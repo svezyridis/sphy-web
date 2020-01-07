@@ -12,7 +12,6 @@ import { toogleDrawer, toogleDark } from '../store/actions'
 
 const DefaultAppBar = () => {
   const classes = homeStyle()
-  const [checked, setChecked] = useState(true)
   const dark = useSelector(state => state.dark)
   const open = useSelector(state => state.open)
   const dispatch = useDispatch()
@@ -32,13 +31,12 @@ const DefaultAppBar = () => {
         <Switch
           checked={dark}
           onChange={onSwitch}
-          value='checkedA'
-          inputProps={{ 'aria-label': 'secondary checkbox' }}
+          className={classNames(classes.darkIcon, open && classes.darkIconHidden)}
         />
         <IconButton
           color='inherit'
           onClick={() => onClick(true)}
-          className={classNames(open && classes.menuIconHidden)}
+          className={classNames(classes.menuIcon, open && classes.menuIconHidden)}
           edge='end'
         >
           <MenuIcon />

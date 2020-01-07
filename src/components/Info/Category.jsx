@@ -37,6 +37,8 @@ const Category = ({
   const category = match.params.category
 
   useEffect(() => {
+    var controller = new window.AbortController()
+    var signal = controller.signal
     if (isEmpty(account)) {
       var tempAccount = window.sessionStorage.getItem('account')
       if (isEmpty(tempAccount)) {
@@ -51,7 +53,8 @@ const Category = ({
       credentials: 'include',
       headers: {
         authorization: 'Bearer ' + account.token
-      }
+      },
+      signal: signal
     })
       .then(response => response.json())
       .then(data => {
@@ -64,31 +67,44 @@ const Category = ({
             if (subject.images.length === 0) {
               return
             }
-            const response = await fetch(
-              imagesURL +
-                branch +
-                '/' +
-                category.toLowerCase() +
-                '/' +
-                subject.name +
-                '/' +
-                sample(subject.images).filename,
-              {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                  authorization: 'Bearer ' + account.token
+            try {
+              const response = await fetch(
+                imagesURL +
+                  branch +
+                  '/' +
+                  category.toLowerCase() +
+                  '/' +
+                  subject.name +
+                  '/' +
+                  sample(subject.images).filename,
+                {
+                  method: 'GET',
+                  credentials: 'include',
+                  headers: {
+                    authorization: 'Bearer ' + account.token
+                  },
+                  signal: signal
                 }
+              )
+              const image = await response.blob()
+              var imageUrl = URL.createObjectURL(image)
+              dispatchSubjects(addImage(subject.id, imageUrl))
+            } catch (error) {
+              if (!controller.signal.aborted) {
+                console.error(error)
               }
-            )
-            const image = await response.blob()
-            var imageUrl = URL.createObjectURL(image)
-            dispatchSubjects(addImage(subject.id, imageUrl))
+            }
           })
         }
       })
-      .catch(error => console.error(error))
-    return () => {}
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+    return () => {
+      controller.abort()
+    }
   }, [])
 
   return (
@@ -106,6 +122,7 @@ const Category = ({
           <Link
             component='button'
             variant='body1'
+            color='textPrimary'
             onClick={() => {
               history.push('/')
             }}

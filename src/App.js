@@ -16,13 +16,11 @@ import { useSelector } from 'react-redux'
 const themeObject = {
   palette: {
     primary: {
-      main: '#003300',
-      dark: '#e188b0'
+      main: '#003300'
     },
     secondary: {
-      main: '#e82129'
-    },
-    type: 'dark'
+      main: '#e57373'
+    }
   },
   typography: {
     useNextVariants: true
@@ -48,7 +46,6 @@ function App () {
   const [theme, toogleDarkMode] = useDarkMode()
   const dark = useSelector(state => state.dark)
   useEffect(() => {
-    console.log(dark)
     toogleDarkMode(dark)
   }, [dark])
   const themeConfig = createMuiTheme(theme)

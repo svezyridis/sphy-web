@@ -1,17 +1,21 @@
 import React from 'react'
 import Card from '@material-ui/core/Card'
-import Link from '@material-ui/core/Link'
 import CardMedia from '@material-ui/core/CardMedia'
-import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
 import { useHistory } from 'react-router-dom'
-import { titleCase } from '../../general/helperFunctions'
+import Avatar from '@material-ui/core/Avatar'
+import {
+  getBranchInitials,
+  getBranchName
+} from '../../general/helperFunctions'
+import CardHeader from '@material-ui/core/CardHeader'
+import classNames from 'classnames'
 
 const cardStyle = makeStyles(theme => ({
   card: {
-    width: '100%',
-    minWidth: '400px',
-    height: '500px'
+    width: '500px',
+    minWidth: '300px',
+    height: '400px'
   },
   media: {
     backgroundColor: 'white',
@@ -35,28 +39,40 @@ const cardStyle = makeStyles(theme => ({
     height: '10%',
     fontSize: '20px',
     fontWeight: 200
+  },
+  avatar: {
+    backgroundColor: theme.palette.primary.main
+  },
+  darkAvatar: {
+    backgroundColor: theme.palette.secondary.main
   }
 }))
 
-const WeaponCard = ({ image, name }) => {
+const WeaponCard = ({ dark, image, name }) => {
   const classes = cardStyle()
   const history = useHistory()
   return (
-    <Link
-      component='button'
-      variant='body1'
+    <Card
+      elevation={8}
+      className={classes.card}
       onClick={() => {
         history.push(`/info/${name.toLowerCase()}`)
       }}
     >
-      <Card elevation={8} raised className={classes.card}>
-        <CardMedia className={classes.media} image={image} title={name}>
-          <Typography className={classes.mediaCaption} align='center'>
-            {titleCase(name)}
-          </Typography>
-        </CardMedia>
-      </Card>
-    </Link>
+      <CardHeader
+        avatar={
+          <Avatar aria-label='recipe' className={classNames(classes.avatar, dark && classes.darkAvatar)}>
+            {getBranchInitials(name)}
+          </Avatar>
+        }
+        title={getBranchName(name)}
+      />
+      <CardMedia
+        className={classes.media}
+        image={image}
+        title={getBranchName(name)}
+      />
+    </Card>
   )
 }
 

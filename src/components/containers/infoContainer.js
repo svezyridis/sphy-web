@@ -6,9 +6,10 @@ import Category from '../Info/Category'
 import Subject from '../Info/Subject'
 
 const InfoContainer = connect(
-  ({ open, account }) => ({
+  ({ dark, open, account }) => ({
     open: open,
-    account: account
+    account: account,
+    dark: dark
   }),
   dispatch => ({
     toogleDrawer (toogle) {
@@ -21,9 +22,10 @@ const InfoContainer = connect(
 )(MainInfo)
 
 export const WeaponContainer = connect(
-  ({ open, account }) => ({
+  ({ dark, open, account }) => ({
     open: open,
-    account: account
+    account: account,
+    dark: dark
   }),
   dispatch => ({
     toogleDrawer (toogle) {
@@ -36,7 +38,8 @@ export const WeaponContainer = connect(
 )(Weapon)
 
 export const CategoryContainer = connect(
-  ({ open, account }) => ({
+  ({ open, account, dark }) => ({
+    dark: dark,
     open: open,
     account: account
   }),
@@ -51,9 +54,10 @@ export const CategoryContainer = connect(
 )(Category)
 
 export const SubjectContainer = connect(
-  ({ open, account }) => ({
+  ({ open, account, dark }) => ({
     open: open,
-    account: account
+    account: account,
+    dark: dark
   }),
   dispatch => ({
     toogleDrawer (toogle) {
