@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -16,9 +16,7 @@ export const MainListItems = () => {
         <ListItemIcon>
           <LocalLibraryIcon />
         </ListItemIcon>
-        <ListItemText
-          primary='Information'
-        />
+        <ListItemText primary='Information' />
       </ListItem>
       <ListItem button onClick={() => history.push('/quiz')}>
         <ListItemIcon>
@@ -33,6 +31,5 @@ export const MainListItems = () => {
         <ListItemText primary='Test' />
       </ListItem>
     </List>
-
   )
 }

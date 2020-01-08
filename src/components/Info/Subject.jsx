@@ -97,12 +97,12 @@ const Subject = ({
   }
 
   const nextSelectedImage = () => {
-    setSelectedImage((selectedImage < images.length - 1) ? selectedImage + 1 : 0)
+    setSelectedImage(selectedImage < images.length - 1 ? selectedImage + 1 : 0)
   }
   const previousSelectedImage = () => {
-    setSelectedImage((selectedImage > 0) ? selectedImage - 1 : images.length - 1)
+    setSelectedImage(selectedImage > 0 ? selectedImage - 1 : images.length - 1)
   }
-
+  console.log(subject.text)
   useEffect(() => {
     if (isEmpty(account)) {
       var tempAccount = window.sessionStorage.getItem('account')
@@ -226,12 +226,26 @@ const Subject = ({
         <Typography variant='h2' align='center' color='textPrimary'>
           {titleCase(subject.name)}
         </Typography>
-        <Paper elevation={10} className={classNames(classes.infoPaper, dark && classes.infoPaperDark)}>
+        <Paper
+          elevation={10}
+          className={classNames(
+            classes.infoPaper,
+            dark && classes.infoPaperDark
+          )}
+        >
           <div className={classes.infoContent}>
-            <Fab color={dark ? 'secondary' : 'primary'} className={classes.leftIcon} onClick={handleLeft}>
+            <Fab
+              color={dark ? 'secondary' : 'primary'}
+              className={classes.leftIcon}
+              onClick={handleLeft}
+            >
               <ChevronLeftRoundedIcon />
             </Fab>
-            <Fab color={dark ? 'secondary' : 'primary'} className={classes.rightIcon} onClick={handleRight}>
+            <Fab
+              color={dark ? 'secondary' : 'primary'}
+              className={classes.rightIcon}
+              onClick={handleRight}
+            >
               <ChevronRightRoundedIcon />
             </Fab>
             <GridList className={classes.gridList} cols={2.5} ref={gridList}>
@@ -255,8 +269,18 @@ const Subject = ({
                 </GridListTile>
               ))}
             </GridList>
-            <Typography variant='body1' align='left' color='textPrimary' paragraph>
-              {subject.text}
+            <Typography
+              variant='body1'
+              component='div'
+              align='left'
+              color='textPrimary'
+              className={classes.paragraph}
+            >
+              {subject.text
+                ? subject.text
+                    .split('\n')
+                    .map((paragraph, key) => <p key={key}>{paragraph}</p>)
+                : null}
             </Typography>
           </div>
         </Paper>

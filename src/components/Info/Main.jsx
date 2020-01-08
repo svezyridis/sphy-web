@@ -16,7 +16,6 @@ import WeaponCard from './WeaponCard'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import HomeIcon from '@material-ui/icons/Home'
-import { Paper } from '@material-ui/core'
 
 const MainInfo = ({ dark, open, toogleDrawer, account, deleteAccount }) => {
   const classes = homeStyle()
@@ -40,17 +39,39 @@ const MainInfo = ({ dark, open, toogleDrawer, account, deleteAccount }) => {
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs>
-          <Link component='button' variant='body1' onClick={() => { history.push('/') }} className={classNames(classes.link, dark && classes.dark)}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push('/')
+            }}
+            className={classNames(classes.link, dark && classes.dark)}
+          >
             <HomeIcon className={classes.icon} />
             Home
           </Link>
-          <Link component='button' variant='body1' onClick={() => { history.push('/info') }} className={classNames(classes.link, dark && classes.dark)}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push('/info')
+            }}
+            className={classNames(classes.link, dark && classes.dark)}
+          >
             <LocalLibraryIcon className={classes.icon} />
             Info
           </Link>
         </Breadcrumbs>
-        <Typography variant='h3' color='textPrimary' align='center'>Επιλέξτε σώμα</Typography>
-        <Grid container alignItems='center' justify='center' spacing={5} className={classes.grid}>
+        <Typography variant='h3' color='textPrimary' align='center'>
+          Επιλέξτε σώμα
+        </Typography>
+        <Grid
+          container
+          alignItems='center'
+          justify='center'
+          spacing={5}
+          className={classes.grid}
+        >
           <Grid item>
             <WeaponCard image={armyImage} name='army' dark={dark} />
           </Grid>

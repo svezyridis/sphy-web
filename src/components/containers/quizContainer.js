@@ -3,9 +3,10 @@ import { toogleDrawer, deleteAccount } from '../../store/actions'
 import Quiz from '../quiz/Quiz'
 
 const QuizContainer = connect(
-  ({ open, account }) => ({
+  ({ open, account, dark }) => ({
     open: open,
-    account: account
+    account: account,
+    dark: dark
   }),
   dispatch => ({
     toogleDrawer (toogle) {

@@ -135,28 +135,10 @@ const homeStyle = makeStyles(theme => ({
     width: '80%',
     marginLeft: 'auto',
     marginRight: 'auto',
+    marginBottom: '5%',
     maxWidth: '800px',
-    maxHeight: '800px',
-    overflowY: 'auto',
-    overflowX: 'hidden',
-    height: '100%',
-    '&::-webkit-scrollbar': {
-      width: '0.6em'
-    },
-    '&::-webkit-scrollbar-track': {
-      boxShadow: 'inset 0 0 5px grey',
-      color: '#8a9c8a',
-      borderRadius: '10px',
-      backgroundColor: '#cbd3cb'
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.primary.light,
-      borderRadius: '10px',
-      outline: '3px solid black',
-      '&:hover': {
-        backgroundColor: theme.palette.primary.dark
-      }
-    }
+    maxHeight: '700px',
+    display: 'flex'
   },
   infoPaperDark: {
     '&::-webkit-scrollbar-thumb': {
@@ -167,13 +149,17 @@ const homeStyle = makeStyles(theme => ({
     }
   },
   infoContent: {
-    position: 'relative'
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column'
   },
   gridList: {
     flexWrap: 'nowrap',
     transform: 'translateZ(0)',
+    height: '420px',
     margin: 0,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    width: '100.3%'
   },
   tile: {
     '&:hover': {
@@ -196,7 +182,6 @@ const homeStyle = makeStyles(theme => ({
     left: '10px',
     top: '3%',
     opacity: 0.8
-
   },
   rightIcon: {
     position: 'absolute',
@@ -204,7 +189,31 @@ const homeStyle = makeStyles(theme => ({
     right: '10px',
     top: '3%',
     opacity: 0.8
-
+  },
+  paragraph: {
+    textIndent: '20px',
+    overflowY: 'scroll',
+    overflowX: 'hidden',
+    '&::-webkit-scrollbar': {
+      width: '0.6em'
+    },
+    '&::-webkit-scrollbar-track': {
+      boxShadow: 'inset 0 0 5px grey',
+      color: '#8a9c8a',
+      borderRadius: '10px',
+      backgroundColor: '#cbd3cb'
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.primary.light,
+      borderRadius: '10px',
+      outline: '3px solid black',
+      '&:hover': {
+        backgroundColor: theme.palette.primary.dark
+      }
+    },
+    list: {
+      width: '50%'
+    }
   }
 }))
 

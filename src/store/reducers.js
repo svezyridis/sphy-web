@@ -43,18 +43,18 @@ export const categoriesReducer = (state, action) => {
       return state.map(category =>
         category.id === action.id
           ? {
-              ...category,
-              image: action.image
-            }
+            ...category,
+            image: action.image
+          }
           : category
       )
     case C.SET_CHECKED:
       return state.map(category =>
         category.id === action.id
           ? {
-              ...category,
-              checked: action.checked
-            }
+            ...category,
+            checked: action.checked
+          }
           : category
       )
     default:
@@ -70,9 +70,9 @@ export const subjectsReducer = (state, action) => {
       return state.map(subject =>
         subject.id === action.id
           ? {
-              ...subject,
-              image: action.image
-            }
+            ...subject,
+            image: action.image
+          }
           : subject
       )
     default:
@@ -88,9 +88,9 @@ export const imagesReducer = (state, action) => {
       return state.map(image =>
         image.id === action.id
           ? {
-              ...image,
-              image: action.image
-            }
+            ...image,
+            image: action.image
+          }
           : image
       )
     default:

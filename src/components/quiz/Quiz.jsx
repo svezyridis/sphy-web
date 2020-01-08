@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react'
+import React from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
@@ -16,7 +16,14 @@ import HomeIcon from '@material-ui/icons/Home'
 import QuizWeaponCard from './QuizWeaponCard'
 import isEmpty from 'lodash.isempty'
 
-const Quiz = ({ open, toogleDrawer, account, deleteAccount, history }) => {
+const Quiz = ({
+  dark,
+  open,
+  toogleDrawer,
+  account,
+  deleteAccount,
+  history
+}) => {
   const classes = homeStyle()
   if (isEmpty(account)) {
     console.log('account is empty')
@@ -38,26 +45,63 @@ const Quiz = ({ open, toogleDrawer, account, deleteAccount, history }) => {
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs>
-          <Link component='button' variant='body1' onClick={() => { history.push('/') }} className={classes.link}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push('/')
+            }}
+            className={classNames(classes.link, dark && classes.dark)}
+          >
             <HomeIcon className={classes.icon} />
             Home
           </Link>
-          <Link component='button' variant='body1' onClick={() => { history.push('/info') }} className={classes.link}>
+          <Link
+            component='button'
+            variant='body1'
+            onClick={() => {
+              history.push('/info')
+            }}
+            className={classNames(classes.link, dark && classes.dark)}
+          >
             <FormatListNumberedIcon className={classes.icon} />
             Quiz
           </Link>
         </Breadcrumbs>
 
-        <Typography variant='h3' color='textPrimary'>Επιλέξτε κατηγοριες ερωτήσεων</Typography>
-        <Grid container alignItems='flex-start' justify='center' spacing={5} className={classes.grid}>
+        <Typography variant='h3' color='textPrimary' align='center'>
+          Επιλέξτε κατηγοριες ερωτήσεων
+        </Typography>
+        <Grid
+          container
+          alignItems='flex-start'
+          justify='center'
+          spacing={5}
+          className={classes.grid}
+        >
           <Grid item>
-            <QuizWeaponCard image={armyImage} branch='army' account={account} />
+            <QuizWeaponCard
+              image={armyImage}
+              branch='army'
+              account={account}
+              dark={dark}
+            />
           </Grid>
           <Grid item>
-            <QuizWeaponCard image={navyImage} branch='navy' account={account} />
+            <QuizWeaponCard
+              image={navyImage}
+              branch='navy'
+              account={account}
+              dark={dark}
+            />
           </Grid>
           <Grid item>
-            <QuizWeaponCard image={ariforceImage} branch='airforce' account={account} />
+            <QuizWeaponCard
+              image={ariforceImage}
+              branch='airforce'
+              account={account}
+              dark={dark}
+            />
           </Grid>
         </Grid>
       </div>

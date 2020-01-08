@@ -1,5 +1,6 @@
 import React from 'react'
-import { Typography, makeStyles, Paper } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import { drawerWidth } from '../styles/drawerStyle'
 import classNames from 'classnames'

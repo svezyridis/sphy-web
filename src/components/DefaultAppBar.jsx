@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import IconButton from '@material-ui/core/IconButton'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -31,12 +31,18 @@ const DefaultAppBar = () => {
         <Switch
           checked={dark}
           onChange={onSwitch}
-          className={classNames(classes.darkIcon, open && classes.darkIconHidden)}
+          className={classNames(
+            classes.darkIcon,
+            open && classes.darkIconHidden
+          )}
         />
         <IconButton
           color='inherit'
           onClick={() => onClick(true)}
-          className={classNames(classes.menuIcon, open && classes.menuIconHidden)}
+          className={classNames(
+            classes.menuIcon,
+            open && classes.menuIconHidden
+          )}
           edge='end'
         >
           <MenuIcon />

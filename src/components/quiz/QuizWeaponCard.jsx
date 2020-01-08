@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect } from 'react'
+import React, { useState, useReducer, useEffect, Fragment } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 import Card from '@material-ui/core/Card'
@@ -9,8 +9,10 @@ import CardActions from '@material-ui/core/CardActions'
 import Collapse from '@material-ui/core/Collapse'
 import Avatar from '@material-ui/core/Avatar'
 import IconButton from '@material-ui/core/IconButton'
-import Typography from '@material-ui/core/Typography'
-import { red } from '@material-ui/core/colors'
+import List from '@material-ui/core/List'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListItem from '@material-ui/core/ListItem'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Checkbox from '@material-ui/core/Checkbox'
 import { setCategories, addImage, setChecked } from '../../store/actions'
@@ -23,6 +25,9 @@ import {
 } from '../../general/helperFunctions'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import { baseURL } from '../../general/constants'
+import classNames from 'classnames'
+import Subject from '../Info/Subject'
+import { Typography, Divider } from '@material-ui/core'
 
 const categoriesURL = baseURL + 'category/'
 const imagesURL = baseURL + 'image/'
@@ -68,11 +73,26 @@ const useStyles = makeStyles(theme => ({
     transform: 'rotate(180deg)'
   },
   avatar: {
-    backgroundColor: red[500]
+    backgroundColor: theme.palette.primary.main
+  },
+  darkAvatar: {
+    backgroundColor: theme.palette.secondary.main
+  },
+  checkbox: {
+    color: theme.palette.primary.main,
+    '&$checked': {
+      color: theme.palette.primary.main
+    }
+  },
+  darkCheckbox: {
+    color: theme.palette.secondary.main,
+    '&$checked': {
+      color: theme.palette.secondary.main
+    }
   }
 }))
 
-const QuizWeaponCard = ({ image, branch, account }) => {
+const QuizWeaponCard = ({ dark, image, branch, account }) => {
   const classes = useStyles()
   const [expanded, setExpanded] = useState(false)
   const [error, setError] = useState('')
@@ -116,37 +136,6 @@ const QuizWeaponCard = ({ image, branch, account }) => {
         if (status === 'error') setError(message)
         else {
           dispatchCategories(setCategories(result))
-          result.forEach(async (category, index) => {
-            if (!category.randomImage) {
-              return
-            }
-            try {
-              const response = await fetch(
-                imagesURL +
-                  branch +
-                  '/' +
-                  category.name.toLowerCase() +
-                  '/' +
-                  category.randomImage.subject +
-                  '/' +
-                  category.randomImage.filename,
-                {
-                  method: 'GET',
-                  credentials: 'include',
-                  headers: {
-                    authorization: 'Bearer ' + account.token
-                  },
-                  signal: signal
-                })
-              const image = await response.blob()
-              var imageUrl = URL.createObjectURL(image)
-              dispatchCategories(addImage(category.id, imageUrl))
-            } catch (error) {
-              if (!controller.signal.aborted) {
-                console.error(error)
-              }
-            }
-          })
         }
       })
       .catch(error => {
@@ -163,7 +152,9 @@ const QuizWeaponCard = ({ image, branch, account }) => {
     <Card elevation={8} className={classes.card}>
       <CardHeader
         avatar={
-          <Avatar aria-label='recipe' className={classes.avatar}>
+          <Avatar
+            className={classNames(classes.avatar, dark && classes.darkAvatar)}
+          >
             {getBranchInitials(branch)}
           </Avatar>
         }
@@ -171,11 +162,15 @@ const QuizWeaponCard = ({ image, branch, account }) => {
           <Checkbox
             checked={noOfCheckedCategories > 0}
             onChange={handleChange}
-            value={branch}
             indeterminate={
               noOfCheckedCategories > 0 &&
               noOfCheckedCategories < categories.length
             }
+            color='default'
+            className={classNames(
+              classes.checkbox,
+              dark && classes.darkCheckbox
+            )}
           />
         }
         title={getBranchName(branch)}
@@ -197,36 +192,37 @@ const QuizWeaponCard = ({ image, branch, account }) => {
           <ExpandMoreIcon />
         </IconButton>
       </CardActions>
+      <Divider />
       <Collapse in={expanded} timeout='auto' unmountOnExit>
         <CardContent>
-          {categories.map((category, index) => {
-            return (
-              <Card key={index} className={classes.innerCard}>
-                <CardMedia
-                  className={classes.innerMedia}
-                  image={category.image}
-                  title={titleCase(category.name)}
-                >
-                  <FormControlLabel
-                    control={
+          <List dense className={classes.list}>
+            {categories.map((category, index) => {
+              return (
+                <Fragment key={index}>
+                  <ListItem button>
+                    <ListItemText
+                      primary={
+                        <Typography>{titleCase(category.name)}</Typography>
+                      }
+                    />
+                    <ListItemSecondaryAction>
                       <Checkbox
                         checked={category.checked}
                         onChange={handleCategoryChecked(category.id)}
                         value={category.id}
+                        color='default'
+                        className={classNames(
+                          classes.checkbox,
+                          dark && classes.darkCheckbox
+                        )}
                       />
-                    }
-                    label={
-                      <Typography variant='h5'>
-                        {titleCase(category.name)}
-                      </Typography>
-                    }
-                    labelPlacement='start'
-                    className={classes.mediaCaption}
-                  />
-                </CardMedia>
-              </Card>
-            )
-          })}
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                  <Divider />
+                </Fragment>
+              )
+            })}
+          </List>
         </CardContent>
       </Collapse>
     </Card>
