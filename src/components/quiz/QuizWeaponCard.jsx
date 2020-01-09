@@ -15,7 +15,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItem from '@material-ui/core/ListItem'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Checkbox from '@material-ui/core/Checkbox'
-import { setCategories, addImage, setChecked } from '../../store/actions'
+import { setCategories, setChecked } from '../../store/actions'
 import { categoriesReducer } from '../../store/reducers'
 import { fetch } from 'whatwg-fetch'
 import {
@@ -23,14 +23,11 @@ import {
   titleCase,
   getBranchName
 } from '../../general/helperFunctions'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
 import { baseURL } from '../../general/constants'
 import classNames from 'classnames'
-import Subject from '../Info/Subject'
 import { Typography, Divider } from '@material-ui/core'
 
 const categoriesURL = baseURL + 'category/'
-const imagesURL = baseURL + 'image/'
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -92,7 +89,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const QuizWeaponCard = ({ dark, image, branch, account }) => {
+const QuizWeaponCard = ({ dark, image, branch, account, onCategoriesChange }) => {
   const classes = useStyles()
   const [expanded, setExpanded] = useState(false)
   const [error, setError] = useState('')
@@ -147,6 +144,10 @@ const QuizWeaponCard = ({ dark, image, branch, account }) => {
       controller.abort()
     }
   }, [])
+
+  useEffect(() => {
+    onCategoriesChange(categories)
+  })
 
   return (
     <Card elevation={8} className={classes.card}>

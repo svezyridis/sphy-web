@@ -25,6 +25,14 @@ const Quiz = ({
   history
 }) => {
   const classes = homeStyle()
+  var categories = {}
+
+  const onCategoriesChange = branch => subjectCategories => {
+    console.log(subjectCategories)
+    categories[branch] = subjectCategories
+    console.log(categories)
+  }
+
   if (isEmpty(account)) {
     console.log('account is empty')
     var tempAccount = window.sessionStorage.getItem('account')
@@ -85,6 +93,7 @@ const Quiz = ({
               branch='army'
               account={account}
               dark={dark}
+              onCategoriesChange={onCategoriesChange('army')}
             />
           </Grid>
           <Grid item>
@@ -93,6 +102,7 @@ const Quiz = ({
               branch='navy'
               account={account}
               dark={dark}
+              onCategoriesChange={onCategoriesChange('navy')}
             />
           </Grid>
           <Grid item>
@@ -101,6 +111,7 @@ const Quiz = ({
               branch='airforce'
               account={account}
               dark={dark}
+              onCategoriesChange={onCategoriesChange('airforce')}
             />
           </Grid>
         </Grid>
