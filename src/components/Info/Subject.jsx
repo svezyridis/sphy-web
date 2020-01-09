@@ -102,7 +102,6 @@ const Subject = ({
   const previousSelectedImage = () => {
     setSelectedImage(selectedImage > 0 ? selectedImage - 1 : images.length - 1)
   }
-  console.log(subject.text)
   useEffect(() => {
     if (isEmpty(account)) {
       var tempAccount = window.sessionStorage.getItem('account')
@@ -226,13 +225,7 @@ const Subject = ({
         <Typography variant='h2' align='center' color='textPrimary'>
           {titleCase(subject.name)}
         </Typography>
-        <Paper
-          elevation={10}
-          className={classNames(
-            classes.infoPaper,
-            dark && classes.infoPaperDark
-          )}
-        >
+        <Paper elevation={10} className={classes.infoPaper}>
           <div className={classes.infoContent}>
             <Fab
               color={dark ? 'secondary' : 'primary'}
@@ -271,10 +264,13 @@ const Subject = ({
             </GridList>
             <Typography
               variant='body1'
-              component='div'
               align='left'
               color='textPrimary'
-              className={classes.paragraph}
+              component='div'
+              className={classNames(
+                classes.paragraph,
+                dark && classes.paragraphDark
+              )}
             >
               {subject.text
                 ? subject.text

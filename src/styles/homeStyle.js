@@ -140,14 +140,6 @@ const homeStyle = makeStyles(theme => ({
     maxHeight: '700px',
     display: 'flex'
   },
-  infoPaperDark: {
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.secondary.light,
-      '&:hover': {
-        backgroundColor: theme.palette.secondary.dark
-      }
-    }
-  },
   infoContent: {
     position: 'relative',
     display: 'flex',
@@ -210,10 +202,24 @@ const homeStyle = makeStyles(theme => ({
       '&:hover': {
         backgroundColor: theme.palette.primary.dark
       }
-    },
-    list: {
-      width: '50%'
     }
+  },
+  paragraphDark: {
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.secondary.light,
+      '&:hover': {
+        backgroundColor: theme.palette.secondary.dark
+      }
+    }
+  },
+  list: {
+    width: '50%'
+  },
+  startQuizButton: {
+    width: '20%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '5%'
   }
 }))
 

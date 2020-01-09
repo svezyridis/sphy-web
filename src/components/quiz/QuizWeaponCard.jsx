@@ -26,6 +26,7 @@ import {
 import { baseURL } from '../../general/constants'
 import classNames from 'classnames'
 import { Typography, Divider } from '@material-ui/core'
+import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 
 const categoriesURL = baseURL + 'category/'
 
@@ -89,7 +90,13 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const QuizWeaponCard = ({ dark, image, branch, account, onCategoriesChange }) => {
+const QuizWeaponCard = ({
+  dark,
+  image,
+  branch,
+  account,
+  onCategoriesChange
+}) => {
   const classes = useStyles()
   const [expanded, setExpanded] = useState(false)
   const [error, setError] = useState('')
@@ -106,9 +113,12 @@ const QuizWeaponCard = ({ dark, image, branch, account, onCategoriesChange }) =>
   const handleExpandClick = () => {
     setExpanded(!expanded)
   }
+  const handleClickAway = () => {
+    setExpanded(false)
+  }
 
-  const handleCategoryChecked = id => event => {
-    dispatchCategories(setChecked(id, event.target.checked))
+  const handleCategoryChecked = category => event => {
+    dispatchCategories(setChecked(category.id, !category.checked))
   }
 
   const noOfCheckedCategories = categories.reduce(
@@ -150,83 +160,85 @@ const QuizWeaponCard = ({ dark, image, branch, account, onCategoriesChange }) =>
   })
 
   return (
-    <Card elevation={8} className={classes.card}>
-      <CardHeader
-        avatar={
-          <Avatar
-            className={classNames(classes.avatar, dark && classes.darkAvatar)}
-          >
-            {getBranchInitials(branch)}
-          </Avatar>
-        }
-        action={
-          <Checkbox
-            checked={noOfCheckedCategories > 0}
-            onChange={handleChange}
-            indeterminate={
-              noOfCheckedCategories > 0 &&
-              noOfCheckedCategories < categories.length
-            }
-            color='default'
-            className={classNames(
-              classes.checkbox,
-              dark && classes.darkCheckbox
-            )}
-          />
-        }
-        title={getBranchName(branch)}
-      />
-      <CardMedia
-        className={classes.media}
-        image={image}
-        title={getBranchName(branch)}
-      />
-      <CardActions disableSpacing>
-        <IconButton
-          className={clsx(classes.expand, {
-            [classes.expandOpen]: expanded
-          })}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label='show more'
-        >
-          <ExpandMoreIcon />
-        </IconButton>
-      </CardActions>
-      <Divider />
-      <Collapse in={expanded} timeout='auto' unmountOnExit>
-        <CardContent>
-          <List dense className={classes.list}>
-            {categories.map((category, index) => {
-              return (
-                <Fragment key={index}>
-                  <ListItem button>
-                    <ListItemText
-                      primary={
-                        <Typography>{titleCase(category.name)}</Typography>
-                      }
-                    />
-                    <ListItemSecondaryAction>
-                      <Checkbox
-                        checked={category.checked}
-                        onChange={handleCategoryChecked(category.id)}
-                        value={category.id}
-                        color='default'
-                        className={classNames(
-                          classes.checkbox,
-                          dark && classes.darkCheckbox
-                        )}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                  <Divider />
-                </Fragment>
-              )
+    <ClickAwayListener onClickAway={handleClickAway}>
+      <Card elevation={8} className={classes.card}>
+        <CardHeader
+          avatar={
+            <Avatar
+              className={classNames(classes.avatar, dark && classes.darkAvatar)}
+            >
+              {getBranchInitials(branch)}
+            </Avatar>
+          }
+          action={
+            <Checkbox
+              checked={noOfCheckedCategories > 0}
+              onChange={handleChange}
+              indeterminate={
+                noOfCheckedCategories > 0 &&
+                noOfCheckedCategories < categories.length
+              }
+              color='default'
+              className={classNames(
+                classes.checkbox,
+                dark && classes.darkCheckbox
+              )}
+            />
+          }
+          title={getBranchName(branch)}
+        />
+        <CardMedia
+          className={classes.media}
+          image={image}
+          title={getBranchName(branch)}
+        />
+        <CardActions disableSpacing>
+          <IconButton
+            className={clsx(classes.expand, {
+              [classes.expandOpen]: expanded
             })}
-          </List>
-        </CardContent>
-      </Collapse>
-    </Card>
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label='show more'
+          >
+            <ExpandMoreIcon />
+          </IconButton>
+        </CardActions>
+        <Divider />
+        <Collapse in={expanded} timeout='auto' unmountOnExit>
+          <CardContent>
+            <List dense className={classes.list}>
+              {categories.map((category, index) => {
+                return (
+                  <Fragment key={index}>
+                    <ListItem button onClick={handleCategoryChecked(category)}>
+                      <ListItemText
+                        primary={
+                          <Typography>{titleCase(category.name)}</Typography>
+                        }
+                      />
+                      <ListItemSecondaryAction>
+                        <Checkbox
+                          checked={category.checked}
+                          onChange={handleCategoryChecked(category)}
+                          value={category.id}
+                          color='default'
+                          className={classNames(
+                            classes.checkbox,
+                            dark && classes.darkCheckbox
+                          )}
+                        />
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <Divider />
+                  </Fragment>
+                )
+              })}
+            </List>
+          </CardContent>
+        </Collapse>
+      </Card>
+    </ClickAwayListener>
   )
 }
 

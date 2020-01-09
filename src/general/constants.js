@@ -7,7 +7,12 @@ export const actiontypes = {
   SET_SUBJECTS: 'SET_SUBJECTS',
   SET_IMAGES: 'SET_IMAGES',
   SET_CHECKED: 'SET_CHECKED',
-  TOOGLE_DARK: 'TOOGLE_DARK'
+  TOOGLE_DARK: 'TOOGLE_DARK',
+  CREATE_QUIZ: 'CREATE_QUIZ',
+  ADD_QUESTION: 'ADD_QUESTION',
+  UPDATE_ANSWER: 'UPDATE_ANSWER'
 }
 
-export const baseURL = 'https://projectapi.ml/'
+//export const baseURL = 'https://projectapi.ml/'
+
+export const baseURL = 'http://localhost:8080/'

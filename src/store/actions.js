@@ -48,3 +48,14 @@ export const setChecked = (id, checked) => ({
   id: id,
   checked: checked
 })
+
+export const createQuiz = username => ({
+  type: C.CREATE_QUIZ,
+  username: username
+})
+
+export const addQuestion = (username, question) => ({
+  type: C.ADD_QUESTION,
+  id: question.id,
+  question: question
+})

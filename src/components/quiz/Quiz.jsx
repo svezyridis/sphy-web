@@ -15,22 +15,93 @@ import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
 import HomeIcon from '@material-ui/icons/Home'
 import QuizWeaponCard from './QuizWeaponCard'
 import isEmpty from 'lodash.isempty'
+import { fetch } from 'whatwg-fetch'
+import { baseURL } from '../../general/constants'
 
+const subjectsURL = baseURL + 'subject/'
+const questionsURL = baseURL + 'question/'
 const Quiz = ({
   dark,
   open,
   toogleDrawer,
   account,
   deleteAccount,
+  quizes,
+  createQuiz,
+  addQuestion,
   history
 }) => {
   const classes = homeStyle()
   var categories = {}
+  var controller = new window.AbortController()
+  var signal = controller.signal
+  if (isEmpty(account)) {
+    console.log('account is empty')
+    var tempAccount = window.sessionStorage.getItem('account')
+    if (isEmpty(tempAccount)) {
+      history.push('/login')
+      return null
+    }
+  }
+  const username = account.metadata.username
 
   const onCategoriesChange = branch => subjectCategories => {
-    console.log(subjectCategories)
     categories[branch] = subjectCategories
-    console.log(categories)
+  }
+
+  const getQuestionsOfSubject = subject => {
+    fetch(questionsURL + subject.name, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        authorization: 'Bearer ' + account.token
+      },
+      signal: signal
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          const questions = data.result
+          questions.forEach(question => addQuestion(username, question))
+        }
+      })
+  }
+
+  const getSubjectsOfCategory = (branch, categories) => {
+    categories.forEach(async category => {
+      try {
+        const response = await fetch(
+          subjectsURL + branch + '/' + category.name.toLowerCase(),
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              authorization: 'Bearer ' + account.token
+            },
+            signal: signal
+          }
+        )
+        const data = await response.json()
+        if (data.status === 'error') {
+          console.log(data.message)
+          return
+        } else {
+          const subjects = data.result
+          subjects.forEach(subject => getQuestionsOfSubject(subject))
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      }
+    })
+  }
+
+  const onQuizStart = () => {
+    createQuiz(username)
+    Object.keys(categories).forEach(async branch => {
+      getSubjectsOfCategory(branch, categories[branch])
+    })
   }
 
   if (isEmpty(account)) {
@@ -50,6 +121,7 @@ const Quiz = ({
         account={account}
         deleteAccount={deleteAccount}
         classes={classes}
+        onQuizStart={onQuizStart}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs>

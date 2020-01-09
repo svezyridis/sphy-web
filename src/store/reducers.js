@@ -1,4 +1,5 @@
 import { actiontypes as C } from '../general/constants'
+import find from 'lodash.find'
 
 export const account = (state = {}, action) => {
   switch (action.type) {
@@ -43,20 +44,53 @@ export const categoriesReducer = (state, action) => {
       return state.map(category =>
         category.id === action.id
           ? {
-            ...category,
-            image: action.image
-          }
+              ...category,
+              image: action.image
+            }
           : category
       )
     case C.SET_CHECKED:
       return state.map(category =>
         category.id === action.id
           ? {
-            ...category,
-            checked: action.checked
-          }
+              ...category,
+              checked: action.checked
+            }
           : category
       )
+    default:
+      return state
+  }
+}
+
+export const quizes = (state = [], action) => {
+  switch (action.type) {
+    case C.CREATE_QUIZ:
+      return [...state, quiz({}, action)]
+    case C.ADD_QUESTION:
+      return state.map(userQuiz => quiz(userQuiz, action))
+    default:
+      return state
+  }
+}
+
+export const quiz = (state, action) => {
+  switch (action.type) {
+    case C.CREATE_QUIZ:
+      return {
+        username: action.username,
+        questions: [],
+        answers: []
+      }
+    case C.ADD_QUESTION:
+      return state.username !== action.username
+        ? state
+        : {
+            ...state,
+            questions: find(state.questions, { id: action.id })
+              ? state.questions
+              : [...state.questions, action.question]
+          }
     default:
       return state
   }
@@ -70,9 +104,9 @@ export const subjectsReducer = (state, action) => {
       return state.map(subject =>
         subject.id === action.id
           ? {
-            ...subject,
-            image: action.image
-          }
+              ...subject,
+              image: action.image
+            }
           : subject
       )
     default:
@@ -88,9 +122,9 @@ export const imagesReducer = (state, action) => {
       return state.map(image =>
         image.id === action.id
           ? {
-            ...image,
-            image: action.image
-          }
+              ...image,
+              image: action.image
+            }
           : image
       )
     default:

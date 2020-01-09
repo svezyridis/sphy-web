@@ -12,7 +12,7 @@ import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { toogleDrawer } from '../../store/actions'
 
-const HomeDrawer = ({ account, deleteAccount, classes }) => {
+const HomeDrawer = ({ account, deleteAccount, classes, onQuizStart }) => {
   const { username, firstName, lastName, serialNumber } = account.metadata
   const history = useHistory()
   const open = useSelector(state => state.open)
@@ -45,12 +45,30 @@ const HomeDrawer = ({ account, deleteAccount, classes }) => {
       </IconButton>
       <Divider />
       <MainListItems />
+      {onQuizStart ? (
+        <div>
+          <Divider />
+          <Button
+            variant='contained'
+            color={dark ? 'secondary' : 'primary'}
+            className={classes.logout}
+            onClick={onQuizStart}
+          >
+            Start Quiz
+          </Button>
+        </div>
+      ) : null}
       <Divider />
-      {
-        open ? <Button variant='contained' color={dark ? 'secondary' : 'primary'} className={classes.logout} onClick={logout}>Logout</Button>
-          : null
-      }
-
+      {open ? (
+        <Button
+          variant='contained'
+          color={dark ? 'secondary' : 'primary'}
+          className={classes.logout}
+          onClick={logout}
+        >
+          Logout
+        </Button>
+      ) : null}
     </Drawer>
   )
 }
