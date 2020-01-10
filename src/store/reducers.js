@@ -1,5 +1,6 @@
 import { actiontypes as C } from '../general/constants'
 import find from 'lodash.find'
+import isEmpty from 'lodash.isempty'
 
 export const account = (state = {}, action) => {
   switch (action.type) {
@@ -44,18 +45,18 @@ export const categoriesReducer = (state, action) => {
       return state.map(category =>
         category.id === action.id
           ? {
-              ...category,
-              image: action.image
-            }
+            ...category,
+            image: action.image
+          }
           : category
       )
     case C.SET_CHECKED:
       return state.map(category =>
         category.id === action.id
           ? {
-              ...category,
-              checked: action.checked
-            }
+            ...category,
+            checked: action.checked
+          }
           : category
       )
     default:
@@ -66,9 +67,15 @@ export const categoriesReducer = (state, action) => {
 export const quizes = (state = [], action) => {
   switch (action.type) {
     case C.CREATE_QUIZ:
-      return [...state, quiz({}, action)]
+      return isEmpty(find(state, { username: action.username }))
+        ? [...state, quiz({}, action)]
+        : state
     case C.ADD_QUESTION:
       return state.map(userQuiz => quiz(userQuiz, action))
+    case C.SELECT_OPTION:
+      return state.map(userQuiz => quiz(userQuiz, action))
+    case C.DELETE_QUIZ:
+      return state.filter(quiz => quiz.username !== action.username)
     default:
       return state
   }
@@ -86,11 +93,42 @@ export const quiz = (state, action) => {
       return state.username !== action.username
         ? state
         : {
-            ...state,
-            questions: find(state.questions, { id: action.id })
-              ? state.questions
-              : [...state.questions, action.question]
-          }
+          ...state,
+          questions: questions(state.questions, action),
+          answers: answers(state.answers, action)
+        }
+    case C.SELECT_OPTION:
+      return state.username !== action.username
+        ? state
+        : {
+          ...state,
+          answers: answers(state.answers, action)
+        }
+    default:
+      return state
+  }
+}
+
+const questions = (state, action) => {
+  switch (action.type) {
+    case C.ADD_QUESTION:
+      return isEmpty(find(state, { id: action.id }))
+        ? [...state, action.question] : state
+    default:
+      return state
+  }
+}
+
+const answers = (state, action) => {
+  switch (action.type) {
+    case C.ADD_QUESTION:
+      return isEmpty(find(state, { questionID: action.id }))
+        ? [...state, { questionID: action.id }] : state
+    case C.SELECT_OPTION:
+      return state.map(answer => answer.questionID === action.questionID
+        ? { ...state, optionID: action.optionID }
+        : state
+      )
     default:
       return state
   }
@@ -104,9 +142,9 @@ export const subjectsReducer = (state, action) => {
       return state.map(subject =>
         subject.id === action.id
           ? {
-              ...subject,
-              image: action.image
-            }
+            ...subject,
+            image: action.image
+          }
           : subject
       )
     default:
@@ -122,9 +160,9 @@ export const imagesReducer = (state, action) => {
       return state.map(image =>
         image.id === action.id
           ? {
-              ...image,
-              image: action.image
-            }
+            ...image,
+            image: action.image
+          }
           : image
       )
     default:

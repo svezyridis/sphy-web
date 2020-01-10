@@ -17,6 +17,9 @@ import QuizWeaponCard from './QuizWeaponCard'
 import isEmpty from 'lodash.isempty'
 import { fetch } from 'whatwg-fetch'
 import { baseURL } from '../../general/constants'
+import QuizInProgressDialog from './QuizInProgressDialog'
+import find from 'lodash.find'
+import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 
 const subjectsURL = baseURL + 'subject/'
 const questionsURL = baseURL + 'question/'
@@ -27,6 +30,7 @@ const Quiz = ({
   account,
   deleteAccount,
   quizes,
+  deleteQuiz,
   createQuiz,
   addQuestion,
   history
@@ -35,6 +39,7 @@ const Quiz = ({
   var categories = {}
   var controller = new window.AbortController()
   var signal = controller.signal
+
   if (isEmpty(account)) {
     console.log('account is empty')
     var tempAccount = window.sessionStorage.getItem('account')
@@ -44,6 +49,7 @@ const Quiz = ({
     }
   }
   const username = account.metadata.username
+  const myQuiz = find(quizes, { username: username })
 
   const onCategoriesChange = branch => subjectCategories => {
     categories[branch] = subjectCategories
@@ -55,8 +61,7 @@ const Quiz = ({
       credentials: 'include',
       headers: {
         authorization: 'Bearer ' + account.token
-      },
-      signal: signal
+      }
     })
       .then(response => response.json())
       .then(data => {
@@ -102,19 +107,16 @@ const Quiz = ({
     Object.keys(categories).forEach(async branch => {
       getSubjectsOfCategory(branch, categories[branch])
     })
+    history.push('/question/1')
   }
+  const continueQuiz = () => console.log('continue')
+  const onDeleteQuiz = () => deleteQuiz(username)
+  const reviewQuiz = () => console.log('review')
 
-  if (isEmpty(account)) {
-    console.log('account is empty')
-    var tempAccount = window.sessionStorage.getItem('account')
-    if (isEmpty(tempAccount)) {
-      history.push('/login')
-      return null
-    }
-  }
   return (
     <div className={classes.root}>
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
+      <QuizInProgressDialog open={!isEmpty(myQuiz)} onGoToQuiz={continueQuiz} onNewQuiz={onDeleteQuiz} onReview={reviewQuiz} finished />
       <HomeDrawer
         open={open}
         setOpen={toogleDrawer}
@@ -124,7 +126,7 @@ const Quiz = ({
         onQuizStart={onQuizStart}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
-        <Breadcrumbs>
+        <Breadcrumbs separator={<NavigateNextIcon fontSize='small' />}>
           <Link
             component='button'
             variant='body1'
@@ -139,9 +141,6 @@ const Quiz = ({
           <Link
             component='button'
             variant='body1'
-            onClick={() => {
-              history.push('/info')
-            }}
             className={classNames(classes.link, dark && classes.dark)}
           >
             <FormatListNumberedIcon className={classes.icon} />

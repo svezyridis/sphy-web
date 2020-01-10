@@ -9,7 +9,7 @@ import InfoContainer, {
   CategoryContainer,
   SubjectContainer
 } from './components/containers/infoContainer'
-import QuizContainer from './components/containers/quizContainer'
+import { QuestionContainer, QuizContainer } from './components/containers/quizContainer'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { useSelector } from 'react-redux'
 
@@ -64,11 +64,11 @@ function App () {
             component={CategoryContainer}
           />
           <Route
-            exact
-            path='/info/:weapon/:category/:subject'
+            exact path='/info/:weapon/:category/:subject'
             component={SubjectContainer}
           />
           <Route exact path='/quiz' component={QuizContainer} />
+          <Route exact path='/question/:questionIndex' component={QuestionContainer} />
         </Switch>
       </MuiThemeProvider>
     </Router>

@@ -57,5 +57,18 @@ export const createQuiz = username => ({
 export const addQuestion = (username, question) => ({
   type: C.ADD_QUESTION,
   id: question.id,
-  question: question
+  question: question,
+  username: username
+})
+
+export const selectOption = (username, questionID, optionID) => ({
+  type: C.SELECT_OPTION,
+  username: username,
+  questionID: questionID,
+  optionID: optionID
+})
+
+export const deleteQuiz = (username) => ({
+  type: C.DELETE_QUIZ,
+  username: username
 })

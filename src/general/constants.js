@@ -10,9 +10,10 @@ export const actiontypes = {
   TOOGLE_DARK: 'TOOGLE_DARK',
   CREATE_QUIZ: 'CREATE_QUIZ',
   ADD_QUESTION: 'ADD_QUESTION',
-  UPDATE_ANSWER: 'UPDATE_ANSWER'
+  SELECT_OPTION: 'SELECT_OPTION',
+  DELETE_QUIZ: 'DELETE_QUIZ'
 }
 
-//export const baseURL = 'https://projectapi.ml/'
+// export const baseURL = 'https://projectapi.ml/'
 
 export const baseURL = 'http://localhost:8080/'
