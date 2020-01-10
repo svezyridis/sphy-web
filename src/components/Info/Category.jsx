@@ -28,7 +28,8 @@ const Category = ({
   account,
   deleteAccount,
   match,
-  history
+  history,
+  dark
 }) => {
   const classes = homeStyle()
   const [error, setError] = useState('')
@@ -122,11 +123,10 @@ const Category = ({
           <Link
             component='button'
             variant='body1'
-            color='textPrimary'
             onClick={() => {
               history.push('/')
             }}
-            className={classes.link}
+            className={classNames(classes.link, dark && classes.dark)}
           >
             <HomeIcon className={classes.icon} />
             Home
@@ -137,7 +137,7 @@ const Category = ({
             onClick={() => {
               history.push('/info')
             }}
-            className={classes.link}
+            className={classNames(classes.link, dark && classes.dark)}
           >
             <LocalLibraryIcon className={classes.icon} />
             Info
@@ -148,6 +148,7 @@ const Category = ({
             onClick={() => {
               history.push(`/info/${branch}`)
             }}
+            className={classNames(classes.link, dark && classes.dark)}
           >
             {titleCase(branch)}
           </Link>
@@ -157,11 +158,12 @@ const Category = ({
             onClick={() => {
               history.push(`/info/${branch}/${category}`)
             }}
+            className={classNames(classes.link, dark && classes.dark)}
           >
             {titleCase(category)}
           </Link>
         </Breadcrumbs>
-        <Typography variant='h3' color='textPrimary'>
+        <Typography variant='h3' color='textPrimary' align='center'>
           Επιλέξτε θέμα
         </Typography>
         <Grid

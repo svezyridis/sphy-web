@@ -6,21 +6,31 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import DialogContentText from '@material-ui/core/DialogContentText'
 
-const finishedText = 'Φαίνεται πως έχετε ολοκληρώσει ένα quiz. ' +
-                    'Πιέστε επισκόπηση για να δείτε τα αποτελέσματά σας ' +
-                    'ή διαγραφή για να δημιουργήσετε ένα νέο'
-const inProgressText = 'Φαίνεται πως έχετε αφήσει ένα quiz σε εξέλιξη. ' +
-'Πιέστε συνέχεια για να το συνεχίσετε ' +
+const finishedText =
+  'Φαίνεται πως έχετε ολοκληρώσει ένα quiz. ' +
+  'Πιέστε επισκόπηση για να δείτε τα αποτελέσματά σας ' +
   'ή διαγραφή για να δημιουργήσετε ένα νέο'
-const QuizInProgressDialog = ({ open, onGoToQuiz, onNewQuiz, onReview, finished }) => {
+const inProgressText =
+  'Φαίνεται πως έχετε αφήσει ένα quiz σε εξέλιξη. ' +
+  'Πιέστε συνέχεια για να το συνεχίσετε ' +
+  'ή διαγραφή για να δημιουργήσετε ένα νέο'
+const QuizInProgressDialog = ({
+  open,
+  onGoToQuiz,
+  onNewQuiz,
+  onReview,
+  finished,
+  dark
+}) => {
   const text = finished ? finishedText : inProgressText
   return (
-    <Dialog
-      open={open}
-      maxWidth='md'
-    >
-      <Typography color='secondary' variant='h3' align='center'>
-                    Xμμ..
+    <Dialog open={open} maxWidth='sm'>
+      <Typography
+        color={dark ? 'secondary' : 'primary'}
+        variant='h3'
+        align='center'
+      >
+        Xμμ..
       </Typography>
       <DialogContent>
         <DialogContentText color='textPrimary' align='center'>
@@ -28,15 +38,27 @@ const QuizInProgressDialog = ({ open, onGoToQuiz, onNewQuiz, onReview, finished 
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        {finished
-          ? <Button onClick={() => onReview()} color='primary'>
-                Επισκόπηση
+        {finished ? (
+          <Button
+            onClick={() => onReview()}
+            color={dark ? 'secondary' : 'primary'}
+          >
+            Επισκόπηση
           </Button>
-          : <Button onClick={() => onGoToQuiz()} color='primary'>
-                Συνεχεια
-            </Button>}
+        ) : (
+          <Button
+            onClick={() => onGoToQuiz()}
+            color={dark ? 'secondary' : 'primary'}
+          >
+            Συνεχεια
+          </Button>
+        )}
 
-        <Button variant='contained' color='primary' onClick={() => onNewQuiz()}>
+        <Button
+          variant='contained'
+          color={dark ? 'secondary' : 'primary'}
+          onClick={() => onNewQuiz()}
+        >
           Διαγραφή
         </Button>
       </DialogActions>

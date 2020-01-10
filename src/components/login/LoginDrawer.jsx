@@ -17,7 +17,7 @@ import { baseURL } from '../../general/constants'
 
 const loginURL = baseURL + 'login'
 
-const LoginDrawer = ({ account, addAccount }) => {
+const LoginDrawer = ({ account, addAccount, dark }) => {
   const classes = drawerStyle()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -57,7 +57,12 @@ const LoginDrawer = ({ account, addAccount }) => {
       <div className={classes.toolbar} />
       <Divider />
       <div className={classes.paper}>
-        <Avatar className={classNames(classes.avatar, error.length > 0 && classes.avatarError)}>
+        <Avatar
+          className={classNames(
+            classes.avatar,
+            error.length > 0 && classes.avatarError
+          )}
+        >
           <LockOutlinedIcon />
         </Avatar>
         <Typography component='h1' variant='h5'>
@@ -90,7 +95,13 @@ const LoginDrawer = ({ account, addAccount }) => {
             onChange={e => setPassword(e.target.value)}
           />
           <FormControlLabel
-            control={<Checkbox value='remember' color='primary' onChange={(event, isChecked) => setIsChecked(isChecked)} />}
+            control={
+              <Checkbox
+                value='remember'
+                color='primary'
+                onChange={(event, isChecked) => setIsChecked(isChecked)}
+              />
+            }
             label='Remember me'
           />
 

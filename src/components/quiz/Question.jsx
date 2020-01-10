@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
@@ -12,6 +12,12 @@ import HomeIcon from '@material-ui/icons/Home'
 import isEmpty from 'lodash.isempty'
 import find from 'lodash.find'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
+import Radio from '@material-ui/core/Radio'
+import RadioGroup from '@material-ui/core/RadioGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormControl from '@material-ui/core/FormControl'
+import FormLabel from '@material-ui/core/FormLabel'
+import Paper from '@material-ui/core/Paper'
 
 const Question = ({
   dark,
@@ -25,25 +31,29 @@ const Question = ({
 }) => {
   const classes = homeStyle()
   const questionIndex = match.params.questionIndex
-
-  if (isEmpty(account)) {
-    console.log('account is empty')
-    var tempAccount = window.sessionStorage.getItem('account')
-    if (isEmpty(tempAccount)) {
-      history.push('/login')
-      return null
-    }
-  }
   const username = account.metadata.username
   const myQuiz = find(quizes, { username: username })
-
+  const [option, setOption] = useState(-1)
+  if (!myQuiz) {
+    history.push('/quiz')
+    return null
+  }
+  if (questionIndex > myQuiz.questions.length - 1) {
+    history.push('/question/1')
+    return null
+  }
+  const question = myQuiz.questions[questionIndex]
   if (isEmpty(account)) {
     console.log('account is empty')
     var tempAccount = window.sessionStorage.getItem('account')
     if (isEmpty(tempAccount)) {
       history.push('/login')
-      return null
     }
+  }
+
+  const onQuestionClick = id => console.log(id)
+  const handleChange = event => {
+    setOption(event.target.value)
   }
   return (
     <div className={classes.root}>
@@ -54,6 +64,7 @@ const Question = ({
         account={account}
         deleteAccount={deleteAccount}
         classes={classes}
+        onQuestionClick={onQuestionClick}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs separator={<NavigateNextIcon fontSize='small' />}>
@@ -77,7 +88,33 @@ const Question = ({
             Quiz
           </Link>
         </Breadcrumbs>
-        <Typography>{myQuiz.questions.length}</Typography>
+        <Paper elevation={7} className={classes.questionPaper}>
+          <Typography align='center' variant='h3'>
+            {question.text}
+          </Typography>
+          <FormControl component='fieldset' className={classes.formControl}>
+            <FormLabel component='legend'>Gender</FormLabel>
+            <RadioGroup value={option} onChange={handleChange}>
+              <FormControlLabel
+                value='female'
+                control={<Radio />}
+                label='Female'
+              />
+              <FormControlLabel value='male' control={<Radio />} label='Male' />
+              <FormControlLabel
+                value='other'
+                control={<Radio />}
+                label='Other'
+              />
+              <FormControlLabel
+                value='disabled'
+                disabled
+                control={<Radio />}
+                label='(Disabled option)'
+              />
+            </RadioGroup>
+          </FormControl>
+        </Paper>
       </div>
       <Copyright open={open} />
     </div>

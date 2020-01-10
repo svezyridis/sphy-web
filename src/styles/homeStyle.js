@@ -172,14 +172,14 @@ const homeStyle = makeStyles(theme => ({
     position: 'absolute',
     zIndex: 1,
     left: '10px',
-    top: '3%',
+    top: '5%',
     opacity: 0.8
   },
   rightIcon: {
     position: 'absolute',
     zIndex: 1,
     right: '10px',
-    top: '3%',
+    top: '5%',
     opacity: 0.8
   },
   paragraph: {
@@ -220,6 +220,18 @@ const homeStyle = makeStyles(theme => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     marginTop: '5%'
+  },
+  questionPaper: {
+    width: '70%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignContent: 'center'
+  },
+  formControl: {
+    margin: theme.spacing(3)
   }
 }))
 

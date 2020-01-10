@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
@@ -20,6 +20,7 @@ import { baseURL } from '../../general/constants'
 import QuizInProgressDialog from './QuizInProgressDialog'
 import find from 'lodash.find'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
+import LoadingDialog from './LoadingDialog'
 
 const subjectsURL = baseURL + 'subject/'
 const questionsURL = baseURL + 'question/'
@@ -35,6 +36,7 @@ const Quiz = ({
   addQuestion,
   history
 }) => {
+  const [loading, setLoading] = useState(false)
   const classes = homeStyle()
   var categories = {}
   var controller = new window.AbortController()
@@ -55,59 +57,79 @@ const Quiz = ({
     categories[branch] = subjectCategories
   }
 
-  const getQuestionsOfSubject = subject => {
-    fetch(questionsURL + subject.name, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        authorization: 'Bearer ' + account.token
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          const questions = data.result
-          questions.forEach(question => addQuestion(username, question))
+  const getQuestionsOfSubject = subject =>
+    new Promise((resolve, reject) => {
+      fetch(questionsURL + subject.name, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          authorization: 'Bearer ' + account.token
         }
       })
-  }
-
-  const getSubjectsOfCategory = (branch, categories) => {
-    categories.forEach(async category => {
-      try {
-        const response = await fetch(
-          subjectsURL + branch + '/' + category.name.toLowerCase(),
-          {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-              authorization: 'Bearer ' + account.token
-            },
-            signal: signal
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            let questions = data.result
+            questions = questions.map(question => ({ ...question, subject }))
+            resolve(isEmpty(questions) ? null : questions)
           }
-        )
-        const data = await response.json()
-        if (data.status === 'error') {
-          console.log(data.message)
-          return
-        } else {
-          const subjects = data.result
-          subjects.forEach(subject => getQuestionsOfSubject(subject))
-        }
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          console.error(error)
-        }
-      }
+        })
+        .catch(error => reject(error))
     })
-  }
+
+  const getQuestionsOfCategory = (branch, category) =>
+    new Promise((resolve, reject) => {
+      fetch(subjectsURL + branch + '/' + category.name.toLowerCase(), {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          authorization: 'Bearer ' + account.token
+        },
+        signal: signal
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'error') {
+            console.log(data.message)
+          } else {
+            const subjects = data.result
+            Promise.all(
+              subjects.map(subject => getQuestionsOfSubject(subject))
+            ).then(result => {
+              console.log(result)
+              result = result.filter(question => question !== null)
+              result = result.map(question => ({
+                ...question,
+                category: category.name
+              }))
+              console.log(result)
+              resolve(isEmpty(result) ? null : result)
+            })
+          }
+        })
+        .catch(error => {
+          if (!controller.signal.aborted) {
+            console.error(error)
+            reject(error)
+          }
+        })
+    })
 
   const onQuizStart = () => {
     createQuiz(username)
-    Object.keys(categories).forEach(async branch => {
-      getSubjectsOfCategory(branch, categories[branch])
-    })
-    history.push('/question/1')
+    setLoading(true)
+    Object.keys(categories).map(branch =>
+      Promise.all(
+        categories[branch].map(category =>
+          getQuestionsOfCategory(branch, category)
+        )
+      ).then(result => {
+        result = result.filter(questions => questions !== null)
+        console.log({ branch: branch, questions: result })
+        setLoading(false)
+        //history.push('/question/1')
+      })
+    )
   }
   const continueQuiz = () => console.log('continue')
   const onDeleteQuiz = () => deleteQuiz(username)
@@ -116,7 +138,15 @@ const Quiz = ({
   return (
     <div className={classes.root}>
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
-      <QuizInProgressDialog open={!isEmpty(myQuiz)} onGoToQuiz={continueQuiz} onNewQuiz={onDeleteQuiz} onReview={reviewQuiz} finished />
+      <QuizInProgressDialog
+        open={!isEmpty(myQuiz) && !loading}
+        onGoToQuiz={continueQuiz}
+        onNewQuiz={onDeleteQuiz}
+        onReview={reviewQuiz}
+        finished={myQuiz && myQuiz.finished}
+        dark={dark}
+      />
+      <LoadingDialog open={loading} reason='Γίνεται λήψη ερωτήσεων' />
       <HomeDrawer
         open={open}
         setOpen={toogleDrawer}
