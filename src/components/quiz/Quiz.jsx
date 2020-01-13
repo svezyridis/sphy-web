@@ -160,6 +160,7 @@ const Quiz = ({
         onReview={reviewQuiz}
         finished={myQuiz && myQuiz.finished}
         dark={dark}
+        classes={classes}
       />
       <LoadingDialog open={loading} reason='Γίνεται λήψη ερωτήσεων' />
       <HomeDrawer

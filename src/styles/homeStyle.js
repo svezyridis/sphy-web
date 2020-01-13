@@ -9,11 +9,7 @@ const homeStyle = makeStyles(theme => ({
     margin: 0,
     display: 'flex',
     height: '100%',
-    flexDirection: 'column',
-    backgroundImage: `url(${backgroundImage})`,
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover'
+    flexDirection: 'column'
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -142,7 +138,7 @@ const homeStyle = makeStyles(theme => ({
     display: 'flex'
   },
   dark: {
-    color: theme.palette.secondary.main
+    color: theme.palette.info.main
   },
   icon: {
     marginRight: theme.spacing(0.5),
@@ -242,13 +238,13 @@ const homeStyle = makeStyles(theme => ({
   },
   questionPaper: {
     width: '80%',
+    minWidth: '80%',
     marginLeft: 'auto',
     marginRight: 'auto',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignContent: 'center',
-    marginTop: '10%'
+    alignContent: 'center'
   },
   media: {
     height: 0,
@@ -256,6 +252,46 @@ const homeStyle = makeStyles(theme => ({
   },
   formControl: {
     margin: theme.spacing(3)
+  },
+  button: {
+    background: `linear-gradient(45deg, ${theme.palette.secondary.light} 20%, ${theme.palette.secondary.main} 90%)`,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: `0 3px 5px 2px ${theme.palette.primary.main}`,
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+    '&:hover': {
+      background: `linear-gradient(45deg, ${theme.palette.secondary.main} 40%, ${theme.palette.secondary.dark} 70%)`
+    }
+  },
+  questionGrid: {
+    marginTop: '10%',
+    width: '90%',
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  },
+  questionCard: {
+    minWidth: '500px',
+    marginBottom: '5%'
+  },
+  questionButtonGrid: {
+    width: '99%',
+    marginBottom: 10,
+    marginTop: 10,
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  },
+  questionBox: {
+    height: 40,
+    width: 40,
+    background: `linear-gradient(45deg, #a8976e 20%, ${theme.palette.secondary.light} 90%)`,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px #661a00',
+    color: 'white'
+  },
+  questionBoxAnswered: {
+    boxShadow: '0 3px 5px 2px  #004d00'
   }
 }))
 

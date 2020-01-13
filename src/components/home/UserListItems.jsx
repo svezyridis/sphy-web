@@ -16,7 +16,7 @@ export const MainListItems = () => {
         <ListItemIcon>
           <LocalLibraryIcon />
         </ListItemIcon>
-        <ListItemText primary='Information' />
+        <ListItemText primary='Πληροφορία' />
       </ListItem>
       <ListItem button onClick={() => history.push('/quiz')}>
         <ListItemIcon>

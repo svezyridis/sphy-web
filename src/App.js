@@ -19,10 +19,13 @@ import { useSelector } from 'react-redux'
 const themeObject = {
   palette: {
     primary: {
-      main: '#003300'
+      main: '#2f353b'
     },
     secondary: {
-      main: '#cc6600'
+      main: '#36332e'
+    },
+    info: {
+      main: '#a8976e'
     }
   },
   typography: {

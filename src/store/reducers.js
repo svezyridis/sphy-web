@@ -45,18 +45,18 @@ export const categoriesReducer = (state, action) => {
       return state.map(category =>
         category.id === action.id
           ? {
-              ...category,
-              image: action.image
-            }
+            ...category,
+            image: action.image
+          }
           : category
       )
     case C.SET_CHECKED:
       return state.map(category =>
         category.id === action.id
           ? {
-              ...category,
-              checked: action.checked
-            }
+            ...category,
+            checked: action.checked
+          }
           : category
       )
     default:
@@ -93,25 +93,25 @@ export const quiz = (state, action) => {
       return state.username !== action.username
         ? state
         : {
-            ...state,
-            questions: questions(state.questions, action),
-            answers: answers(state.answers, action)
-          }
+          ...state,
+          questions: questions(state.questions, action),
+          answers: answers(state.answers, action)
+        }
     case C.SELECT_OPTION:
       return state.username !== action.username
         ? state
         : {
-            ...state,
-            answers: answers(state.answers, action)
-          }
+          ...state,
+          answers: answers(state.answers, action)
+        }
     case C.ADD_QUESTION_IMAGE:
       console.log(action)
       return state.username !== action.username
         ? state
         : {
-            ...state,
-            questions: questions(state.questions, action)
-          }
+          ...state,
+          questions: questions(state.questions, action)
+        }
     default:
       return state
   }
@@ -138,13 +138,13 @@ const answers = (state, action) => {
   switch (action.type) {
     case C.ADD_QUESTION:
       return isEmpty(find(state, { questionID: action.id }))
-        ? [...state, { questionID: action.id }]
+        ? [...state, { questionID: action.id, optionID: '-1' }]
         : state
     case C.SELECT_OPTION:
       return state.map(answer =>
         answer.questionID === action.questionID
-          ? { ...state, optionID: action.optionID }
-          : state
+          ? { ...answer, optionID: action.optionID }
+          : answer
       )
     default:
       return state
@@ -159,9 +159,9 @@ export const subjectsReducer = (state, action) => {
       return state.map(subject =>
         subject.id === action.id
           ? {
-              ...subject,
-              image: action.image
-            }
+            ...subject,
+            image: action.image
+          }
           : subject
       )
     default:
@@ -177,9 +177,9 @@ export const imagesReducer = (state, action) => {
       return state.map(image =>
         image.id === action.id
           ? {
-              ...image,
-              image: action.image
-            }
+            ...image,
+            image: action.image
+          }
           : image
       )
     default:

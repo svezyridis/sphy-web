@@ -1,16 +1,18 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import Divider from '@material-ui/core/Divider'
 import Drawer from '@material-ui/core/Drawer'
 import classNames from 'classnames'
 import IconButton from '@material-ui/core/IconButton'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import Typography from '@material-ui/core/Typography'
+import Box from '@material-ui/core/Box'
 import { titleCase } from '../../general/helperFunctions'
 import { MainListItems } from './UserListItems'
 import { Button, Grid } from '@material-ui/core'
 import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { toogleDrawer } from '../../store/actions'
+import find from 'lodash.find'
 
 const HomeDrawer = ({
   account,
@@ -18,7 +20,7 @@ const HomeDrawer = ({
   classes,
   onQuizStart,
   onQuestionClick,
-  questions
+  quiz
 }) => {
   const { username, firstName, lastName, serialNumber } = account.metadata
   const history = useHistory()
@@ -44,31 +46,49 @@ const HomeDrawer = ({
       <IconButton
         onClick={() => setOpen(false)}
         className={classes.toolbarIcon}
+        color='inherit'
       >
         <ChevronRightIcon />
-        <Typography color={dark ? 'secondary' : 'primary'} variant='h4'>
+        <Typography variant='h4'>
           {titleCase(`${firstName} ${lastName}`)}
         </Typography>
       </IconButton>
       <Divider />
       <MainListItems />
-      {onQuestionClick ? (
-        <Grid>
-          {questions.map((question, index) => {
-
-          })}
-        </Grid>
+      {onQuestionClick && open ? (
+        <>
+          <Divider />
+          <Grid container spacing={2} className={classes.questionButtonGrid} justify='space-evenly'>
+            {quiz.questions.map((question, index) => {
+              console.log(find(quiz.answers, { questionID: question.id }))
+              return (
+                <Grid item key={index}>
+                  <Button className={classNames(classes.questionBox, find(quiz.answers, { questionID: question.id }).optionID !== '-1' && classes.questionBoxAnswered)} onClick={() => history.push(`/question/${index + 1}`)}>
+                    <Typography align='center'>{index + 1}</Typography>
+                  </Button>
+                </Grid>
+              )
+            })}
+          </Grid>
+          <Divider />
+          <Button
+            variant='contained'
+            className={classNames(classes.logout, classes.button)}
+            onClick={onQuizStart}
+          >
+            ΥΠΟΒΟΛΗ
+          </Button>
+        </>
       ) : null}
       {onQuizStart && open ? (
         <div>
           <Divider />
           <Button
             variant='contained'
-            color={dark ? 'secondary' : 'primary'}
-            className={classes.logout}
+            className={classNames(classes.logout, classes.button)}
             onClick={onQuizStart}
           >
-            Start Quiz
+            ΔΗΜΙΟΥΡΓΙΑ QUIZ
           </Button>
         </div>
       ) : null}
@@ -76,11 +96,10 @@ const HomeDrawer = ({
       {open ? (
         <Button
           variant='contained'
-          color={dark ? 'secondary' : 'primary'}
-          className={classes.logout}
+          className={classNames(classes.logout, classes.button)}
           onClick={logout}
         >
-          Logout
+          ΕΞΟΔΟΣ
         </Button>
       ) : null}
     </Drawer>

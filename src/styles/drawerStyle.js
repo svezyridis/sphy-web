@@ -4,14 +4,16 @@ export const drawerWidth = 400
 
 const drawerStyle = makeStyles(theme => ({
   root: {
-    display: 'flex'
+    display: 'flex',
+    overflowX: 'hidden'
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
       width: drawerWidth,
       flexShrink: 0
     },
-    alignItems: 'center'
+    alignItems: 'center',
+    overflowX: 'hidden'
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -29,10 +31,10 @@ const drawerStyle = makeStyles(theme => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.primary.main
+    backgroundColor: theme.palette.secondary.main
   },
   avatarError: {
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.error.main
   },
   form: {
     width: '80%', // Fix IE 11 issue.
@@ -43,13 +45,24 @@ const drawerStyle = makeStyles(theme => ({
     width: '60%',
     marginLeft: 'auto',
     marginRight: 'auto',
-    display: 'block'
+    display: 'block',
+    background: `linear-gradient(45deg, ${theme.palette.secondary.light} 20%, ${theme.palette.secondary.main} 90%)`,
+    border: 0,
+    borderRadius: 3,
+    boxShadow: `0 3px 5px 2px ${theme.palette.primary.main}`,
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+    '&:hover': {
+      backgroundColor: `linear-gradient(45deg, ${theme.palette.secondary.main} 20%, ${theme.palette.secondary.dark} 90%)`
+    }
   },
   paper: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: drawerWidth
+    width: drawerWidth,
+    overflowX: 'hidden'
   },
   signup: {
     width: '90%',

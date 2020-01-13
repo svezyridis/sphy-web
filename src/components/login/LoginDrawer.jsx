@@ -109,7 +109,6 @@ const LoginDrawer = ({ account, addAccount, dark }) => {
             type='submit'
             fullWidth
             variant='contained'
-            color='primary'
             className={classes.submit}
           >
             Sign In

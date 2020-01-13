@@ -17,6 +17,8 @@ import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import QuestionCard from './QuestionCard'
 import { baseURL } from '../../general/constants'
 import { fetch } from 'whatwg-fetch'
+import Grid from '@material-ui/core/Grid'
+import { Typography } from '@material-ui/core'
 
 const imagesURL = baseURL + 'image/'
 
@@ -27,12 +29,13 @@ const Question = ({
   account,
   deleteAccount,
   addImage,
+  selectOption,
   quizes,
   history,
   match
 }) => {
   const classes = homeStyle()
-  const questionIndex = match.params.questionIndex
+  const questionIndex = match.params.questionIndex - 1
   const username = account.metadata.username
   const [image, setImage] = useState(null)
   const myQuiz = find(quizes, { username: username })
@@ -66,7 +69,7 @@ const Question = ({
       .then(imageFile => {
         var imageUrl = URL.createObjectURL(imageFile)
         console.log(imageUrl)
-        addImage(username, question.id, imageUrl)
+        // addImage(username, question.id, imageUrl)
         setImage(imageUrl)
       })
       .catch(error => {
@@ -76,16 +79,12 @@ const Question = ({
       })
   }
   const question = myQuiz.questions[questionIndex]
-  if (isEmpty(account)) {
-    console.log('account is empty')
-    var tempAccount = window.sessionStorage.getItem('account')
-    if (isEmpty(tempAccount)) {
-      history.push('/login')
-    }
-  }
+  const answer = find(myQuiz.answers, { questionID: question.id })
+
   useEffect(() => {
+    console.log(question)
     if (!myQuiz) return
-    console.log('i am running')
+    if (!question) return
     getImagesOfQuestion(question)
     return () => {}
   }, [question])
@@ -94,15 +93,26 @@ const Question = ({
     history.push('/quiz')
     return null
   }
-  if (questionIndex > myQuiz.questions.length - 1) {
+  if (isEmpty(account)) {
+    console.log('account is empty')
+    var tempAccount = window.sessionStorage.getItem('account')
+    if (isEmpty(tempAccount)) {
+      history.push('/login')
+      return null
+    }
+  }
+  if (questionIndex > myQuiz.questions.length - 1 || questionIndex < 0) {
     history.push('/question/1')
     return null
   }
 
-  const handleRight = () =>
-    history.push(`/question/${parseInt(questionIndex) + 1}`)
+  const handleRight = () => {
+    console.log('right')
+    history.push(`/question/${parseInt(questionIndex + 1) + 1}`)
+  }
+
   const handleLeft = () =>
-    history.push(`/question/${parseInt(questionIndex) - 1}`)
+    history.push(`/question/${parseInt(questionIndex + 1) - 1}`)
 
   const onQuestionClick = id => console.log(id)
 
@@ -116,7 +126,7 @@ const Question = ({
         deleteAccount={deleteAccount}
         classes={classes}
         onQuestionClick={onQuestionClick}
-        questions={myQuiz.questions}
+        quiz={myQuiz}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs separator={<NavigateNextIcon fontSize='small' />}>
@@ -140,27 +150,36 @@ const Question = ({
             Quiz
           </Link>
         </Breadcrumbs>
-        <Fab
-          color={dark ? 'secondary' : 'primary'}
-          className={classes.leftIcon}
-          onClick={handleLeft}
-        >
-          <ChevronLeftRoundedIcon />
-        </Fab>
-        <Fab
-          color={dark ? 'secondary' : 'primary'}
-          className={classes.rightIcon}
-          onClick={handleRight}
-        >
-          <ChevronRightRoundedIcon />
-        </Fab>
-        <QuestionCard
-          classes={classes}
-          setOption={option => console.log(option)}
-          question={question}
-          dark={dark}
-          image={image}
-        />
+        <Grid container className={classes.questionGrid} alignItems='center' wrap='nowrap' justify='center'>
+          <Grid item>
+            <Fab
+              color={dark ? 'secondary' : 'primary'}
+              onClick={handleLeft}
+            >
+              <ChevronLeftRoundedIcon />
+            </Fab>
+          </Grid>
+          <Grid item xs={12}>
+            <QuestionCard
+              classes={classes}
+              setOption={option => selectOption(username, question.id, option)}
+              question={question}
+              dark={dark}
+              image={image}
+              answer={answer}
+            />
+          </Grid>
+          <Grid item>
+            <Fab
+              color='secondary'
+              onClick={handleRight}
+            >
+              <ChevronRightRoundedIcon />
+            </Fab>
+          </Grid>
+        </Grid>
+        <Typography variant='subtitle1' align='center'>{`Ερώτηση ${parseInt(questionIndex) + 1} από ${myQuiz.questions.length}`}</Typography>
+
       </div>
       <Copyright open={open} />
     </div>

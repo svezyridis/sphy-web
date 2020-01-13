@@ -198,8 +198,6 @@ const QuizWeaponCard = ({
               [classes.expandOpen]: expanded
             })}
             onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label='show more'
           >
             <ExpandMoreIcon />
           </IconButton>

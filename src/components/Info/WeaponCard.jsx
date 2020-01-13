@@ -38,10 +38,10 @@ const cardStyle = makeStyles(theme => ({
     fontWeight: 200
   },
   avatar: {
-    backgroundColor: theme.palette.primary.main
+    backgroundColor: theme.palette.info.main
   },
   darkAvatar: {
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.info.light
   }
 }))
 

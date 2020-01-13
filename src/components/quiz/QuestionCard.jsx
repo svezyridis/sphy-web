@@ -13,16 +13,15 @@ import { Grid, CardHeader } from '@material-ui/core'
 import classNames from 'classnames'
 import Avatar from '@material-ui/core/Avatar'
 
-const QuestionCard = ({ question, classes, setOption, dark, image }) => {
-  const [selectedOption, setSelectedOption] = useState('')
+const QuestionCard = ({ question, classes, setOption, dark, image, answer }) => {
   const handleChange = event => {
-    setSelectedOption(event.target.value)
+    setOption(event.target.value)
   }
   return (
     <Paper elevation={7} className={classes.questionPaper}>
-      <Grid container spacing={3}>
+      <Grid container spacing={3} wrap='nowrap'>
         <Grid item>
-          <Card>
+          <Card className={classes.questionCard}>
             <CardHeader title={question.subject.name} />
             <CardMedia className={classes.media} image={image} />
           </Card>
@@ -33,7 +32,7 @@ const QuestionCard = ({ question, classes, setOption, dark, image }) => {
           </Typography>
           <FormControl component='fieldset' className={classes.formControl}>
             <FormLabel component='legend'>Η επιλογή σας:</FormLabel>
-            <RadioGroup value={selectedOption} onChange={handleChange}>
+            <RadioGroup value={answer.optionID} onChange={handleChange}>
               {question.optionList.map((option, index) => {
                 return (
                   <FormControlLabel

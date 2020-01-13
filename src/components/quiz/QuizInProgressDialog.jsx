@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DeleteIcon from '@material-ui/icons/Delete'
+import classNames from 'classnames'
 
 const finishedText =
   'Φαίνεται πως έχετε ολοκληρώσει ένα quiz. ' +
@@ -21,7 +22,8 @@ const QuizInProgressDialog = ({
   onNewQuiz,
   onReview,
   finished,
-  dark
+  dark,
+  classes
 }) => {
   const text = finished ? finishedText : inProgressText
   return (
@@ -42,14 +44,14 @@ const QuizInProgressDialog = ({
         {finished ? (
           <Button
             onClick={() => onReview()}
-            color={dark ? 'secondary' : 'primary'}
+            color='secondary'
           >
             Επισκόπηση
           </Button>
         ) : (
           <Button
             onClick={() => onGoToQuiz()}
-            color={dark ? 'secondary' : 'primary'}
+            color='secondary'
           >
             Συνεχεια
           </Button>
@@ -57,7 +59,7 @@ const QuizInProgressDialog = ({
 
         <Button
           variant='contained'
-          color={dark ? 'secondary' : 'primary'}
+          color='secondary'
           onClick={() => onNewQuiz()}
           startIcon={<DeleteIcon />}
         >
