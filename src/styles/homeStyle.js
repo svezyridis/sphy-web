@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/styles'
-import backgroundImage from '../images/background.png'
+import backgroundImage from '../images/backgroundLight.jpeg'
 
 export const drawerWidth = 400
 const imageHeight = 40
@@ -8,8 +8,12 @@ const homeStyle = makeStyles(theme => ({
   root: {
     margin: 0,
     display: 'flex',
-    height: '90%',
-    flexDirection: 'column'
+    height: '100%',
+    flexDirection: 'column',
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover'
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -94,11 +98,25 @@ const homeStyle = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    // backgroundImage: `url(${backgroundImage})`,
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'contain',
-    flex: 1
+    overflow: 'auto',
+    flex: 1,
+    '&::-webkit-scrollbar': {
+      width: '0.6em'
+    },
+    '&::-webkit-scrollbar-track': {
+      boxShadow: 'inset 0 0 5px grey',
+      color: '#8a9c8a',
+      borderRadius: '10px',
+      backgroundColor: '#cbd3cb'
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.primary.light,
+      borderRadius: '10px',
+      outline: '3px solid black',
+      '&:hover': {
+        backgroundColor: theme.palette.primary.dark
+      }
+    }
   },
   closed: {
     width: `calc(100% - ${theme.spacing(7)}px)`,

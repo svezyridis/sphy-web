@@ -13,7 +13,7 @@ import { imagesReducer } from '../../store/reducers'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import HomeIcon from '@material-ui/icons/Home'
-import { titleCase } from '../../general/helperFunctions'
+import { titleCase, getBranchName } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
 import Paper from '@material-ui/core/Paper'
 import GridList from '@material-ui/core/GridList'
@@ -23,6 +23,7 @@ import Fab from '@material-ui/core/Fab'
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded'
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import ImageDialog from './ImageDialog'
+import { Divider } from '@material-ui/core'
 
 const subjectsURL = baseURL + 'subject/'
 const imagesURL = baseURL + 'image/'
@@ -199,7 +200,7 @@ const Subject = ({
             }}
             className={classNames(classes.link, dark && classes.dark)}
           >
-            {titleCase(branch)}
+            {titleCase(getBranchName(branch))}
           </Link>
           <Link
             component='button'
@@ -219,7 +220,7 @@ const Subject = ({
             }}
             className={classNames(classes.link, dark && classes.dark)}
           >
-            {titleCase(subject.name) ? titleCase(subject.name) : ''}
+            {subject.name ? subject.name : ''}
           </Link>
         </Breadcrumbs>
         <Typography variant='h2' align='center' color='textPrimary'>
@@ -262,6 +263,7 @@ const Subject = ({
                 </GridListTile>
               ))}
             </GridList>
+            <Divider />
             <Typography
               variant='body1'
               align='left'
@@ -272,10 +274,12 @@ const Subject = ({
                 dark && classes.paragraphDark
               )}
             >
+              <b><p>{subject.text ? subject.text.split('\n').shift() : null}</p></b>
               {subject.text
                 ? subject.text
-                    .split('\n')
-                    .map((paragraph, key) => <p key={key}>{paragraph}</p>)
+                  .split('\n')
+                  .slice(1)
+                  .map((paragraph, key) => <p key={key}>{paragraph}</p>)
                 : null}
             </Typography>
           </div>

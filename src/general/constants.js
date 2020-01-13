@@ -14,6 +14,6 @@ export const actiontypes = {
   DELETE_QUIZ: 'DELETE_QUIZ'
 }
 
-export const baseURL = 'https://projectapi.ml/'
+// export const baseURL = 'https://projectapi.ml/'
 
-//export const baseURL = 'http://localhost:8080/'
+export const baseURL = 'http://localhost:8080/'

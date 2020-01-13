@@ -49,7 +49,7 @@ const SubjectCard = ({ weapon, subject }) => {
         history.push(
           `/info/${weapon.toLowerCase()}/${
             subject.category
-          }/${subject.name.toLowerCase()}`
+          }/${subject.uri}`
         )
       }}
     >

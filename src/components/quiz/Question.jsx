@@ -12,11 +12,6 @@ import HomeIcon from '@material-ui/icons/Home'
 import isEmpty from 'lodash.isempty'
 import find from 'lodash.find'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
-import Radio from '@material-ui/core/Radio'
-import RadioGroup from '@material-ui/core/RadioGroup'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormControl from '@material-ui/core/FormControl'
-import FormLabel from '@material-ui/core/FormLabel'
 import Paper from '@material-ui/core/Paper'
 
 const Question = ({
@@ -65,6 +60,7 @@ const Question = ({
         deleteAccount={deleteAccount}
         classes={classes}
         onQuestionClick={onQuestionClick}
+        questions={myQuiz.questions}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs separator={<NavigateNextIcon fontSize='small' />}>
@@ -92,28 +88,7 @@ const Question = ({
           <Typography align='center' variant='h3'>
             {question.text}
           </Typography>
-          <FormControl component='fieldset' className={classes.formControl}>
-            <FormLabel component='legend'>Gender</FormLabel>
-            <RadioGroup value={option} onChange={handleChange}>
-              <FormControlLabel
-                value='female'
-                control={<Radio />}
-                label='Female'
-              />
-              <FormControlLabel value='male' control={<Radio />} label='Male' />
-              <FormControlLabel
-                value='other'
-                control={<Radio />}
-                label='Other'
-              />
-              <FormControlLabel
-                value='disabled'
-                disabled
-                control={<Radio />}
-                label='(Disabled option)'
-              />
-            </RadioGroup>
-          </FormControl>
+
         </Paper>
       </div>
       <Copyright open={open} />

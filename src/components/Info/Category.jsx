@@ -16,7 +16,7 @@ import SubjectCard from './SubjectCard'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import HomeIcon from '@material-ui/icons/Home'
-import { titleCase } from '../../general/helperFunctions'
+import { titleCase, getBranchName } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
 
 const subjectsURL = baseURL + 'subject/'
@@ -29,6 +29,7 @@ const Category = ({
   deleteAccount,
   match,
   history,
+  location,
   dark
 }) => {
   const classes = homeStyle()
@@ -73,9 +74,9 @@ const Category = ({
                 imagesURL +
                   branch +
                   '/' +
-                  category.toLowerCase() +
+                  category +
                   '/' +
-                  subject.name +
+                  subject.uri +
                   '/' +
                   sample(subject.images).filename,
                 {
@@ -150,7 +151,7 @@ const Category = ({
             }}
             className={classNames(classes.link, dark && classes.dark)}
           >
-            {titleCase(branch)}
+            {titleCase(getBranchName(branch))}
           </Link>
           <Link
             component='button'
@@ -160,7 +161,7 @@ const Category = ({
             }}
             className={classNames(classes.link, dark && classes.dark)}
           >
-            {titleCase(category)}
+            {category}
           </Link>
         </Breadcrumbs>
         <Typography variant='h3' color='textPrimary' align='center'>

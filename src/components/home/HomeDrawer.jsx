@@ -7,7 +7,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import Typography from '@material-ui/core/Typography'
 import { titleCase } from '../../general/helperFunctions'
 import { MainListItems } from './UserListItems'
-import { Button } from '@material-ui/core'
+import { Button, Grid } from '@material-ui/core'
 import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { toogleDrawer } from '../../store/actions'
@@ -17,7 +17,8 @@ const HomeDrawer = ({
   deleteAccount,
   classes,
   onQuizStart,
-  onQuestionClick
+  onQuestionClick,
+  questions
 }) => {
   const { username, firstName, lastName, serialNumber } = account.metadata
   const history = useHistory()
@@ -51,6 +52,13 @@ const HomeDrawer = ({
       </IconButton>
       <Divider />
       <MainListItems />
+      {onQuestionClick ? (
+        <Grid>
+          {questions.map((question, index) => {
+
+          })}
+        </Grid>
+      ) : null}
       {onQuizStart && open ? (
         <div>
           <Divider />

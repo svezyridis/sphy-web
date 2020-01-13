@@ -15,7 +15,7 @@ import { categoriesReducer } from '../../store/reducers'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import HomeIcon from '@material-ui/icons/Home'
-import { titleCase } from '../../general/helperFunctions'
+import { titleCase, getBranchName } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
 
 const categoriesURL = baseURL + 'category/'
@@ -71,7 +71,7 @@ const Weapon = ({
                 imagesURL +
                   branch +
                   '/' +
-                  category.name.toLowerCase() +
+                  category.uri +
                   '/' +
                   category.randomImage.subject +
                   '/' +
@@ -147,7 +147,7 @@ const Weapon = ({
             }}
             className={classNames(classes.link, dark && classes.dark)}
           >
-            {titleCase(branch)}
+            {titleCase(getBranchName(branch))}
           </Link>
         </Breadcrumbs>
         <Typography variant='h3' color='textPrimary' align='center'>
@@ -165,6 +165,7 @@ const Weapon = ({
               <Grid key={index} item>
                 <CategoryCard
                   key={index}
+                  category={category}
                   image={category.image}
                   name={category.name}
                   weapon={branch}

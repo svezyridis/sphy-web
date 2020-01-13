@@ -59,7 +59,7 @@ const Quiz = ({
 
   const getQuestionsOfSubject = subject =>
     new Promise((resolve, reject) => {
-      fetch(questionsURL + subject.name, {
+      fetch(questionsURL + subject.uri, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -72,14 +72,14 @@ const Quiz = ({
             let questions = data.result
             questions = questions.map(question => ({ ...question, subject }))
             resolve(isEmpty(questions) ? null : questions)
-          }
+          } else { reject(data.message) }
         })
         .catch(error => reject(error))
     })
 
   const getQuestionsOfCategory = (branch, category) =>
     new Promise((resolve, reject) => {
-      fetch(subjectsURL + branch + '/' + category.name.toLowerCase(), {
+      fetch(subjectsURL + branch + '/' + category.uri, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -90,19 +90,15 @@ const Quiz = ({
         .then(response => response.json())
         .then(data => {
           if (data.status === 'error') {
-            console.log(data.message)
+            reject(data.message)
           } else {
             const subjects = data.result
             Promise.all(
               subjects.map(subject => getQuestionsOfSubject(subject))
             ).then(result => {
-              console.log(result)
-              result = result.filter(question => question !== null)
-              result = result.map(question => ({
-                ...question,
-                category: category.name
-              }))
-              console.log(result)
+              result = result.flat(2)
+                .filter(question => question !== null)
+                .map(question => ({ ...question, branch: category.branch, category: category.uri }))
               resolve(isEmpty(result) ? null : result)
             })
           }
@@ -118,18 +114,30 @@ const Quiz = ({
   const onQuizStart = () => {
     createQuiz(username)
     setLoading(true)
-    Object.keys(categories).map(branch =>
-      Promise.all(
-        categories[branch].map(category =>
-          getQuestionsOfCategory(branch, category)
-        )
-      ).then(result => {
-        result = result.filter(questions => questions !== null)
-        console.log({ branch: branch, questions: result })
-        setLoading(false)
-        //history.push('/question/1')
+    const categoriesToFetch = []
+    Object.entries(categories).forEach(([branch, branchCategories]) => {
+      branchCategories.forEach(category => {
+        categoriesToFetch.push({ ...category, branch })
       })
-    )
+    })
+    Promise.all(
+      categoriesToFetch.map(category =>
+        getQuestionsOfCategory(category.branch, category)
+      )
+    ).then(questions => {
+      questions = questions.flat()
+        .filter(questions => questions !== null)
+      questions.forEach(question => {
+        addQuestion(username, question)
+      })
+      setLoading(false)
+      // history.push('/question/1')
+    })
+      .catch(error => {
+        console.log(error)
+        deleteQuiz(username)
+        setLoading(false)
+      })
   }
   const continueQuiz = () => console.log('continue')
   const onDeleteQuiz = () => deleteQuiz(username)

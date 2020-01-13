@@ -38,7 +38,7 @@ const cardStyle = makeStyles(theme => ({
   }
 }))
 
-const CategoryCard = ({ image, weapon, name }) => {
+const CategoryCard = ({ weapon, category }) => {
   const classes = cardStyle()
   const history = useHistory()
   return (
@@ -46,13 +46,13 @@ const CategoryCard = ({ image, weapon, name }) => {
       component='button'
       variant='body1'
       onClick={() => {
-        history.push(`/info/${weapon.toLowerCase()}/${name.toLowerCase()}`)
+        history.push(`/info/${weapon.toLowerCase()}/${category.uri.toLowerCase()}`)
       }}
     >
       <Card elevation={8} raised className={classes.card}>
-        <CardMedia className={classes.media} image={image} title={titleCase(name)}>
+        <CardMedia className={classes.media} image={category.image} title={category.name.toUpperCase()}>
           <Typography className={classes.mediaCaption} align='center'>
-            {titleCase(name)}
+            {category.name.toUpperCase()}
           </Typography>
         </CardMedia>
       </Card>

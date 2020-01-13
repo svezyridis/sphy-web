@@ -5,6 +5,7 @@ import Dialog from '@material-ui/core/Dialog'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import DialogContentText from '@material-ui/core/DialogContentText'
+import DeleteIcon from '@material-ui/icons/Delete'
 
 const finishedText =
   'Φαίνεται πως έχετε ολοκληρώσει ένα quiz. ' +
@@ -58,8 +59,9 @@ const QuizInProgressDialog = ({
           variant='contained'
           color={dark ? 'secondary' : 'primary'}
           onClick={() => onNewQuiz()}
+          startIcon={<DeleteIcon />}
         >
-          Διαγραφή
+          Διαγραφη
         </Button>
       </DialogActions>
     </Dialog>
