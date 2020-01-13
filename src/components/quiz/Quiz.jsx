@@ -72,7 +72,9 @@ const Quiz = ({
             let questions = data.result
             questions = questions.map(question => ({ ...question, subject }))
             resolve(isEmpty(questions) ? null : questions)
-          } else { reject(data.message) }
+          } else {
+            reject(data.message)
+          }
         })
         .catch(error => reject(error))
     })
@@ -96,9 +98,14 @@ const Quiz = ({
             Promise.all(
               subjects.map(subject => getQuestionsOfSubject(subject))
             ).then(result => {
-              result = result.flat(2)
+              result = result
+                .flat(2)
                 .filter(question => question !== null)
-                .map(question => ({ ...question, branch: category.branch, category: category.uri }))
+                .map(question => ({
+                  ...question,
+                  branch: category.branch,
+                  category: category.uri
+                }))
               resolve(isEmpty(result) ? null : result)
             })
           }
@@ -124,22 +131,22 @@ const Quiz = ({
       categoriesToFetch.map(category =>
         getQuestionsOfCategory(category.branch, category)
       )
-    ).then(questions => {
-      questions = questions.flat()
-        .filter(questions => questions !== null)
-      questions.forEach(question => {
-        addQuestion(username, question)
+    )
+      .then(questions => {
+        questions = questions.flat().filter(questions => questions !== null)
+        questions.forEach(question => {
+          addQuestion(username, question)
+        })
+        setLoading(false)
+        history.push('/question/1')
       })
-      setLoading(false)
-      // history.push('/question/1')
-    })
       .catch(error => {
         console.log(error)
         deleteQuiz(username)
         setLoading(false)
       })
   }
-  const continueQuiz = () => console.log('continue')
+  const continueQuiz = () => console.log(history.push('/question/1'))
   const onDeleteQuiz = () => deleteQuiz(username)
   const reviewQuiz = () => console.log('review')
 

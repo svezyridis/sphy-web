@@ -47,9 +47,7 @@ const SubjectCard = ({ weapon, subject }) => {
       variant='body1'
       onClick={() => {
         history.push(
-          `/info/${weapon.toLowerCase()}/${
-            subject.category
-          }/${subject.uri}`
+          `/info/${weapon.toLowerCase()}/${subject.category}/${subject.uri}`
         )
       }}
     >
@@ -60,7 +58,7 @@ const SubjectCard = ({ weapon, subject }) => {
           title={subject.name}
         >
           <Typography className={classes.mediaCaption} align='center'>
-            {titleCase(subject.name)}
+            {subject.name}
           </Typography>
         </CardMedia>
       </Card>

@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
 import classNames from 'classnames'
 import HomeDrawer from '../home/HomeDrawer'
-import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
@@ -12,7 +11,14 @@ import HomeIcon from '@material-ui/icons/Home'
 import isEmpty from 'lodash.isempty'
 import find from 'lodash.find'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
-import Paper from '@material-ui/core/Paper'
+import Fab from '@material-ui/core/Fab'
+import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded'
+import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
+import QuestionCard from './QuestionCard'
+import { baseURL } from '../../general/constants'
+import { fetch } from 'whatwg-fetch'
+
+const imagesURL = baseURL + 'image/'
 
 const Question = ({
   dark,
@@ -20,6 +26,7 @@ const Question = ({
   toogleDrawer,
   account,
   deleteAccount,
+  addImage,
   quizes,
   history,
   match
@@ -27,15 +34,46 @@ const Question = ({
   const classes = homeStyle()
   const questionIndex = match.params.questionIndex
   const username = account.metadata.username
+  const [image, setImage] = useState(null)
   const myQuiz = find(quizes, { username: username })
-  const [option, setOption] = useState(-1)
-  if (!myQuiz) {
-    history.push('/quiz')
-    return null
-  }
-  if (questionIndex > myQuiz.questions.length - 1) {
-    history.push('/question/1')
-    return null
+  var controller = new window.AbortController()
+  var signal = controller.signal
+
+  const getImagesOfQuestion = question => {
+    console.log(question)
+    const branch = question.branch
+    const category = question.category
+    const subject = question.subject.uri
+    fetch(
+      imagesURL +
+        branch +
+        '/' +
+        category +
+        '/' +
+        subject +
+        '/' +
+        question.image.filename,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          authorization: 'Bearer ' + account.token
+        },
+        signal: signal
+      }
+    )
+      .then(response => response.blob())
+      .then(imageFile => {
+        var imageUrl = URL.createObjectURL(imageFile)
+        console.log(imageUrl)
+        addImage(username, question.id, imageUrl)
+        setImage(imageUrl)
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
   }
   const question = myQuiz.questions[questionIndex]
   if (isEmpty(account)) {
@@ -45,11 +83,29 @@ const Question = ({
       history.push('/login')
     }
   }
+  useEffect(() => {
+    if (!myQuiz) return
+    console.log('i am running')
+    getImagesOfQuestion(question)
+    return () => {}
+  }, [question])
+
+  if (!myQuiz) {
+    history.push('/quiz')
+    return null
+  }
+  if (questionIndex > myQuiz.questions.length - 1) {
+    history.push('/question/1')
+    return null
+  }
+
+  const handleRight = () =>
+    history.push(`/question/${parseInt(questionIndex) + 1}`)
+  const handleLeft = () =>
+    history.push(`/question/${parseInt(questionIndex) - 1}`)
 
   const onQuestionClick = id => console.log(id)
-  const handleChange = event => {
-    setOption(event.target.value)
-  }
+
   return (
     <div className={classes.root}>
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
@@ -84,12 +140,27 @@ const Question = ({
             Quiz
           </Link>
         </Breadcrumbs>
-        <Paper elevation={7} className={classes.questionPaper}>
-          <Typography align='center' variant='h3'>
-            {question.text}
-          </Typography>
-
-        </Paper>
+        <Fab
+          color={dark ? 'secondary' : 'primary'}
+          className={classes.leftIcon}
+          onClick={handleLeft}
+        >
+          <ChevronLeftRoundedIcon />
+        </Fab>
+        <Fab
+          color={dark ? 'secondary' : 'primary'}
+          className={classes.rightIcon}
+          onClick={handleRight}
+        >
+          <ChevronRightRoundedIcon />
+        </Fab>
+        <QuestionCard
+          classes={classes}
+          setOption={option => console.log(option)}
+          question={question}
+          dark={dark}
+          image={image}
+        />
       </div>
       <Copyright open={open} />
     </div>

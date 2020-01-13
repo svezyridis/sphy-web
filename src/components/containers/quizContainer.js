@@ -4,7 +4,8 @@ import {
   deleteAccount,
   createQuiz,
   addQuestion,
-  deleteQuiz
+  deleteQuiz,
+  addQuestionImage
 } from '../../store/actions'
 import Quiz from '../quiz/Quiz'
 import Question from '../quiz/Question'
@@ -51,6 +52,9 @@ export const QuestionContainer = connect(
     },
     deleteQuiz (username) {
       dispatch(deleteQuiz(username))
+    },
+    addImage (username, questionID, url) {
+      dispatch(addQuestionImage(username, questionID, url))
     }
   })
 )(Question)

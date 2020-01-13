@@ -93,6 +93,7 @@ const homeStyle = makeStyles(theme => ({
   },
   rest: {
     width: `calc(100% - ${drawerWidth}px)`,
+    position: 'relative',
     marginTop: imageHeight * 1.6,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -166,7 +167,7 @@ const homeStyle = makeStyles(theme => ({
   gridList: {
     flexWrap: 'nowrap',
     transform: 'translateZ(0)',
-    height: '420px',
+    height: '190px',
     margin: 0,
     overflow: 'hidden',
     width: '100.3%'
@@ -202,7 +203,7 @@ const homeStyle = makeStyles(theme => ({
   },
   paragraph: {
     textIndent: '20px',
-    overflowY: 'scroll',
+    overflowY: 'auto',
     overflowX: 'hidden',
     '&::-webkit-scrollbar': {
       width: '0.6em'
@@ -240,13 +241,18 @@ const homeStyle = makeStyles(theme => ({
     marginTop: '5%'
   },
   questionPaper: {
-    width: '70%',
+    width: '80%',
     marginLeft: 'auto',
     marginRight: 'auto',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignContent: 'center'
+    alignContent: 'center',
+    marginTop: '10%'
+  },
+  media: {
+    height: 0,
+    paddingTop: '56.25%' // 16:9
   },
   formControl: {
     margin: theme.spacing(3)

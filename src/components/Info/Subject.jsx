@@ -85,14 +85,14 @@ const Subject = ({
 
   const handleLeft = () => {
     gridList.current.scroll({
-      left: gridList.current.scrollLeft - 200,
+      left: gridList.current.scrollLeft - 400,
       behavior: 'smooth'
     })
   }
 
   const handleRight = () => {
     gridList.current.scroll({
-      left: gridList.current.scrollLeft + 200,
+      left: gridList.current.scrollLeft + 400,
       behavior: 'smooth'
     })
   }
@@ -224,7 +224,7 @@ const Subject = ({
           </Link>
         </Breadcrumbs>
         <Typography variant='h2' align='center' color='textPrimary'>
-          {titleCase(subject.name)}
+          {subject.name}
         </Typography>
         <Paper elevation={10} className={classes.infoPaper}>
           <div className={classes.infoContent}>
@@ -274,12 +274,14 @@ const Subject = ({
                 dark && classes.paragraphDark
               )}
             >
-              <b><p>{subject.text ? subject.text.split('\n').shift() : null}</p></b>
+              <b>
+                <p>{subject.text ? subject.text.split('\n').shift() : null}</p>
+              </b>
               {subject.text
                 ? subject.text
-                  .split('\n')
-                  .slice(1)
-                  .map((paragraph, key) => <p key={key}>{paragraph}</p>)
+                    .split('\n')
+                    .slice(1)
+                    .map((paragraph, key) => <p key={key}>{paragraph}</p>)
                 : null}
             </Typography>
           </div>

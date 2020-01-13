@@ -68,7 +68,14 @@ export const selectOption = (username, questionID, optionID) => ({
   optionID: optionID
 })
 
-export const deleteQuiz = (username) => ({
+export const deleteQuiz = username => ({
   type: C.DELETE_QUIZ,
   username: username
+})
+
+export const addQuestionImage = (username, questionID, url) => ({
+  type: C.ADD_QUESTION_IMAGE,
+  username: username,
+  questionID: questionID,
+  url: url
 })
