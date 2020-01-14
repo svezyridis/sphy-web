@@ -11,7 +11,8 @@ import InfoContainer, {
 } from './components/containers/infoContainer'
 import {
   QuestionContainer,
-  QuizContainer
+  QuizContainer,
+  ReviewContainer
 } from './components/containers/quizContainer'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { useSelector } from 'react-redux'
@@ -79,6 +80,11 @@ function App () {
             exact
             path='/question/:questionIndex'
             component={QuestionContainer}
+          />
+          <Route
+            exact
+            path='/review/:questionIndex'
+            component={ReviewContainer}
           />
         </Switch>
       </MuiThemeProvider>

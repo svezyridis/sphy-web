@@ -162,8 +162,8 @@ const homeStyle = makeStyles(theme => ({
   },
   gridList: {
     flexWrap: 'nowrap',
-    transform: 'translateZ(0)',
-    height: '33%',
+
+    height: '30%',
     margin: 0,
     overflow: 'hidden',
     width: '100.3%'
@@ -174,7 +174,7 @@ const homeStyle = makeStyles(theme => ({
     }
   },
   title: {
-    color: theme.palette.primary.light
+    color: '#fff2e6'
   },
   darkTitle: {
     color: theme.palette.secondary.main
@@ -295,6 +295,28 @@ const homeStyle = makeStyles(theme => ({
   },
   questionBoxAnswered: {
     boxShadow: '0 5px 7px 4px  #004d00'
+  },
+  reviewBox: {
+    height: 40,
+    width: 40,
+    background: `linear-gradient(45deg, #a8976e 20%, ${theme.palette.secondary.light} 90%)`,
+    borderRadius: 4,
+    boxShadow: '0 5px 7px 4px #661a00',
+    color: 'white',
+    '&:hover': {
+      background: `linear-gradient(45deg, #a8976e 20%, ${theme.palette.secondary.dark} 90%)`
+    }
+  },
+  correct: {
+    color: 'green'
+  },
+  incorrect: {
+    color: 'red'
+  },
+  correctRadio: {
+    '&$checked': {
+      color: '#4B8DF8'
+    }
   }
 }))
 

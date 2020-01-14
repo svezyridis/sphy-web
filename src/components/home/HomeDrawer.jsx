@@ -20,6 +20,7 @@ const HomeDrawer = ({
   classes,
   onQuizStart,
   onQuestionClick,
+  onReviewQuestionClick,
   quiz
 }) => {
   const { username, firstName, lastName, serialNumber } = account.metadata
@@ -55,14 +56,59 @@ const HomeDrawer = ({
       </IconButton>
       <Divider />
       <MainListItems />
+      {onReviewQuestionClick && open ? (
+        <>
+          <Divider />
+          <Grid
+            container
+            spacing={2}
+            className={classes.questionButtonGrid}
+            justify='space-evenly'
+          >
+            {quiz.questions.map((question, index) => {
+              const answer = find(quiz.answers, { questionID: question.id })
+              const selectedOption = find(question.optionList, {
+                id: parseInt(answer.optionID)
+              })
+              const correct = selectedOption && selectedOption.correct
+              return (
+                <Grid item key={index}>
+                  <Button
+                    className={classNames(
+                      classes.questionBox,
+                      correct && classes.questionBoxAnswered
+                    )}
+                    onClick={() => history.push(`/review/${index + 1}`)}
+                  >
+                    <Typography align='center'>{index + 1}</Typography>
+                  </Button>
+                </Grid>
+              )
+            })}
+          </Grid>
+          <Divider />
+        </>
+      ) : null}
       {onQuestionClick && open ? (
         <>
           <Divider />
-          <Grid container spacing={2} className={classes.questionButtonGrid} justify='space-evenly'>
+          <Grid
+            container
+            spacing={2}
+            className={classes.questionButtonGrid}
+            justify='space-evenly'
+          >
             {quiz.questions.map((question, index) => {
               return (
                 <Grid item key={index}>
-                  <Button className={classNames(classes.questionBox, find(quiz.answers, { questionID: question.id }).optionID !== '-1' && classes.questionBoxAnswered)} onClick={() => history.push(`/question/${index + 1}`)}>
+                  <Button
+                    className={classNames(
+                      classes.questionBox,
+                      find(quiz.answers, { questionID: question.id })
+                        .optionID !== '-1' && classes.questionBoxAnswered
+                    )}
+                    onClick={() => history.push(`/question/${index + 1}`)}
+                  >
                     <Typography align='center'>{index + 1}</Typography>
                   </Button>
                 </Grid>
@@ -73,7 +119,7 @@ const HomeDrawer = ({
           <Button
             variant='contained'
             className={classNames(classes.logout, classes.button)}
-            onClick={onQuizStart}
+            onClick={() => history.push('/review/1')}
           >
             ΥΠΟΒΟΛΗ
           </Button>

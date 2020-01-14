@@ -252,9 +252,13 @@ const Subject = ({
                   }}
                   className={classes.tile}
                 >
-                  <img src={image.image} alt={image.label} />
+                  <img src={image.image} />
                   <GridListTileBar
-                    title={image.label}
+                    title={
+                      <Typography align='center' variant='h5'>
+                        {image.label}
+                      </Typography>
+                    }
                     classes={{
                       root: classes.titleBar,
                       title: classes.title
