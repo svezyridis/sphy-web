@@ -163,7 +163,7 @@ const homeStyle = makeStyles(theme => ({
   gridList: {
     flexWrap: 'nowrap',
     transform: 'translateZ(0)',
-    height: '190px',
+    height: '33%',
     margin: 0,
     overflow: 'hidden',
     width: '100.3%'
@@ -286,12 +286,15 @@ const homeStyle = makeStyles(theme => ({
     height: 40,
     width: 40,
     background: `linear-gradient(45deg, #a8976e 20%, ${theme.palette.secondary.light} 90%)`,
-    borderRadius: 3,
-    boxShadow: '0 3px 5px 2px #661a00',
-    color: 'white'
+    borderRadius: 4,
+    boxShadow: '0 5px 7px 4px #661a00',
+    color: 'white',
+    '&:hover': {
+      background: `linear-gradient(45deg, #a8976e 20%, ${theme.palette.secondary.dark} 90%)`
+    }
   },
   questionBoxAnswered: {
-    boxShadow: '0 3px 5px 2px  #004d00'
+    boxShadow: '0 5px 7px 4px  #004d00'
   }
 }))
 

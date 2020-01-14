@@ -60,7 +60,6 @@ const HomeDrawer = ({
           <Divider />
           <Grid container spacing={2} className={classes.questionButtonGrid} justify='space-evenly'>
             {quiz.questions.map((question, index) => {
-              console.log(find(quiz.answers, { questionID: question.id }))
               return (
                 <Grid item key={index}>
                   <Button className={classNames(classes.questionBox, find(quiz.answers, { questionID: question.id }).optionID !== '-1' && classes.questionBoxAnswered)} onClick={() => history.push(`/question/${index + 1}`)}>

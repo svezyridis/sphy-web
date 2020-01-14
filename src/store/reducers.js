@@ -105,7 +105,7 @@ export const quiz = (state, action) => {
           answers: answers(state.answers, action)
         }
     case C.ADD_QUESTION_IMAGE:
-      console.log(action)
+      console.log('addding image')
       return state.username !== action.username
         ? state
         : {
@@ -124,11 +124,14 @@ const questions = (state, action) => {
         ? [...state, action.question]
         : state
     case C.ADD_QUESTION_IMAGE:
-      return state.map(question =>
-        question.id === action.questionID
-          ? state
-          : { ...state, imageURL: action.url }
-      )
+      return state.map(question => {
+        console.log(question)
+        return (
+          question.id === action.questionID
+            ? { ...question, imageURL: action.url }
+            : { ...question, imageURL: action.url }
+        )
+      })
     default:
       return state
   }

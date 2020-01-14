@@ -94,24 +94,13 @@ const LoginDrawer = ({ account, addAccount, dark }) => {
             autoComplete='current-password'
             onChange={e => setPassword(e.target.value)}
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                value='remember'
-                color='primary'
-                onChange={(event, isChecked) => setIsChecked(isChecked)}
-              />
-            }
-            label='Remember me'
-          />
-
           <Button
             type='submit'
             fullWidth
             variant='contained'
             className={classes.submit}
           >
-            Sign In
+            ΕΙΣΟΔΟΣ
           </Button>
         </form>
       </div>

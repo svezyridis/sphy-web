@@ -54,7 +54,7 @@ export const QuestionContainer = connect(
     deleteQuiz (username) {
       dispatch(deleteQuiz(username))
     },
-    addImage (username, questionID, url) {
+    addQuestionImage (username, questionID, url) {
       dispatch(addQuestionImage(username, questionID, url))
     },
     selectOption (username, questionID, optionID) {

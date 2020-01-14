@@ -28,7 +28,7 @@ const Question = ({
   toogleDrawer,
   account,
   deleteAccount,
-  addImage,
+  addQuestionImage,
   selectOption,
   quizes,
   history,
@@ -69,7 +69,7 @@ const Question = ({
       .then(imageFile => {
         var imageUrl = URL.createObjectURL(imageFile)
         console.log(imageUrl)
-        // addImage(username, question.id, imageUrl)
+        addQuestionImage(username, question.id, imageUrl)
         setImage(imageUrl)
       })
       .catch(error => {
