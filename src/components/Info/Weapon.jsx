@@ -17,6 +17,7 @@ import { titleCase, getBranchName } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
 import find from 'lodash.find'
 import isEqual from 'lodash.isequal'
+import NewCategoryCard from '../adminInfo/NewCategoryCard'
 
 const categoriesURL = baseURL + 'category/'
 const imagesURL = baseURL + 'image/'
@@ -59,7 +60,8 @@ const Weapon = ({
             authorization: 'Bearer ' + account.token
           },
           signal: signal
-        })
+        }
+      )
       const image = await response.blob()
       var imageUrl = URL.createObjectURL(image)
       addImage(category.id, imageUrl)
@@ -102,7 +104,11 @@ const Weapon = ({
               newCategories.push(category)
               return
             }
-            const { imageURL, checked, ...originalCategoryObject } = storedCategory
+            const {
+              imageURL,
+              checked,
+              ...originalCategoryObject
+            } = storedCategory
             if (!isEqual(originalCategoryObject, category)) {
               console.log('category found but not equal')
               newCategories.push(category)
@@ -125,11 +131,10 @@ const Weapon = ({
           })
           // check categories that need new image fetching
           categories.forEach(category => {
-            fetch(category.imageURL)
-              .catch(error => {
-                console.log(error)
-                getImageOfCategory(category)
-              })
+            fetch(category.imageURL).catch(error => {
+              console.log(error)
+              getImageOfCategory(category)
+            })
           })
         }
       })
@@ -211,7 +216,6 @@ const Weapon = ({
                   key={index}
                   category={category}
                   name={category.name}
-                  weapon={branch}
                   admin={isAdmin}
                   branch={branch}
                   token={account.token}
@@ -219,6 +223,9 @@ const Weapon = ({
               </Grid>
             )
           })}
+          <Grid item>
+            <NewCategoryCard branch={branch} token={account.token} />
+          </Grid>
         </Grid>
       </div>
       <Copyright open={open} />

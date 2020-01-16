@@ -53,7 +53,7 @@ const cardStyle = makeStyles(theme => ({
   }
 }))
 const categoriesURL = baseURL + 'category/'
-const CategoryCard = ({ weapon, category, admin, branch, token }) => {
+const CategoryCard = ({ category, admin, branch, token }) => {
   const classes = cardStyle()
   const history = useHistory()
   const [error, setError] = useState('')
@@ -86,11 +86,21 @@ const CategoryCard = ({ weapon, category, admin, branch, token }) => {
 
   return (
     <>
-      <DeleteCategoryDialog open={deleteDialogOpen} onClose={closeDeleteDialog} onDeleteCategory={handleDelete} category={category.name} />
+      <DeleteCategoryDialog
+        open={deleteDialogOpen}
+        onClose={closeDeleteDialog}
+        onDeleteCategory={handleDelete}
+        category={category.name}
+      />
       <Card elevation={8} raised className={classes.card}>
         <CardMedia
-          className={classes.media} image={category.imageURL} title={category.name.toUpperCase()} onClick={() => {
-            history.push(`/info/${weapon.toLowerCase()}/${category.uri.toLowerCase()}`)
+          className={classes.media}
+          image={category.imageURL}
+          title={category.name.toUpperCase()}
+          onClick={() => {
+            history.push(
+              `/info/${branch.toLowerCase()}/${category.uri.toLowerCase()}`
+            )
           }}
         >
           <Typography className={classes.mediaCaption} align='center'>
@@ -98,7 +108,12 @@ const CategoryCard = ({ weapon, category, admin, branch, token }) => {
           </Typography>
         </CardMedia>
         <CardActions>
-          <Grid container spacing={1} className={classes.grid} justify='flex-end'>
+          <Grid
+            container
+            spacing={1}
+            className={classes.grid}
+            justify='flex-end'
+          >
             <Grid item className={classes.icon}>
               <Tooltip title='Επεξεργασία' placement='bottom-start'>
                 <Fab color='secondary' onClick={handleEdit}>
@@ -117,7 +132,6 @@ const CategoryCard = ({ weapon, category, admin, branch, token }) => {
         </CardActions>
       </Card>
     </>
-
   )
 }
 
