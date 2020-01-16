@@ -7,7 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import { Typography } from '@material-ui/core'
 
-const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
+const CreateNewCategoryDialog = ({ open, onEdit, onClose, classes }) => {
   const [name, setName] = useState('')
   const [URI, setURI] = useState('')
   return (
@@ -23,7 +23,6 @@ const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
           variant='outlined'
           value={name}
           className={classes.input}
-          fullWidth
           autoFocus
           onChange={e => setName(e.target.value)}
         />
@@ -33,7 +32,6 @@ const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
           margin='normal'
           variant='outlined'
           value={URI}
-          fullWidth
           className={classes.input}
           onChange={e => setURI(e.target.value)}
         />
@@ -43,11 +41,11 @@ const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
           ΑΚΥΡΟ
         </Button>
         <Button
-          onClick={() => onCreate(name, URI)}
+          onClick={() => onEdit(name, URI, imageID)}
           color='primary'
           variant='contained'
         >
-          ΔΗΜΙΟΥΡΓΙΑ
+          ΕΝΗΜΕΡΩΣΗ
         </Button>
       </DialogActions>
     </Dialog>

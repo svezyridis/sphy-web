@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Card from '@material-ui/core/Card'
 import Link from '@material-ui/core/Link'
 import CardMedia from '@material-ui/core/CardMedia'
@@ -11,9 +11,10 @@ import EditIcon from '@material-ui/icons/Edit'
 import Tooltip from '@material-ui/core/Tooltip'
 import Fab from '@material-ui/core/Fab'
 import { Grid } from '@material-ui/core'
-import DeleteCategoryDialog from './DeleteCategoryDialog'
+import DeleteCategoryDialog from '../adminInfo/DeleteCategoryDialog'
 import { baseURL } from '../../general/constants'
 import { fetch } from 'whatwg-fetch'
+import classNames from 'classnames'
 
 const cardStyle = makeStyles(theme => ({
   card: {
@@ -22,6 +23,18 @@ const cardStyle = makeStyles(theme => ({
     height: '400px'
   },
   media: {
+    backgroundColor: 'white',
+    height: '100%',
+    width: 'auto',
+    overflow: 'hidden',
+    position: 'relative',
+    transition: '300ms',
+    cursor: 'pointer',
+    '&:hover': {
+      filter: 'brightness(115%)'
+    }
+  },
+  adminMedia: {
     backgroundColor: 'white',
     height: '80%',
     width: 'auto',
@@ -53,36 +66,22 @@ const cardStyle = makeStyles(theme => ({
   }
 }))
 const categoriesURL = baseURL + 'category/'
-const CategoryCard = ({ category, admin, branch, token }) => {
+const CategoryCard = ({ category, admin, branch, deleteCategoy }) => {
   const classes = cardStyle()
   const history = useHistory()
   const [error, setError] = useState('')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const controller = new window.AbortController()
-  const signal = controller.signal
   const handleEdit = () => console.log('edit')
   const handleDelete = () => {
-    fetch(categoriesURL + branch + '/' + category.uri, {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        authorization: 'Bearer ' + token
-      },
-      signal: signal
-    })
-      .then(response => response.json())
-      .then(data => {
-        const { message } = data
-        console.log(message)
-      })
-      .catch(error => {
-        if (!controller.signal.aborted) {
-          console.error(error)
-        }
-      })
+    deleteCategoy(category)
+    setDeleteDialogOpen(false)
   }
+
   const openDeleteDialog = () => setDeleteDialogOpen(true)
   const closeDeleteDialog = () => setDeleteDialogOpen(false)
+  useEffect(() => {
+    console.log(category.uri)
+  })
 
   return (
     <>
@@ -94,10 +93,11 @@ const CategoryCard = ({ category, admin, branch, token }) => {
       />
       <Card elevation={8} raised className={classes.card}>
         <CardMedia
-          className={classes.media}
+          className={classNames(classes.media, admin && classes.adminMedia)}
           image={category.imageURL}
           title={category.name.toUpperCase()}
           onClick={() => {
+            console.log(category.uri)
             history.push(
               `/info/${branch.toLowerCase()}/${category.uri.toLowerCase()}`
             )
@@ -107,29 +107,31 @@ const CategoryCard = ({ category, admin, branch, token }) => {
             {category.name.toUpperCase()}
           </Typography>
         </CardMedia>
-        <CardActions>
-          <Grid
-            container
-            spacing={1}
-            className={classes.grid}
-            justify='flex-end'
-          >
-            <Grid item className={classes.icon}>
-              <Tooltip title='Επεξεργασία' placement='bottom-start'>
-                <Fab color='secondary' onClick={handleEdit}>
-                  <EditIcon />
-                </Fab>
-              </Tooltip>
+        {admin
+          ? <CardActions>
+            <Grid
+              container
+              spacing={1}
+              className={classes.grid}
+              justify='flex-end'
+            >
+              <Grid item className={classes.icon}>
+                <Tooltip title='Επεξεργασία' placement='bottom-start'>
+                  <Fab color='secondary' onClick={handleEdit}>
+                    <EditIcon />
+                  </Fab>
+                </Tooltip>
+              </Grid>
+              <Grid item className={classes.icon}>
+                <Tooltip title='Διαγραφή' placement='bottom-end'>
+                  <Fab onClick={openDeleteDialog}>
+                    <DeleteIcon />
+                  </Fab>
+                </Tooltip>
+              </Grid>
             </Grid>
-            <Grid item className={classes.icon}>
-              <Tooltip title='Διαγραφή' placement='bottom-end'>
-                <Fab onClick={openDeleteDialog}>
-                  <DeleteIcon />
-                </Fab>
-              </Tooltip>
-            </Grid>
-          </Grid>
-        </CardActions>
+            </CardActions>
+          : null}
       </Card>
     </>
   )

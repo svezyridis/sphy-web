@@ -14,7 +14,7 @@ const DeleteCategoryDialog = ({ open, onClose, onDeleteCategory, category }) => 
       keepMounted
       onClose={onClose}
     >
-      <Typography color='error' align='center' variant='h4'>{`Διαγραφη κατηγορίας ${category}!`}</Typography>
+      <Typography color='error' align='center' variant='h5'>{`Διαγραφη κατηγορίας ${category}!`}</Typography>
       <DialogContent>
         <DialogContentText>
           {`Η παρακάτω ενέργεια είναι μη αναστρέψιμη και θα διαγράψει την κατηγορία ${category} καθώς και όλα τα θέματα που ανήκουν σε αυτήν.

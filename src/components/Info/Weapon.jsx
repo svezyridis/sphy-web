@@ -43,6 +43,7 @@ const Weapon = ({
   const branch = match.params.weapon
 
   const getImageOfCategory = async category => {
+    if (!category.image) { return }
     try {
       const response = await fetch(
         imagesURL +
@@ -71,13 +72,7 @@ const Weapon = ({
       }
     }
   }
-
-  useEffect(() => {
-    if (isEmpty(account)) {
-      history.push('/login')
-      return null
-    }
-
+  const getCategories = () => {
     fetch(categoriesURL + branch, {
       method: 'GET',
       credentials: 'include',
@@ -127,14 +122,10 @@ const Weapon = ({
           // add new categories and fetch their images
           newCategories.forEach(category => {
             addCategory(category)
-            getImageOfCategory(category)
           })
           // check categories that need new image fetching
           categories.forEach(category => {
-            fetch(category.imageURL).catch(error => {
-              console.log(error)
-              getImageOfCategory(category)
-            })
+            getImageOfCategory(category)
           })
         }
       })
@@ -143,6 +134,59 @@ const Weapon = ({
           console.error(error)
         }
       })
+  }
+
+  const handleDeleteCategory = (category) => {
+    fetch(categoriesURL + branch + '/' + category.uri, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        authorization: 'Bearer ' + account.token
+      },
+      signal: signal
+    })
+      .then(response => response.json())
+      .then(data => {
+        const { status, message } = data
+        console.log(message)
+        if (status === 'success') { deleteCategory(category.id) }
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+  }
+
+  const handleCreateCategory = (name, uri) => {
+    console.log('creating category')
+    fetch(categoriesURL + branch, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        authorization: 'Bearer ' + account.token,
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify({ name: name, uri: uri }),
+      signal: signal
+    })
+      .then(response => response.json())
+      .then(data => {
+        const { status, result, message } = data
+        if (status === 'error') console.log(message)
+        if (status === 'success') { addCategory(result) }
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+  }
+
+  useEffect(() => {
+    if (isEmpty(account)) { return }
+    getCategories()
     return () => {
       controller.abort()
     }
@@ -217,15 +261,17 @@ const Weapon = ({
                   category={category}
                   name={category.name}
                   admin={isAdmin}
+                  deleteCategoy={handleDeleteCategory}
                   branch={branch}
-                  token={account.token}
                 />
               </Grid>
             )
           })}
-          <Grid item>
-            <NewCategoryCard branch={branch} token={account.token} />
-          </Grid>
+          {isAdmin 
+            ? <Grid item>
+              <NewCategoryCard branch={branch} token={account.token} createCategory={handleCreateCategory} />
+            </Grid> : null}
+
         </Grid>
       </div>
       <Copyright open={open} />

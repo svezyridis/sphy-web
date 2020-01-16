@@ -17,6 +17,6 @@ export const actiontypes = {
   ADD_CATEGORY: 'ADD_CATEGORY',
   ADD_CATEGORY_IMAGE: 'ADD_CAT_IMAGE'
 }
-export const baseURL = 'https://projectapi.ml/'
+// export const baseURL = 'https://projectapi.ml/'
 
-//export const baseURL = 'http://localhost:8080/'
+export const baseURL = 'http://localhost:8080/'

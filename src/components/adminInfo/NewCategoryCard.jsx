@@ -49,15 +49,18 @@ const cardStyle = makeStyles(theme => ({
     minWidth: '200px'
   }
 }))
-const categoriesURL = baseURL + 'category/'
-const NewCategoryCard = ({ branch, token }) => {
+
+const NewCategoryCard = ({ branch, token, createCategory }) => {
   const classes = cardStyle()
   const [error, setError] = useState('')
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const controller = new window.AbortController()
   const signal = controller.signal
   const onClose = () => setCreateDialogOpen(false)
-  const onCreate = (name, uri) => console.log(name, uri)
+  const onCreate = (name, uri) => {
+    createCategory(name, uri)
+    setCreateDialogOpen(false)
+  }
   return (
     <>
       <CreateNewCategoryDialog
