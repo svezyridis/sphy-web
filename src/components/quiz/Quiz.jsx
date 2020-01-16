@@ -34,11 +34,13 @@ const Quiz = ({
   deleteQuiz,
   createQuiz,
   addQuestion,
+  categories,
+  setCategories,
+  setChecked,
   history
 }) => {
   const [loading, setLoading] = useState(false)
   const classes = homeStyle()
-  var categories = {}
   var controller = new window.AbortController()
   var signal = controller.signal
 

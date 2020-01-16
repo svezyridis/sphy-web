@@ -37,6 +37,12 @@ export const setImages = images => ({
   images: images
 })
 
+export const addCategoryImage = (id, image) => ({
+  type: C.ADD_CATEGORY_IMAGE,
+  id: id,
+  image: image
+})
+
 export const addImage = (id, image) => ({
   type: C.ADD_IMAGE,
   id: id,
@@ -78,4 +84,14 @@ export const addQuestionImage = (username, questionID, url) => ({
   username: username,
   questionID: questionID,
   url: url
+})
+
+export const deleteCategory = (id) => ({
+  type: C.DELETE_CATEGORY,
+  id: id
+})
+
+export const addCategory = (category) => ({
+  type: C.ADD_CATEGORY,
+  category: category
 })

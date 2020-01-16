@@ -12,8 +12,11 @@ export const actiontypes = {
   ADD_QUESTION: 'ADD_QUESTION',
   SELECT_OPTION: 'SELECT_OPTION',
   DELETE_QUIZ: 'DELETE_QUIZ',
-  ADD_QUESTION_IMAGE: 'ADD__QUESTION_IMAGE'
+  ADD_QUESTION_IMAGE: 'ADD__QUESTION_IMAGE',
+  DELETE_CATEGORY: 'DELETE_CATEGORY',
+  ADD_CATEGORY: 'ADD_CATEGORY',
+  ADD_CATEGORY_IMAGE: 'ADD_CAT_IMAGE'
 }
-export const baseURL = 'https://projectapi.ml/'
+// export const baseURL = 'https://projectapi.ml/'
 
-//export const baseURL = 'http://localhost:8080/'
+export const baseURL = 'http://localhost:8080/'

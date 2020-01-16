@@ -6,18 +6,21 @@ import {
   addQuestion,
   deleteQuiz,
   addQuestionImage,
-  selectOption
+  selectOption,
+  setCategories,
+  setChecked
 } from '../../store/actions'
 import Quiz from '../quiz/Quiz'
 import Question from '../quiz/Question'
 import Review from '../quiz/Review'
 
 export const QuizContainer = connect(
-  ({ open, account, dark, quizes }) => ({
+  ({ open, account, dark, quizes, categories }) => ({
     open: open,
     account: account,
     dark: dark,
-    quizes: quizes
+    quizes: quizes,
+    categories: categories
   }),
   dispatch => ({
     toogleDrawer (toogle) {
@@ -34,6 +37,12 @@ export const QuizContainer = connect(
     },
     deleteQuiz (username) {
       dispatch(deleteQuiz(username))
+    },
+    setCategories (categories) {
+      dispatch(setCategories(categories))
+    },
+    setChecked (categoryID, checked) {
+      dispatch(setChecked(categoryID, checked))
     }
   })
 )(Quiz)

@@ -21,11 +21,8 @@ const MainInfo = ({ dark, open, toogleDrawer, account, deleteAccount }) => {
   const classes = homeStyle()
   const history = useHistory()
   if (isEmpty(account)) {
-    var tempAccount = window.sessionStorage.getItem('account')
-    if (isEmpty(tempAccount)) {
-      history.push('/login')
-      return null
-    }
+    history.push('/login')
+    return null
   }
   return (
     <div className={classes.root}>

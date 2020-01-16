@@ -95,18 +95,20 @@ const QuizWeaponCard = ({
   image,
   branch,
   account,
-  onCategoriesChange
+  onCategoriesChange,
+  categories,
+  setCategories,
+  setChecked
 }) => {
   const classes = useStyles()
   const [expanded, setExpanded] = useState(false)
   const [error, setError] = useState('')
-  const [categories, dispatchCategories] = useReducer(categoriesReducer, [])
   var controller = new window.AbortController()
   var signal = controller.signal
 
   const handleChange = event => {
     categories.forEach(category => {
-      dispatchCategories(setChecked(category.id, event.target.checked))
+      setChecked(category.id, event.target.checked)
     })
   }
 
@@ -118,7 +120,7 @@ const QuizWeaponCard = ({
   }
 
   const handleCategoryChecked = category => event => {
-    dispatchCategories(setChecked(category.id, !category.checked))
+    setChecked(category.id, !category.checked)
   }
 
   const noOfCheckedCategories = categories.reduce(
@@ -142,7 +144,7 @@ const QuizWeaponCard = ({
         console.log(data)
         if (status === 'error') setError(message)
         else {
-          dispatchCategories(setCategories(result))
+          setCategories(result)
         }
       })
       .catch(error => {

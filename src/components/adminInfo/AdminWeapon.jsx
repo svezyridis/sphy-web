@@ -9,14 +9,14 @@ import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import { fetch } from 'whatwg-fetch'
 import Grid from '@material-ui/core/Grid'
-import CategoryCard from './CategoryCard'
+import 
+import { setCategories, addImage } from '../../store/actions'
+import { categoriesReducer } from '../../store/reducers'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import HomeIcon from '@material-ui/icons/Home'
 import { titleCase, getBranchName } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
-import find from 'lodash.find'
-import isEqual from 'lodash.isequal'
 
 const categoriesURL = baseURL + 'category/'
 const imagesURL = baseURL + 'image/'
@@ -26,11 +26,6 @@ const Weapon = ({
   toogleDrawer,
   account,
   deleteAccount,
-  categories,
-  setCategories,
-  addImage,
-  addCategory,
-  deleteCategory,
   match,
   history,
   dark
@@ -39,41 +34,17 @@ const Weapon = ({
   var signal = controller.signal
   const classes = homeStyle()
   const [error, setError] = useState('')
+  const [categories, dispatchCategories] = useReducer(categoriesReducer, [])
   const branch = match.params.weapon
-
-  const getImageOfCategory = async category => {
-    try {
-      const response = await fetch(
-        imagesURL +
-          branch +
-          '/' +
-          category.uri +
-          '/' +
-          category.image.subject +
-          '/' +
-          category.image.filename,
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            authorization: 'Bearer ' + account.token
-          },
-          signal: signal
-        })
-      const image = await response.blob()
-      var imageUrl = URL.createObjectURL(image)
-      addImage(category.id, imageUrl)
-    } catch (error) {
-      if (!controller.signal.aborted) {
-        console.error(error)
-      }
-    }
-  }
 
   useEffect(() => {
     if (isEmpty(account)) {
-      history.push('/login')
-      return null
+      var tempAccount = window.sessionStorage.getItem('account')
+      if (isEmpty(tempAccount)) {
+        history.push('/login')
+        return null
+      }
+      account = tempAccount
     }
 
     fetch(categoriesURL + branch, {
@@ -82,8 +53,7 @@ const Weapon = ({
       headers: {
         authorization: 'Bearer ' + account.token
       },
-      signal: signal,
-      cache: 'force-cache'
+      signal: signal
     })
       .then(response => response.json())
       .then(data => {
@@ -91,45 +61,37 @@ const Weapon = ({
         console.log(data)
         if (status === 'error') setError(message)
         else {
-          // Compare new categories with stored ones and make the necessary changes
-          const newCategories = []
-          const categoriesToDelete = []
-
-          result.forEach(category => {
-            const storedCategory = find(categories, { id: category.id })
-            if (!storedCategory) {
-              console.log('category not found')
-              newCategories.push(category)
+          dispatchCategories(setCategories(result))
+          result.forEach(async (category, index) => {
+            if (!category.randomImage) {
               return
             }
-            const { imageURL, checked, ...originalCategoryObject } = storedCategory
-            if (!isEqual(originalCategoryObject, category)) {
-              console.log('category found but not equal')
-              newCategories.push(category)
-              categoriesToDelete.push(storedCategory)
+            try {
+              const response = await fetch(
+                imagesURL +
+                  branch +
+                  '/' +
+                  category.uri +
+                  '/' +
+                  category.randomImage.subject +
+                  '/' +
+                  category.randomImage.filename,
+                {
+                  method: 'GET',
+                  credentials: 'include',
+                  headers: {
+                    authorization: 'Bearer ' + account.token
+                  },
+                  signal: signal
+                })
+              const image = await response.blob()
+              var imageUrl = URL.createObjectURL(image)
+              dispatchCategories(addImage(category.id, imageUrl))
+            } catch (error) {
+              if (!controller.signal.aborted) {
+                console.error(error)
+              }
             }
-          })
-
-          categories.forEach(category => {
-            if (!find(result, { id: category.id })) {
-              categoriesToDelete.push(category)
-            }
-          })
-
-          categoriesToDelete.forEach(category => deleteCategory(category.id))
-
-          // add new categories and fetch their images
-          newCategories.forEach(category => {
-            addCategory(category)
-            getImageOfCategory(category)
-          })
-          // check categories that need new image fetching
-          categories.forEach(category => {
-            fetch(category.imageURL)
-              .catch(error => {
-                console.log(error)
-                getImageOfCategory(category)
-              })
           })
         }
       })
@@ -142,12 +104,6 @@ const Weapon = ({
       controller.abort()
     }
   }, [])
-
-  if (isEmpty(account)) {
-    history.push('/login')
-    return null
-  }
-  const isAdmin = account.metadata.role === 'ADMIN'
 
   return (
     <div className={classes.root}>
@@ -207,14 +163,12 @@ const Weapon = ({
           {categories.map((category, index) => {
             return (
               <Grid key={index} item>
-                <CategoryCard
+                <AdminCategoryCard
                   key={index}
                   category={category}
+                  image={category.image}
                   name={category.name}
                   weapon={branch}
-                  admin={isAdmin}
-                  branch={branch}
-                  token={account.token}
                 />
               </Grid>
             )

@@ -34,36 +34,6 @@ export const dark = (state = false, action) => {
   }
 }
 
-export const categoriesReducer = (state, action) => {
-  switch (action.type) {
-    case C.SET_CATEGORIES:
-      return action.categories.map(category => ({
-        ...category,
-        checked: true
-      }))
-    case C.ADD_IMAGE:
-      return state.map(category =>
-        category.id === action.id
-          ? {
-            ...category,
-            image: action.image
-          }
-          : category
-      )
-    case C.SET_CHECKED:
-      return state.map(category =>
-        category.id === action.id
-          ? {
-            ...category,
-            checked: action.checked
-          }
-          : category
-      )
-    default:
-      return state
-  }
-}
-
 export const quizes = (state = [], action) => {
   switch (action.type) {
     case C.CREATE_QUIZ:
@@ -184,6 +154,40 @@ export const imagesReducer = (state, action) => {
             image: action.image
           }
           : image
+      )
+    default:
+      return state
+  }
+}
+
+export const categories = (state = [], action) => {
+  switch (action.type) {
+    case C.SET_CATEGORIES:
+      return action.categories.map(category => ({
+        ...category,
+        checked: true
+      }))
+    case C.DELETE_CATEGORY:
+      return state.filter(category => category.id !== action.id)
+    case C.ADD_CATEGORY:
+      return [...state, action.category]
+    case C.ADD_CATEGORY_IMAGE:
+      return state.map(category =>
+        category.id === action.id
+          ? {
+            ...category,
+            imageURL: action.image
+          }
+          : category
+      )
+    case C.SET_CHECKED:
+      return state.map(category =>
+        category.id === action.id
+          ? {
+            ...category,
+            checked: action.checked
+          }
+          : category
       )
     default:
       return state
