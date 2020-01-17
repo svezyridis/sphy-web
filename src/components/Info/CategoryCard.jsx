@@ -15,6 +15,7 @@ import DeleteCategoryDialog from '../adminInfo/DeleteCategoryDialog'
 import { baseURL } from '../../general/constants'
 import { fetch } from 'whatwg-fetch'
 import classNames from 'classnames'
+import EditCategoryDialog from '../adminInfo/EditCategoryDialog'
 
 const cardStyle = makeStyles(theme => ({
   card: {
@@ -25,18 +26,6 @@ const cardStyle = makeStyles(theme => ({
   media: {
     backgroundColor: 'white',
     height: '100%',
-    width: 'auto',
-    overflow: 'hidden',
-    position: 'relative',
-    transition: '300ms',
-    cursor: 'pointer',
-    '&:hover': {
-      filter: 'brightness(115%)'
-    }
-  },
-  adminMedia: {
-    backgroundColor: 'white',
-    height: '80%',
     width: 'auto',
     overflow: 'hidden',
     position: 'relative',
@@ -66,12 +55,19 @@ const cardStyle = makeStyles(theme => ({
   }
 }))
 const categoriesURL = baseURL + 'category/'
-const CategoryCard = ({ category, admin, branch, deleteCategoy }) => {
+const CategoryCard = ({
+  category,
+  admin,
+  branch,
+  deleteCategoy,
+  editCategory
+}) => {
   const classes = cardStyle()
   const history = useHistory()
   const [error, setError] = useState('')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const handleEdit = () => console.log('edit')
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const handleEdit = () => setEditDialogOpen(true)
   const handleDelete = () => {
     deleteCategoy(category)
     setDeleteDialogOpen(false)
@@ -79,12 +75,16 @@ const CategoryCard = ({ category, admin, branch, deleteCategoy }) => {
 
   const openDeleteDialog = () => setDeleteDialogOpen(true)
   const closeDeleteDialog = () => setDeleteDialogOpen(false)
-  useEffect(() => {
-    console.log(category.uri)
-  })
+  const closeEditDialog = () => setEditDialogOpen(false)
 
   return (
     <>
+      <EditCategoryDialog
+        open={editDialogOpen}
+        onClose={closeEditDialog}
+        onEdit={editCategory}
+        category={category}
+      />
       <DeleteCategoryDialog
         open={deleteDialogOpen}
         onClose={closeDeleteDialog}
@@ -97,7 +97,6 @@ const CategoryCard = ({ category, admin, branch, deleteCategoy }) => {
           image={category.imageURL}
           title={category.name.toUpperCase()}
           onClick={() => {
-            console.log(category.uri)
             history.push(
               `/info/${branch.toLowerCase()}/${category.uri.toLowerCase()}`
             )
@@ -107,8 +106,8 @@ const CategoryCard = ({ category, admin, branch, deleteCategoy }) => {
             {category.name.toUpperCase()}
           </Typography>
         </CardMedia>
-        {admin
-          ? <CardActions>
+        {admin ? (
+          <CardActions>
             <Grid
               container
               spacing={1}
@@ -130,8 +129,8 @@ const CategoryCard = ({ category, admin, branch, deleteCategoy }) => {
                 </Tooltip>
               </Grid>
             </Grid>
-            </CardActions>
-          : null}
+          </CardActions>
+        ) : null}
       </Card>
     </>
   )

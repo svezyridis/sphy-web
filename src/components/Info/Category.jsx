@@ -66,7 +66,7 @@ const Category = ({
         else {
           dispatchSubjects(setSubjects(result))
           result.forEach(async (subject, index) => {
-            if (subject.images.length === 0) {
+            if (!subject.defaultImage) {
               return
             }
             try {
@@ -78,7 +78,7 @@ const Category = ({
                   '/' +
                   subject.uri +
                   '/' +
-                  sample(subject.images).filename,
+                  subject.defaultImage.filename,
                 {
                   method: 'GET',
                   credentials: 'include',

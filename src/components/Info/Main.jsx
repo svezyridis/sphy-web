@@ -60,7 +60,7 @@ const MainInfo = ({ dark, open, toogleDrawer, account, deleteAccount }) => {
           </Link>
         </Breadcrumbs>
         <Typography variant='h3' color='textPrimary' align='center'>
-          Επιλέξτε σώμα
+          Επιλέξτε Σώμα
         </Typography>
         <Grid
           container
