@@ -7,15 +7,16 @@ import DialogContent from '@material-ui/core/DialogContent'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import EditIcon from '@material-ui/icons/Edit'
-import IconButton from '@material-ui/core/IconButton'
 import Card from '@material-ui/core/Card'
 import CardMedia from '@material-ui/core/CardMedia'
-import CardActions from '@material-ui/core/CardActions'
 import ImageListDialog from './ImageListDialog'
 import unavailableImage from '../../images/unavailable.png'
 import { makeStyles } from '@material-ui/styles'
 import { Fab } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
+import { fetch } from 'whatwg-fetch'
+import { useSelector } from 'react-redux'
+import { baseURL } from '../../general/constants'
 
 const dialogStyle = makeStyles(theme => ({
   content: {
@@ -30,20 +31,84 @@ const dialogStyle = makeStyles(theme => ({
   }
 }))
 
+const subjectsURL = baseURL + 'subject/'
+const imagesURL = baseURL + 'image/'
+
 const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
   const [name, setName] = useState(category.name)
   const [URI, setURI] = useState(category.uri)
   const [image, setImage] = useState({
     ...category.image,
-    imageURL: category.imageURL
+    URL: category.imageURL
   })
   const [imageDialogOpen, setImageDialogOpen] = useState(false)
   const classes = dialogStyle()
+  const [images, setImages] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const account = useSelector(state => state.account)
+
   const onImageChange = image => {
     console.log(image)
     setImage(image)
     setImageDialogOpen(false)
   }
+
+  const getImages = () => {
+    console.log(category)
+    if (images.length > 0) return
+    fetch(subjectsURL + category.branch + '/' + category.uri, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        authorization: 'Bearer ' + account.token
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        const { status, result, message } = data
+        console.log(data)
+        if (status === 'error' || status === 500) setError(message)
+        else {
+          result.forEach(async (subject, index) => {
+            if (!subject.defaultImage) {
+              return
+            }
+            try {
+              const response = await fetch(
+                imagesURL +
+                  category.branch +
+                  '/' +
+                  category.uri +
+                  '/' +
+                  subject.uri +
+                  '/' +
+                  subject.defaultImage.filename,
+                {
+                  method: 'GET',
+                  credentials: 'include',
+                  headers: {
+                    authorization: 'Bearer ' + account.token
+                  }
+                }
+              )
+              const image = await response.blob()
+              var imageURL = URL.createObjectURL(image)
+              setImages(images => [
+                ...images,
+                { ...subject.defaultImage, URL: imageURL }
+              ])
+            } catch (error) {
+              console.log(error)
+            }
+          })
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
+  console.log(category)
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -51,9 +116,11 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
         open={imageDialogOpen}
         onClose={() => setImageDialogOpen(false)}
         onChange={onImageChange}
-        selectedImage={image}
-        category={category}
+        currentImage={image}
         classes={classes}
+        onEnter={getImages}
+        loading={loading}
+        images={images}
       />
       <Typography color='secondary' align='center' variant='h5'>
         Επεξεργασία κατηγορίας
@@ -90,7 +157,7 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.media}
-                    image={image.imageURL ? image.imageURL : unavailableImage}
+                    image={image.URL ? image.URL : unavailableImage}
                     title={
                       category.image
                         ? category.image.label
@@ -119,7 +186,10 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
           ΑΚΥΡΟ
         </Button>
         <Button
-          onClick={() => onEdit(name, URI, image.id)}
+          onClick={() => {
+            onClose()
+            onEdit(category, name, URI, image.id)
+          }}
           color='primary'
           variant='contained'
         >

@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/styles'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import { Modal } from '@material-ui/core'
+import ReactImageMagnify from 'react-image-magnify'
 
 const dialogStyle = makeStyles(theme => ({
   root: {
@@ -35,6 +36,9 @@ const ImageDialog = ({ open, images, index, onNext, onPrevious, onClose }) => {
   if (isEmpty(images)) {
     return null
   }
+  var img = new window.Image()
+  img.src = images[index].image
+
   return (
     <Modal open={open} onClose={onClose} className={classes.root}>
       <div className={classes.root}>
@@ -51,10 +55,19 @@ const ImageDialog = ({ open, images, index, onNext, onPrevious, onClose }) => {
             </Fab>
           </Grid>
           <Grid item>
-            <img
-              src={images[index].image}
-              alt={images[index].label}
-              className={classes.img}
+            <ReactImageMagnify {...{
+              smallImage: {
+                alt: images[index].label,
+                isFluidWidth: true,
+                src: img.src
+              },
+              enlargedImagePosition: 'over',
+              largeImage: {
+                src: img.src,
+                width: 3 * img.width,
+                height: 3 * img.height
+              }
+            }}
             />
           </Grid>
           <Grid item>

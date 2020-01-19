@@ -3,7 +3,9 @@ export const actiontypes = {
   DELETE_ACCOUNT: 'DELETE_ACCOUNT',
   TOOGLE_DRAWER: 'TOOGLE_DRAWER',
   SET_CATEGORIES: 'SET_CATGORIES',
-  ADD_IMAGE: 'ADD_IMAGE',
+  ADD_SUBJECT_IMAGE: 'ADD_SUBJECT_IMAGE',
+  DELETE_SUBJECT: 'DELETE_SUBJECT',
+  ADD_SUBJECT: 'ADD_SUBJECT',
   SET_SUBJECTS: 'SET_SUBJECTS',
   SET_IMAGES: 'SET_IMAGES',
   SET_CHECKED: 'SET_CHECKED',
@@ -15,8 +17,9 @@ export const actiontypes = {
   ADD_QUESTION_IMAGE: 'ADD__QUESTION_IMAGE',
   DELETE_CATEGORY: 'DELETE_CATEGORY',
   ADD_CATEGORY: 'ADD_CATEGORY',
-  ADD_CATEGORY_IMAGE: 'ADD_CAT_IMAGE'
+  ADD_CATEGORY_IMAGE: 'ADD_CAT_IMAGE',
+  ADD_IMAGE: 'ADD_IMAGE'
 }
-export const baseURL = 'https://projectapi.ml/'
+// export const baseURL = 'https://projectapi.ml/'
 
-//export const baseURL = 'http://localhost:8080/'
+export const baseURL = 'http://localhost:8080/'

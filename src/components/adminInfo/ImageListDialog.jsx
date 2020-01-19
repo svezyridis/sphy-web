@@ -12,9 +12,6 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import Button from '@material-ui/core/Button'
 import LoadingDialog from '../quiz/LoadingDialog'
-import { fetch } from 'whatwg-fetch'
-import { useSelector, useDispatch } from 'react-redux'
-import { baseURL } from '../../general/constants'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,81 +30,23 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const subjectsURL = baseURL + 'subject/'
-const imagesURL = baseURL + 'image/'
-
 const ImageListDialog = ({
   open,
   currentImage,
   onClose,
   onChange,
-  category
+  onEnter,
+  images,
+  loading
 }) => {
   const classes = useStyles()
   const [selectedImage, setSelectedImage] = useState(currentImage)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [images, setImages] = useState([])
-  const account = useSelector(state => state.account)
-  console.log(images)
-  const getImages = () => {
-    if (images.length > 0) return
-    fetch(subjectsURL + category.branch + '/' + category.uri, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        authorization: 'Bearer ' + account.token
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        const { status, result, message } = data
-        console.log(data)
-        if (status === 'error' || status === 500) setError(message)
-        else {
-          result.forEach(async (subject, index) => {
-            if (!subject.defaultImage) {
-              return
-            }
-            try {
-              const response = await fetch(
-                imagesURL +
-                  category.branch +
-                  '/' +
-                  category.uri +
-                  '/' +
-                  subject.uri +
-                  '/' +
-                  subject.defaultImage.filename,
-                {
-                  method: 'GET',
-                  credentials: 'include',
-                  headers: {
-                    authorization: 'Bearer ' + account.token
-                  }
-                }
-              )
-              const image = await response.blob()
-              var imageURL = URL.createObjectURL(image)
-              setImages(images => [
-                ...images,
-                { ...subject.defaultImage, imageURL }
-              ])
-            } catch (error) {
-              console.log(error)
-            }
-          })
-        }
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  }
 
+  console.log(selectedImage)
   return (
     <>
       <LoadingDialog open={loading} reason='Γίνεται λήψη διαθέσιμων εικόνων' />
-      <Dialog open={open} onEnter={getImages}>
+      <Dialog open={open} onEnter={onEnter}>
         <DialogContent>
           <div className={classes.root}>
             <GridList cellHeight={180} className={classes.gridList}>
@@ -117,17 +56,17 @@ const ImageListDialog = ({
               {images.map((image, index) => (
                 <GridListTile
                   key={index}
-                  onClick={() => setSelectedImage(image.id)}
+                  onClick={() => setSelectedImage(image)}
                 >
-                  <img src={image.imageURL} alt={image.label} />
+                  <img src={image.URL} alt={image.label} />
                   <GridListTileBar
                     title={image.label}
                     actionIcon={
                       <IconButton
                         className={classes.icon}
-                        onClick={() => setSelectedImage(image.id)}
+                        onClick={() => setSelectedImage(image)}
                       >
-                        {selectedImage === image.id ? (
+                        {selectedImage.id === image.id ? (
                           <CheckBoxIcon />
                         ) : (
                           <CheckBoxOutlineBlankIcon />

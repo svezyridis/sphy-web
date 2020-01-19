@@ -32,6 +32,22 @@ export const setSubjects = subjects => ({
   subjects: subjects
 })
 
+export const deleteSubject = id => ({
+  type: C.DELETE_SUBJECT,
+  id: id
+})
+
+export const addSubjectImage = (id, image) => ({
+  type: C.ADD_SUBJECT_IMAGE,
+  id: id,
+  image: image
+})
+
+export const addSubject = (subject) => ({
+  type: C.ADD_SUBJECT,
+  subject: subject
+})
+
 export const setImages = images => ({
   type: C.SET_IMAGES,
   images: images
@@ -39,12 +55,6 @@ export const setImages = images => ({
 
 export const addCategoryImage = (id, image) => ({
   type: C.ADD_CATEGORY_IMAGE,
-  id: id,
-  image: image
-})
-
-export const addImage = (id, image) => ({
-  type: C.ADD_IMAGE,
   id: id,
   image: image
 })
@@ -94,4 +104,10 @@ export const deleteCategory = (id) => ({
 export const addCategory = (category) => ({
   type: C.ADD_CATEGORY,
   category: category
+})
+
+export const addImage = (id, image) => ({
+  type: C.ADD_IMAGE,
+  id: id,
+  image: image
 })

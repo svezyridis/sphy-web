@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Card from '@material-ui/core/Card'
-import Link from '@material-ui/core/Link'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
@@ -12,8 +11,6 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Fab from '@material-ui/core/Fab'
 import { Grid } from '@material-ui/core'
 import DeleteCategoryDialog from '../adminInfo/DeleteCategoryDialog'
-import { baseURL } from '../../general/constants'
-import { fetch } from 'whatwg-fetch'
 import classNames from 'classnames'
 import EditCategoryDialog from '../adminInfo/EditCategoryDialog'
 
@@ -54,7 +51,7 @@ const cardStyle = makeStyles(theme => ({
     right: 0
   }
 }))
-const categoriesURL = baseURL + 'category/'
+
 const CategoryCard = ({
   category,
   admin,
@@ -64,7 +61,6 @@ const CategoryCard = ({
 }) => {
   const classes = cardStyle()
   const history = useHistory()
-  const [error, setError] = useState('')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const handleEdit = () => setEditDialogOpen(true)

@@ -45,7 +45,7 @@ const MainInfo = ({ dark, open, toogleDrawer, account, deleteAccount }) => {
             className={classNames(classes.link, dark && classes.dark)}
           >
             <HomeIcon className={classes.icon} />
-            Home
+            Αρχική
           </Link>
           <Link
             component='button'
@@ -56,7 +56,7 @@ const MainInfo = ({ dark, open, toogleDrawer, account, deleteAccount }) => {
             className={classNames(classes.link, dark && classes.dark)}
           >
             <LocalLibraryIcon className={classes.icon} />
-            Info
+            Εκπαίδευση
           </Link>
         </Breadcrumbs>
         <Typography variant='h3' color='textPrimary' align='center'>

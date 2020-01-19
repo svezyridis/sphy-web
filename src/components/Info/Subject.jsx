@@ -50,7 +50,6 @@ const Subject = ({
   const subjectName = match.params.subject
   var controller = new window.AbortController()
   var signal = controller.signal
-
   const getImages = imageArray => {
     imageArray.forEach(async image => {
       try {
@@ -179,7 +178,7 @@ const Subject = ({
             className={classNames(classes.link, dark && classes.dark)}
           >
             <HomeIcon className={classes.icon} />
-            Home
+            Αρχική
           </Link>
           <Link
             component='button'
@@ -190,7 +189,7 @@ const Subject = ({
             className={classNames(classes.link, dark && classes.dark)}
           >
             <LocalLibraryIcon className={classes.icon} />
-            Info
+            Εκπαίδευση
           </Link>
           <Link
             component='button'
@@ -279,13 +278,12 @@ const Subject = ({
               )}
             >
               <b>
-                <p>{subject.text ? subject.text.split('\n').shift() : null}</p>
+                <p>{subject.general ? 'Γενικά' : null}</p>
               </b>
-              {subject.text
-                ? subject.text
-                    .split('\n')
-                    .slice(1)
-                    .map((paragraph, key) => <p key={key}>{paragraph}</p>)
+              {subject.general
+                ? subject.general
+                  .split('\n')
+                  .map((paragraph, key) => <p key={key}>{paragraph}</p>)
                 : null}
             </Typography>
           </div>

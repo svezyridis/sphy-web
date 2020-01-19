@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
-import { account, open, dark, quizes, categories } from './reducers'
+import { account, open, dark, quizes, categories, subjects } from './reducers'
 
 const logger = store => next => action => {
   console.groupCollapsed('dispatching', action.type)
@@ -18,7 +18,7 @@ const saver = store => next => action => {
 
 const storeFactory = () =>
   applyMiddleware(logger, saver)(createStore)(
-    combineReducers({ account, open, dark, quizes, categories }),
+    combineReducers({ account, open, dark, quizes, categories, subjects }),
     window.localStorage['redux-store']
       ? JSON.parse(window.localStorage['redux-store'])
       : {}

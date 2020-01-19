@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react'
+import React, { useEffect, useState } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
@@ -43,7 +43,7 @@ const Weapon = ({
   const branch = match.params.weapon
 
   const getImageOfCategory = async category => {
-    if (!category.image) { return }
+    if (!(category.image && category.image.filename)) { return }
     try {
       const response = await fetch(
         imagesURL +
@@ -93,6 +93,7 @@ const Weapon = ({
           const categoriesToDelete = []
 
           result.forEach(category => {
+            category = { ...category, branch }
             const storedCategory = find(categories, { id: category.id })
             if (!storedCategory) {
               console.log('category not found')
@@ -184,6 +185,65 @@ const Weapon = ({
       })
   }
 
+  const getNewSubjectAndUpdate = (oldCategory, newURI) => {
+    console.log(oldCategory, newURI)
+    fetch(categoriesURL + 'uri/' + newURI, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        authorization: 'Bearer ' + account.token
+      },
+      signal: signal,
+      cache: 'force-cache'
+    })
+      .then(response => response.json())
+      .then(data => {
+        const { status, result, message } = data
+        console.log(data)
+        if (status === 'error') setError(message)
+        else {
+          deleteCategory(oldCategory.id)
+          addCategory({ ...result, branch })
+          getImageOfCategory(result)
+        }
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+  }
+
+  const handleEditCategory = (category, name, uri, image) => {
+    console.log('editing category')
+    console.log(name, uri, image, category)
+    fetch(categoriesURL + branch + '/' + category.uri, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        authorization: 'Bearer ' + account.token,
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify({ name: name, uri: uri, imageID: image !== 0 ? image : null }),
+      signal: signal
+    })
+      .then(response => response.json())
+      .then(data => {
+        const { status, message } = data
+        if (status === 'error') console.log(message)
+        if (status === 'success') {
+          console.log(message)
+          getNewSubjectAndUpdate(category, uri)
+        }
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+  }
+
   useEffect(() => {
     if (isEmpty(account)) { return }
     getCategories()
@@ -219,7 +279,7 @@ const Weapon = ({
             className={classNames(classes.link, dark && classes.dark)}
           >
             <HomeIcon className={classes.icon} />
-            Home
+            Αρχική
           </Link>
           <Link
             component='button'
@@ -230,7 +290,7 @@ const Weapon = ({
             className={classNames(classes.link, dark && classes.dark)}
           >
             <LocalLibraryIcon className={classes.icon} />
-            Info
+            Εκπαίδευση
           </Link>
           <Link
             component='button'
@@ -262,15 +322,16 @@ const Weapon = ({
                   name={category.name}
                   admin={isAdmin}
                   deleteCategoy={handleDeleteCategory}
+                  editCategory={handleEditCategory}
                   branch={branch}
                 />
               </Grid>
             )
           })}
-          {isAdmin 
+          {isAdmin
             ? <Grid item>
               <NewCategoryCard branch={branch} token={account.token} createCategory={handleCreateCategory} />
-            </Grid> : null}
+              </Grid> : null}
 
         </Grid>
       </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react'
+import React, { useEffect, useState } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
@@ -9,15 +9,13 @@ import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import { fetch } from 'whatwg-fetch'
 import Grid from '@material-ui/core/Grid'
-import { setSubjects, addImage } from '../../store/actions'
-import { subjectsReducer } from '../../store/reducers'
-import sample from 'lodash.sample'
 import SubjectCard from './SubjectCard'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import HomeIcon from '@material-ui/icons/Home'
 import { titleCase, getBranchName } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
+import NewSubjectCard from '../adminInfo/NewSubjectCard'
 
 const subjectsURL = baseURL + 'subject/'
 const imagesURL = baseURL + 'image/'
@@ -27,28 +25,24 @@ const Category = ({
   toogleDrawer,
   account,
   deleteAccount,
+  dark,
+  subjects,
+  setSubjects,
+  addImage,
   match,
   history,
-  location,
-  dark
+  location
 }) => {
   const classes = homeStyle()
   const [error, setError] = useState('')
-  const [subjects, dispatchSubjects] = useReducer(subjectsReducer, [])
   const branch = match.params.weapon
   const category = match.params.category
+  subjects = subjects.filter(subject => subject.category === category)
 
   useEffect(() => {
     var controller = new window.AbortController()
     var signal = controller.signal
-    if (isEmpty(account)) {
-      var tempAccount = window.sessionStorage.getItem('account')
-      if (isEmpty(tempAccount)) {
-        history.push('/login')
-        return null
-      }
-      account = tempAccount
-    }
+    if (isEmpty(account)) { return }
 
     fetch(subjectsURL + branch + '/' + category, {
       method: 'GET',
@@ -64,7 +58,7 @@ const Category = ({
         console.log(data)
         if (status === 'error' || status === 500) setError(message)
         else {
-          dispatchSubjects(setSubjects(result))
+          setSubjects(result)
           result.forEach(async (subject, index) => {
             if (!subject.defaultImage) {
               return
@@ -90,7 +84,7 @@ const Category = ({
               )
               const image = await response.blob()
               var imageUrl = URL.createObjectURL(image)
-              dispatchSubjects(addImage(subject.id, imageUrl))
+              addImage(subject.id, imageUrl)
             } catch (error) {
               if (!controller.signal.aborted) {
                 console.error(error)
@@ -108,6 +102,12 @@ const Category = ({
       controller.abort()
     }
   }, [])
+
+  if (isEmpty(account)) {
+    history.push('/login')
+    return null
+  }
+  const isAdmin = account.metadata.role === 'ADMIN'
 
   return (
     <div className={classes.root}>
@@ -130,7 +130,7 @@ const Category = ({
             className={classNames(classes.link, dark && classes.dark)}
           >
             <HomeIcon className={classes.icon} />
-            Home
+            Αρχική
           </Link>
           <Link
             component='button'
@@ -141,7 +141,7 @@ const Category = ({
             className={classNames(classes.link, dark && classes.dark)}
           >
             <LocalLibraryIcon className={classes.icon} />
-            Info
+            Εκπαίδευση
           </Link>
           <Link
             component='button'
@@ -181,6 +181,11 @@ const Category = ({
               </Grid>
             )
           })}
+          {isAdmin
+            ? <Grid item>
+              <NewSubjectCard branch={branch} token={account.token} />
+            </Grid> : null}
+
         </Grid>
       </div>
       <Copyright open={open} />

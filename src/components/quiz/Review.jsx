@@ -147,7 +147,7 @@ const Review = ({
             className={classNames(classes.link, dark && classes.dark)}
           >
             <HomeIcon className={classes.icon} />
-            Home
+            Αρχική
           </Link>
           <Link
             component='button'

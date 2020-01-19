@@ -124,11 +124,11 @@ const answers = (state, action) => {
   }
 }
 
-export const subjectsReducer = (state, action) => {
+export const subjects = (state = [], action) => {
   switch (action.type) {
     case C.SET_SUBJECTS:
       return action.subjects
-    case C.ADD_IMAGE:
+    case C.ADD_SUBJECT_IMAGE:
       return state.map(subject =>
         subject.id === action.id
           ? {
@@ -137,6 +137,10 @@ export const subjectsReducer = (state, action) => {
           }
           : subject
       )
+    case C.DELETE_SUBJECT:
+      return state.filter(subject => subject.id !== action.id)
+    case C.ADD_SUBJECT:
+      return [...state, action.subject]
     default:
       return state
   }
