@@ -43,9 +43,6 @@ const cardStyle = makeStyles(theme => ({
     fontSize: '20px',
     fontWeight: 200
   },
-  adminMedia: {
-    height: '80%'
-  },
   editIcon: {
     position: 'relative',
     right: 0
@@ -87,23 +84,27 @@ const CategoryCard = ({
         onDeleteCategory={handleDelete}
         category={category.name}
       />
-      <Card elevation={8} raised className={classes.card}>
-        <CardMedia
-          className={classNames(classes.media, admin && classes.adminMedia)}
-          image={category.imageURL}
-          title={category.name.toUpperCase()}
-          onClick={() => {
-            history.push(
-              `/info/${branch.toLowerCase()}/${category.uri.toLowerCase()}`
-            )
-          }}
-        >
-          <Typography className={classes.mediaCaption} align='center'>
-            {category.name.toUpperCase()}
-          </Typography>
-        </CardMedia>
+      <Grid container direction='column' spacing={1}>
+        <Grid item>
+          <Card elevation={8} raised className={classes.card}>
+            <CardMedia
+              className={classes.media}
+              image={category.imageURL}
+              title={category.name.toUpperCase()}
+              onClick={() => {
+                history.push(
+                  `/info/${branch.toLowerCase()}/${category.uri.toLowerCase()}`
+                )
+              }}
+            >
+              <Typography className={classes.mediaCaption} align='center'>
+                {category.name.toUpperCase()}
+              </Typography>
+            </CardMedia>
+          </Card>
+        </Grid>
         {admin ? (
-          <CardActions>
+          <Grid item>
             <Grid
               container
               spacing={1}
@@ -112,22 +113,22 @@ const CategoryCard = ({
             >
               <Grid item className={classes.icon}>
                 <Tooltip title='Επεξεργασία' placement='bottom-start'>
-                  <Fab color='secondary' onClick={handleEdit}>
+                  <Fab color='secondary' onClick={handleEdit} size='small'>
                     <EditIcon />
                   </Fab>
                 </Tooltip>
               </Grid>
               <Grid item className={classes.icon}>
-                <Tooltip title='Διαγραφή' placement='bottom-end'>
+                <Tooltip title='Διαγραφή' placement='bottom-end' size='small'>
                   <Fab onClick={openDeleteDialog}>
                     <DeleteIcon />
                   </Fab>
                 </Tooltip>
               </Grid>
             </Grid>
-          </CardActions>
+          </Grid>
         ) : null}
-      </Card>
+      </Grid>
     </>
   )
 }

@@ -42,7 +42,7 @@ const ImageListDialog = ({
   const classes = useStyles()
   const [selectedImage, setSelectedImage] = useState(currentImage)
 
-  console.log(selectedImage)
+  console.log(images)
   return (
     <>
       <LoadingDialog open={loading} reason='Γίνεται λήψη διαθέσιμων εικόνων' />

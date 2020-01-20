@@ -282,8 +282,8 @@ const Subject = ({
               </b>
               {subject.general
                 ? subject.general
-                  .split('\n')
-                  .map((paragraph, key) => <p key={key}>{paragraph}</p>)
+                    .split('\n')
+                    .map((paragraph, key) => <p key={key}>{paragraph}</p>)
                 : null}
             </Typography>
           </div>

@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
-import { Typography, Grid } from '@material-ui/core'
+import { Typography, Grid, Tooltip } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import GridList from '@material-ui/core/GridList'
 import GridListTile from '@material-ui/core/GridListTile'
@@ -15,6 +15,8 @@ import Card from '@material-ui/core/Card'
 import CardMedia from '@material-ui/core/CardMedia'
 import classNames from 'classnames'
 import find from 'lodash.find'
+import IconButton from '@material-ui/core/IconButton'
+import DeleteIcon from '@material-ui/icons/Delete'
 
 const dialogStyle = makeStyles(theme => ({
   '@global': {
@@ -105,7 +107,7 @@ const dialogStyle = makeStyles(theme => ({
     borderColor: 'lightgrey',
     borderRadius: '5px',
     width: 500,
-    height: 300,
+    height: 320,
     padding: '4px',
     display: 'inline-block',
     flexWrap: 'wrap',
@@ -114,6 +116,9 @@ const dialogStyle = makeStyles(theme => ({
   label: {
     color: 'white',
     borderColor: 'white'
+  },
+  icon: {
+    color: 'rgba(255,255,255,0.8)'
   }
 }))
 
@@ -134,29 +139,31 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
   const [images, setImages] = useState([])
   const textFieldClasses = customTextfieldStyle()
 
-  const onDrop = useCallback(acceptedFiles => {
-    acceptedFiles.forEach(file => {
-      const reader = new window.FileReader()
-      reader.onabort = () => console.log('file reading was aborted')
-      reader.onerror = () => console.log('file reading has failed')
-      reader.onload = () => {
-        console.log(images)
-        const src = reader.result
-        const files = images.map(image => image.file)
-        console.log(files)
-        console.log(file)
-        if (find(files, { name: file.name })) return
-        setImages(images => [...images, { file, src }])
-      }
-      if (file) {
-        reader.readAsDataURL(file)
-      }
-    })
-  }, [images])
+  const onDrop = useCallback(
+    acceptedFiles => {
+      acceptedFiles.forEach(file => {
+        const reader = new window.FileReader()
+        reader.onabort = () => console.log('file reading was aborted')
+        reader.onerror = () => console.log('file reading has failed')
+        reader.onload = () => {
+          const src = reader.result
+          const files = images.map(image => image.file)
+          if (find(files, { name: file.name })) return
+          setImages(images => [...images, { file, src }])
+        }
+        if (file) {
+          reader.readAsDataURL(file)
+        }
+      })
+    },
+    [images]
+  )
 
   const {
-    getRootProps, getInputProps,
-    open, acceptedFiles,
+    getRootProps,
+    getInputProps,
+    open,
+    acceptedFiles,
     isDragActive
   } = useDropzone({
     // Disable click and keydown behavior
@@ -167,8 +174,15 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
   })
 
   const setLabel = (filename, label) => {
-    setImages(images => images.map(image => image.file.name === filename ? { ...image, label } : image
-    ))
+    setImages(images =>
+      images.map(image =>
+        image.file.name === filename ? { ...image, label } : image
+      )
+    )
+  }
+
+  const deleteImage = filename => {
+    setImages(images => images.filter(image => image.file.name !== filename))
   }
 
   return (
@@ -177,6 +191,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
       onClose={onClose}
       className={classes.dialog}
       classes={{ paper: classes.dialog }}
+      disableBackdropClick
     >
       <Typography color='secondary' align='center' variant='h5'>
         Δημιουργία νέου θέματος
@@ -227,7 +242,14 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
         />
         <Grid container spacing={2}>
           <Grid item>
-            <div {...getRootProps({ className: classNames(classes.dropzone, isDragActive && classes.dropzoneActive) })}>
+            <div
+              {...getRootProps({
+                className: classNames(
+                  classes.dropzone,
+                  isDragActive && classes.dropzoneActive
+                )
+              })}
+            >
               <input {...getInputProps()} />
               <Card elevation={8} raised className={classes.card}>
                 <CardMedia
@@ -235,15 +257,20 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                   image={addNewImage}
                   title='Προθέστε φωτογραφίες'
                 >
-                  <Typography className={classes.mediaCaption} variant='caption' align='center'>
-            Σείρετε φωτογραφίες
+                  <Typography
+                    className={classes.mediaCaption}
+                    variant='caption'
+                    align='center'
+                  >
+                    Σύρετε φωτογραφίες
                   </Typography>
                 </CardMedia>
               </Card>
             </div>
-            <p>{'ή κλικ  '}
+            <p>
+              {'ή κλικ  '}
               <span>
-                <Button variant='contained' onClick={open}>
+                <Button variant='outlined' onClick={open} color='primary'>
                   ΕΔΩ
                 </Button>
                 {' για να επιλέξετε'}
@@ -265,11 +292,24 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                           InputProps={{
                             classes: textFieldClasses
                           }}
-                          onChange={e => setLabel(image.file.name, e.target.value)}
+                          onChange={e =>
+                            setLabel(image.file.name, e.target.value)
+                          }
                         />
                       }
+                      actionIcon={
+                        <Tooltip title='Διαγραφή εικόνας'>
+                          <IconButton
+                            className={classes.icon}
+                            onClick={() => deleteImage(image.file.name)}
+                          >
+                            <DeleteIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
+                      }
                     />
-                  </GridListTile>)
+                  </GridListTile>
+                )
               })}
             </GridList>
           </Grid>
@@ -280,7 +320,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
           ΑΚΥΡΟ
         </Button>
         <Button
-          onClick={() => onCreate(name, URI)}
+          onClick={() => onCreate(name, URI, general, units, images)}
           color='primary'
           variant='contained'
         >

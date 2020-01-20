@@ -43,7 +43,9 @@ const Weapon = ({
   const branch = match.params.weapon
 
   const getImageOfCategory = async category => {
-    if (!(category.image && category.image.filename)) { return }
+    if (!(category.image && category.image.filename)) {
+      return
+    }
     try {
       const response = await fetch(
         imagesURL +
@@ -137,7 +139,7 @@ const Weapon = ({
       })
   }
 
-  const handleDeleteCategory = (category) => {
+  const handleDeleteCategory = category => {
     fetch(categoriesURL + branch + '/' + category.uri, {
       method: 'DELETE',
       credentials: 'include',
@@ -150,7 +152,9 @@ const Weapon = ({
       .then(data => {
         const { status, message } = data
         console.log(message)
-        if (status === 'success') { deleteCategory(category.id) }
+        if (status === 'success') {
+          deleteCategory(category.id)
+        }
       })
       .catch(error => {
         if (!controller.signal.aborted) {
@@ -176,7 +180,9 @@ const Weapon = ({
       .then(data => {
         const { status, result, message } = data
         if (status === 'error') console.log(message)
-        if (status === 'success') { addCategory(result) }
+        if (status === 'success') {
+          addCategory(result)
+        }
       })
       .catch(error => {
         if (!controller.signal.aborted) {
@@ -225,7 +231,11 @@ const Weapon = ({
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
-      body: JSON.stringify({ name: name, uri: uri, imageID: image !== 0 ? image : null }),
+      body: JSON.stringify({
+        name: name,
+        uri: uri,
+        imageID: image !== 0 ? image : null
+      }),
       signal: signal
     })
       .then(response => response.json())
@@ -245,7 +255,9 @@ const Weapon = ({
   }
 
   useEffect(() => {
-    if (isEmpty(account)) { return }
+    if (isEmpty(account)) {
+      return
+    }
     getCategories()
     return () => {
       controller.abort()
@@ -328,11 +340,15 @@ const Weapon = ({
               </Grid>
             )
           })}
-          {isAdmin
-            ? <Grid item>
-              <NewCategoryCard branch={branch} token={account.token} createCategory={handleCreateCategory} />
-              </Grid> : null}
-
+          {isAdmin ? (
+            <Grid item>
+              <NewCategoryCard
+                branch={branch}
+                token={account.token}
+                createCategory={handleCreateCategory}
+              />
+            </Grid>
+          ) : null}
         </Grid>
       </div>
       <Copyright open={open} />

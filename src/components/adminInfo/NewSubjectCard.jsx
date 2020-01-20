@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
 import addNewImage from '../../images/addNew.png'
 import CreateSubjectDialog from './CreateSubjectDialog'
+import { useRouteMatch } from 'react-router-dom'
 
 const cardStyle = makeStyles(theme => ({
   card: {
@@ -48,15 +49,20 @@ const cardStyle = makeStyles(theme => ({
   }
 }))
 
-const NewSubjectCard = ({ branch, token, createSubject }) => {
+const NewSubjectCard = () => {
   const classes = cardStyle()
   const [error, setError] = useState('')
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const controller = new window.AbortController()
   const signal = controller.signal
+  const match = useRouteMatch()
+  const branch = match.params.weapon
+  const category = match.params.category
   const onClose = () => setCreateDialogOpen(false)
-  const onCreate = (name, uri) => {
-    createSubject(name, uri)
+  const onCreate = (name, uri, general, units, images) => {
+    console.log(branch)
+    console.log(category)
+    console.log(name, uri, general, units, images)
     setCreateDialogOpen(false)
   }
   return (
@@ -64,6 +70,7 @@ const NewSubjectCard = ({ branch, token, createSubject }) => {
       <CreateSubjectDialog
         dialogOpen={createDialogOpen}
         onCreate={onCreate}
+        onClose={onClose}
       />
       <Card elevation={8} raised className={classes.card}>
         <CardMedia

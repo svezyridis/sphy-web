@@ -49,13 +49,12 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
   const account = useSelector(state => state.account)
 
   const onImageChange = image => {
-    console.log(image)
     setImage(image)
     setImageDialogOpen(false)
   }
 
   const getImages = () => {
-    console.log(category)
+    console.log('getting images')
     if (images.length > 0) return
     fetch(subjectsURL + category.branch + '/' + category.uri, {
       method: 'GET',
@@ -94,6 +93,7 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
               )
               const image = await response.blob()
               var imageURL = URL.createObjectURL(image)
+              console.log(imageURL)
               setImages(images => [
                 ...images,
                 { ...subject.defaultImage, URL: imageURL }
