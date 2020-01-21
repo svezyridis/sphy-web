@@ -6,6 +6,10 @@ import { makeStyles } from '@material-ui/styles'
 import addNewImage from '../../images/addNew.png'
 import CreateSubjectDialog from './CreateSubjectDialog'
 import { useRouteMatch } from 'react-router-dom'
+import { baseURL } from '../../general/constants'
+import { useSelector } from 'react-redux'
+import { fetch } from 'whatwg-fetch'
+import find from 'lodash.find'
 
 const cardStyle = makeStyles(theme => ({
   card: {
@@ -49,7 +53,10 @@ const cardStyle = makeStyles(theme => ({
   }
 }))
 
-const NewSubjectCard = () => {
+const subjectsURL = baseURL + 'subject/'
+const imagesURL = baseURL + 'image/'
+
+const NewSubjectCard = ({ addSubject, addImage }) => {
   const classes = cardStyle()
   const [error, setError] = useState('')
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
@@ -58,11 +65,71 @@ const NewSubjectCard = () => {
   const match = useRouteMatch()
   const branch = match.params.weapon
   const category = match.params.category
+  const account = useSelector(state => state.account)
   const onClose = () => setCreateDialogOpen(false)
+
+  const postImages = (subjectURI, imageArray) => {
+    imageArray.forEach(async image => {
+      console.log(image)
+      const formData = new FormData()
+      formData.append('file', image.file)
+      formData.append('label', image.label)
+      formData.append('isDefault', image.default)
+
+      try {
+        const response = await fetch(
+          imagesURL + branch + '/' + category.toLowerCase() + '/' + subjectURI,
+          {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              authorization: 'Bearer ' + account.token,
+              Accept: 'application/json'
+            },
+            body: formData
+          }
+        )
+        const data = await response.json()
+        console.log(data)
+      } catch (error) {
+        console.error(error)
+      }
+    })
+  }
   const onCreate = (name, uri, general, units, images) => {
-    console.log(branch)
-    console.log(category)
-    console.log(name, uri, general, units, images)
+    console.log('creating subject')
+    console.log(images)
+    fetch(subjectsURL + branch + '/' + category, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        authorization: 'Bearer ' + account.token,
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify({
+        name: name.length > 0 ? name : null,
+        uri: uri.length > 0 ? uri : null,
+        general: general.length > 0 ? general : null,
+        units: units.length > 0 ? units : null
+      }),
+      signal: signal
+    })
+      .then(response => response.json())
+      .then(data => {
+        const { status, result, message } = data
+        if (status === 'error') console.log(message)
+        if (status === 'success') {
+          addSubject(result)
+          addImage(result.id, find(images, { default: true }).src)
+          postImages(result.uri, images)
+        }
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
     setCreateDialogOpen(false)
   }
   return (

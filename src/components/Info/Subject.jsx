@@ -47,7 +47,7 @@ const Subject = ({
   const gridList = useRef(null)
   const branch = match.params.weapon
   const category = match.params.category
-  const subjectName = match.params.subject
+  const subjectURI = match.params.subject
   var controller = new window.AbortController()
   var signal = controller.signal
   const getImages = imageArray => {
@@ -59,7 +59,7 @@ const Subject = ({
             '/' +
             category.toLowerCase() +
             '/' +
-            subjectName +
+            subjectURI +
             '/' +
             image.filename,
           {
@@ -113,7 +113,7 @@ const Subject = ({
     }
 
     if (!location.state) {
-      fetch(subjectsURL + subjectName, {
+      fetch(subjectsURL + subjectURI, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -209,7 +209,7 @@ const Subject = ({
             }}
             className={classNames(classes.link, dark && classes.dark)}
           >
-            {titleCase(category)}
+            {category}
           </Link>
           <Link
             component='button'

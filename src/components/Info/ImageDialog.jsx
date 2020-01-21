@@ -13,12 +13,14 @@ const dialogStyle = makeStyles(theme => ({
   root: {
     width: 'min-content',
     margin: 'auto',
-    marginTop: '10%',
     outline: 'none'
   },
   grid: {
-    width: '950px',
-    backgroundColor: 'transparent'
+    minWidth: '950px',
+    height: '900px',
+    backgroundColor: 'transparent',
+    margin: 'auto',
+    zIndex: 1500
   },
   img: {
     width: 'auto',
@@ -29,6 +31,10 @@ const dialogStyle = makeStyles(theme => ({
   },
   button: {
     opacity: 0.4
+  },
+  image: {
+    maxWidth: '800px',
+    maxHeight: '800px'
   }
 }))
 const ImageDialog = ({ open, images, index, onNext, onPrevious, onClose }) => {
@@ -55,20 +61,25 @@ const ImageDialog = ({ open, images, index, onNext, onPrevious, onClose }) => {
             </Fab>
           </Grid>
           <Grid item>
-            <ReactImageMagnify {...{
-              smallImage: {
-                alt: images[index].label,
-                isFluidWidth: true,
-                src: img.src
-              },
-              enlargedImagePosition: 'over',
-              largeImage: {
-                src: img.src,
-                width: 3 * img.width,
-                height: 3 * img.height
-              }
-            }}
+            <ReactImageMagnify
+              className={classes.image}
+              {...{
+                smallImage: {
+                  alt: images[index].label,
+                  isFluidWidth: true,
+                  src: img.src
+                },
+                enlargedImagePosition: 'over',
+                largeImage: {
+                  src: img.src,
+                  width: 3 * img.width,
+                  height: 3 * img.height
+                }
+              }}
             />
+            <Typography align='center' variant='h6' className={classes.label}>
+              {images[index].label}
+            </Typography>
           </Grid>
           <Grid item>
             <Fab color='default' onClick={onNext} className={classes.button}>
@@ -76,9 +87,6 @@ const ImageDialog = ({ open, images, index, onNext, onPrevious, onClose }) => {
             </Fab>
           </Grid>
         </Grid>
-        <Typography align='center' variant='h6' className={classes.label}>
-          {images[index].label}
-        </Typography>
       </div>
     </Modal>
   )

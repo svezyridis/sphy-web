@@ -158,12 +158,13 @@ const homeStyle = makeStyles(theme => ({
   infoContent: {
     position: 'relative',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    width: '100%'
   },
   gridList: {
     flexWrap: 'nowrap',
-
     height: '30%',
+    minHeight: '120px',
     margin: 0,
     overflow: 'hidden',
     width: '100.3%'

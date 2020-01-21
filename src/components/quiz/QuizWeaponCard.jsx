@@ -15,8 +15,8 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItem from '@material-ui/core/ListItem'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Checkbox from '@material-ui/core/Checkbox'
-import { setCategories, setChecked } from '../../store/actions'
-import { categoriesReducer } from '../../store/reducers'
+import find from 'lodash.find'
+import isEqual from 'lodash.isequal'
 import { fetch } from 'whatwg-fetch'
 import {
   getBranchInitials,
@@ -97,7 +97,8 @@ const QuizWeaponCard = ({
   account,
   onCategoriesChange,
   categories,
-  setCategories,
+  addCategory,
+  deleteCategory,
   setChecked
 }) => {
   const classes = useStyles()
@@ -105,12 +106,6 @@ const QuizWeaponCard = ({
   const [error, setError] = useState('')
   var controller = new window.AbortController()
   var signal = controller.signal
-
-  const handleChange = event => {
-    categories.forEach(category => {
-      setChecked(category.id, event.target.checked)
-    })
-  }
 
   const handleExpandClick = () => {
     setExpanded(!expanded)
@@ -123,7 +118,17 @@ const QuizWeaponCard = ({
     setChecked(category.id, !category.checked)
   }
 
-  const noOfCheckedCategories = categories.reduce(
+  const categoriesOfBranch = categories.filter(
+    category => category.branch === branch
+  )
+
+  const handleChange = event => {
+    categoriesOfBranch.forEach(category => {
+      setChecked(category.id, event.target.checked)
+    })
+  }
+
+  const noOfCheckedCategories = categoriesOfBranch.reduce(
     (accumulator, currentValue) =>
       currentValue.checked ? accumulator + 1 : accumulator,
     0
@@ -144,7 +149,43 @@ const QuizWeaponCard = ({
         console.log(data)
         if (status === 'error') setError(message)
         else {
-          setCategories(result)
+          // Compare new categories with stored ones and make the necessary changes
+          const newCategories = []
+          const categoriesToDelete = []
+          result.forEach(category => {
+            category = { ...category, branch }
+            const storedCategory = find(categories, { id: category.id })
+            if (!storedCategory) {
+              newCategories.push(category)
+              return
+            }
+            const {
+              imageURL,
+              checked,
+              ...originalCategoryObject
+            } = storedCategory
+            if (
+              !isEqual(originalCategoryObject, category) &&
+              category.branch === branch
+            ) {
+              console.log('category found but not equal')
+              newCategories.push(category)
+              categoriesToDelete.push(storedCategory)
+            }
+          })
+          categories.forEach(category => {
+            if (
+              !find(result, { id: category.id }) &&
+              category.branch === branch
+            ) {
+              categoriesToDelete.push(category)
+            }
+          })
+          categoriesToDelete.forEach(category => deleteCategory(category.id))
+          // add new categories and fetch their images
+          newCategories.forEach(category => {
+            addCategory({ ...category, branch })
+          })
         }
       })
       .catch(error => {
@@ -208,7 +249,7 @@ const QuizWeaponCard = ({
         <Collapse in={expanded} timeout='auto' unmountOnExit>
           <CardContent>
             <List dense className={classes.list}>
-              {categories.map((category, index) => {
+              {categoriesOfBranch.map((category, index) => {
                 return (
                   <Fragment key={index}>
                     <ListItem button onClick={handleCategoryChecked(category)}>

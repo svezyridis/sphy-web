@@ -41,8 +41,8 @@ const dialogStyle = makeStyles(theme => ({
     }
   },
   dialog: {
-    minWidth: '900px',
-    minHeight: '1100px'
+    minWidth: '800px',
+    maxHeight: '900px'
   },
   input: {
     maxWidth: '300px',
@@ -107,10 +107,10 @@ const dialogStyle = makeStyles(theme => ({
   imageList: {
     border: '1px',
     borderStyle: 'solid',
-    borderColor: 'lightgrey',
+    borderColor: 'grey',
     borderRadius: '5px',
-    width: 540,
-    height: 420,
+    width: 440,
+    height: 340,
     padding: '4px',
     display: 'inline-block',
     flexWrap: 'wrap',
@@ -118,18 +118,38 @@ const dialogStyle = makeStyles(theme => ({
   },
   label: {
     color: 'white',
-    borderColor: 'white'
+    borderColor: 'white',
+    position: 'absolute',
+    bottom: 0
   },
   icon: {
     color: 'rgba(255,255,255,0.8)'
+  },
+  tile: {
+    position: 'relative',
+    height: '100%'
+  },
+  image: {
+    height: '100%',
+    position: 'absolute',
+    width: '100%'
+  },
+  actionIcons: {
+    position: 'absolute',
+    top: 0
+  },
+  MuiIconButton: {
+    backgroundColor: 'red'
   }
 }))
 
 const customTextfieldStyle = makeStyles(theme => ({
   root: {
-    backgroundColor: 'transparent',
+    position: 'absolute',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     borderColor: 'white',
-    color: 'white'
+    color: 'white',
+    bottom: 0
   }
 }))
 
@@ -140,7 +160,6 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
   const [units, setUnits] = useState('')
   const classes = dialogStyle()
   const [images, setImages] = useState([])
-  const [defaultImage, setDefaultImage] = useState(null)
   const textFieldClasses = customTextfieldStyle()
 
   const onDrop = useCallback(
@@ -153,7 +172,15 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
           const src = reader.result
           const files = images.map(image => image.file)
           if (find(files, { name: file.name })) return
-          setImages(images => [...images, { file, src }])
+          setImages(images => [
+            ...images,
+            {
+              file,
+              src,
+              default: images.length === 0,
+              label: ''
+            }
+          ])
         }
         if (file) {
           reader.readAsDataURL(file)
@@ -162,6 +189,16 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
     },
     [images]
   )
+
+  const setDefaultImage = defaultImage => {
+    setImages(images =>
+      images.map(image =>
+        defaultImage.file.name === image.file.name
+          ? { ...image, default: true }
+          : { ...image, default: false }
+      )
+    )
+  }
 
   const {
     getRootProps,
@@ -286,34 +323,37 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
               {images.map((image, index) => {
                 return (
                   <GridListTile key={index}>
-                    <img src={image.src} />
-                    <GridListTileBar
-                      title={
-                        <TextField
-                          placeholder='Προσθέστε περιγραφή'
-                          fullWidth
-                          value={image.label ? image.label : ''}
-                          InputProps={{
-                            classes: textFieldClasses
-                          }}
-                          onChange={e =>
-                            setLabel(image.file.name, e.target.value)}
-                        />
-                      }
-                      actionIcon={
-                        <>
+                    <div className={classes.tile}>
+                      <img src={image.src} className={classes.image} />
+                      <TextField
+                        placeholder='  Προσθέστε περιγραφή'
+                        fullWidth
+                        className={classes.label}
+                        value={image.label ? image.label : ''}
+                        inputProps={{ style: { textAlign: 'center' } }} // the change is here
+                        InputProps={{
+                          classes: textFieldClasses
+                        }}
+                        onChange={e =>
+                          setLabel(image.file.name, e.target.value)
+                        }
+                      />
+                      <Grid container justify='flex-end'>
+                        <Grid item>
                           <Tooltip title='Εικόνα εξοφύλλου'>
                             <IconButton
                               className={classes.icon}
                               onClick={() => setDefaultImage(image)}
                             >
-                              {defaultImage && defaultImage.file.name === image.file.name ? (
+                              {image.default ? (
                                 <CheckBoxIcon fontSize='small' />
                               ) : (
                                 <CheckBoxOutlineBlankIcon fontSize='small' />
                               )}
                             </IconButton>
                           </Tooltip>
+                        </Grid>
+                        <Grid item>
                           <Tooltip title='Διαγραφή εικόνας'>
                             <IconButton
                               className={classes.icon}
@@ -322,9 +362,9 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                               <DeleteIcon fontSize='small' />
                             </IconButton>
                           </Tooltip>
-                        </>
-                      }
-                    />
+                        </Grid>
+                      </Grid>
+                    </div>
                   </GridListTile>
                 )
               })}

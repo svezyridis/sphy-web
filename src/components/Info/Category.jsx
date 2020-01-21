@@ -29,6 +29,7 @@ const Category = ({
   subjects,
   setSubjects,
   addImage,
+  addSubject,
   match,
   history,
   location
@@ -42,7 +43,9 @@ const Category = ({
   useEffect(() => {
     var controller = new window.AbortController()
     var signal = controller.signal
-    if (isEmpty(account)) { return }
+    if (isEmpty(account)) {
+      return
+    }
 
     fetch(subjectsURL + branch + '/' + category, {
       method: 'GET',
@@ -60,7 +63,7 @@ const Category = ({
         else {
           setSubjects(result)
           result.forEach(async (subject, index) => {
-            if (!subject.defaultImage) {
+            if (!(subject.defaultImage && subject.defaultImage.filename)) {
               return
             }
             try {
@@ -181,11 +184,11 @@ const Category = ({
               </Grid>
             )
           })}
-          {isAdmin
-            ? <Grid item>
-              <NewSubjectCard branch={branch} token={account.token} />
-            </Grid> : null}
-
+          {isAdmin ? (
+            <Grid item>
+              <NewSubjectCard addSubject={addSubject} addImage={addImage} />
+            </Grid>
+          ) : null}
         </Grid>
       </div>
       <Copyright open={open} />

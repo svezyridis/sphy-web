@@ -8,7 +8,9 @@ import {
   addQuestionImage,
   selectOption,
   setCategories,
-  setChecked
+  setChecked,
+  deleteCategory,
+  addCategory
 } from '../../store/actions'
 import Quiz from '../quiz/Quiz'
 import Question from '../quiz/Question'
@@ -38,8 +40,14 @@ export const QuizContainer = connect(
     deleteQuiz (username) {
       dispatch(deleteQuiz(username))
     },
+    deleteCategory (id) {
+      dispatch(deleteCategory(id))
+    },
     setCategories (categories) {
       dispatch(setCategories(categories))
+    },
+    addCategory (category) {
+      dispatch(addCategory(category))
     },
     setChecked (categoryID, checked) {
       dispatch(setChecked(categoryID, checked))

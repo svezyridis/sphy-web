@@ -1,8 +1,15 @@
 import { connect } from 'react-redux'
 import {
-  toogleDrawer, deleteAccount, deleteCategory,
-  setCategories, addCategoryImage, addCategory,
-  setSubjects, addSubject, deleteSubject, addSubjectImage
+  toogleDrawer,
+  deleteAccount,
+  deleteCategory,
+  setCategories,
+  addCategoryImage,
+  addCategory,
+  setSubjects,
+  addSubject,
+  deleteSubject,
+  addSubjectImage
 } from '../../store/actions'
 import MainInfo from '../Info/Main'
 import Weapon from '../Info/Weapon'
@@ -51,7 +58,6 @@ export const WeaponContainer = connect(
     addCategory (category) {
       dispatch(addCategory(category))
     }
-
   })
 )(Weapon)
 
@@ -74,6 +80,9 @@ export const CategoryContainer = connect(
     },
     addImage (subjectID, url) {
       dispatch(addSubjectImage(subjectID, url))
+    },
+    addSubject (subject) {
+      dispatch(addSubject(subject))
     }
   })
 )(Category)

@@ -35,7 +35,8 @@ const Quiz = ({
   createQuiz,
   addQuestion,
   categories,
-  setCategories,
+  deleteCategory,
+  addCategory,
   setChecked,
   history
 }) => {
@@ -151,6 +152,7 @@ const Quiz = ({
   const continueQuiz = () => console.log(history.push('/question/1'))
   const onDeleteQuiz = () => deleteQuiz(username)
   const reviewQuiz = () => console.log('review')
+  console.log(categories)
 
   return (
     <div className={classes.root}>
@@ -213,6 +215,10 @@ const Quiz = ({
               account={account}
               dark={dark}
               onCategoriesChange={onCategoriesChange('army')}
+              categories={categories}
+              addCategory={addCategory}
+              setChecked={setChecked}
+              deleteCategory={deleteCategory}
             />
           </Grid>
           <Grid item>
@@ -222,6 +228,10 @@ const Quiz = ({
               account={account}
               dark={dark}
               onCategoriesChange={onCategoriesChange('navy')}
+              categories={categories}
+              addCategory={addCategory}
+              setChecked={setChecked}
+              deleteCategory={deleteCategory}
             />
           </Grid>
           <Grid item>
@@ -231,6 +241,10 @@ const Quiz = ({
               account={account}
               dark={dark}
               onCategoriesChange={onCategoriesChange('airforce')}
+              categories={categories}
+              addCategory={addCategory}
+              deleteCategory={deleteCategory}
+              setChecked={setChecked}
             />
           </Grid>
         </Grid>
