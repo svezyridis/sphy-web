@@ -9,6 +9,8 @@ import { makeStyles } from '@material-ui/styles'
 import GridList from '@material-ui/core/GridList'
 import GridListTile from '@material-ui/core/GridListTile'
 import GridListTileBar from '@material-ui/core/GridListTileBar'
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import addNewImage from '../../images/addNew.png'
 import { useDropzone } from 'react-dropzone'
 import Card from '@material-ui/core/Card'
@@ -39,7 +41,8 @@ const dialogStyle = makeStyles(theme => ({
     }
   },
   dialog: {
-    minWidth: '820px'
+    minWidth: '900px',
+    minHeight: '1100px'
   },
   input: {
     maxWidth: '300px',
@@ -70,8 +73,8 @@ const dialogStyle = makeStyles(theme => ({
     maxHeight: '100%'
   },
   card: {
-    width: '250px',
-    height: '200px'
+    width: '300px',
+    height: '250px'
   },
   dropzone: {
     border: '3px',
@@ -106,8 +109,8 @@ const dialogStyle = makeStyles(theme => ({
     borderStyle: 'solid',
     borderColor: 'lightgrey',
     borderRadius: '5px',
-    width: 500,
-    height: 320,
+    width: 540,
+    height: 420,
     padding: '4px',
     display: 'inline-block',
     flexWrap: 'wrap',
@@ -137,6 +140,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
   const [units, setUnits] = useState('')
   const classes = dialogStyle()
   const [images, setImages] = useState([])
+  const [defaultImage, setDefaultImage] = useState(null)
   const textFieldClasses = customTextfieldStyle()
 
   const onDrop = useCallback(
@@ -293,19 +297,32 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                             classes: textFieldClasses
                           }}
                           onChange={e =>
-                            setLabel(image.file.name, e.target.value)
-                          }
+                            setLabel(image.file.name, e.target.value)}
                         />
                       }
                       actionIcon={
-                        <Tooltip title='Διαγραφή εικόνας'>
-                          <IconButton
-                            className={classes.icon}
-                            onClick={() => deleteImage(image.file.name)}
-                          >
-                            <DeleteIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
+                        <>
+                          <Tooltip title='Εικόνα εξοφύλλου'>
+                            <IconButton
+                              className={classes.icon}
+                              onClick={() => setDefaultImage(image)}
+                            >
+                              {defaultImage && defaultImage.file.name === image.file.name ? (
+                                <CheckBoxIcon fontSize='small' />
+                              ) : (
+                                <CheckBoxOutlineBlankIcon fontSize='small' />
+                              )}
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title='Διαγραφή εικόνας'>
+                            <IconButton
+                              className={classes.icon}
+                              onClick={() => deleteImage(image.file.name)}
+                            >
+                              <DeleteIcon fontSize='small' />
+                            </IconButton>
+                          </Tooltip>
+                        </>
                       }
                     />
                   </GridListTile>
