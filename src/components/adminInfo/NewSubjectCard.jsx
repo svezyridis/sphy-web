@@ -10,6 +10,7 @@ import { baseURL } from '../../general/constants'
 import { useSelector } from 'react-redux'
 import { fetch } from 'whatwg-fetch'
 import find from 'lodash.find'
+import LoadingDialog from '../quiz/LoadingDialog'
 
 const cardStyle = makeStyles(theme => ({
   card: {
@@ -67,8 +68,11 @@ const NewSubjectCard = ({ addSubject, addImage }) => {
   const category = match.params.category
   const account = useSelector(state => state.account)
   const onClose = () => setCreateDialogOpen(false)
+  const [imageUploadCounter, setImageUploadCounter] = useState(0)
+  const [imageUploadError, setImageUploadError] = useState(false)
 
   const postImages = (subjectURI, imageArray) => {
+    setImageUploadCounter(imageArray.length)
     imageArray.forEach(async image => {
       console.log(image)
       const formData = new FormData()
@@ -91,8 +95,11 @@ const NewSubjectCard = ({ addSubject, addImage }) => {
         )
         const data = await response.json()
         console.log(data)
+        setImageUploadCounter(imageUploadCounter => imageUploadCounter - 1)
       } catch (error) {
         console.error(error)
+        setImageUploadCounter(imageUploadCounter => imageUploadCounter - 1)
+        setImageUploadError(true)
       }
     })
   }
@@ -132,8 +139,21 @@ const NewSubjectCard = ({ addSubject, addImage }) => {
       })
     setCreateDialogOpen(false)
   }
+  console.log("Outside:"+imageUploadCounter)
+  
+  let loader = null
+
+  if(imageUploadCounter > 0){
+    loader= (
+      <LoadingDialog
+            open={imageUploadCounter > 0} 
+            reason={`Απομένουν ${imageUploadCounter} φωτογραφίες`}/>
+    )
+  }
+
   return (
     <>
+      {loader}
       <CreateSubjectDialog
         dialogOpen={createDialogOpen}
         onCreate={onCreate}
