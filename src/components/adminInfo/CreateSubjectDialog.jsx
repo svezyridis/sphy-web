@@ -158,6 +158,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
   const [URI, setURI] = useState('')
   const [general, setGeneral] = useState('')
   const [units, setUnits] = useState('')
+  const [errors, setErrors] = useState({ nameError: false, UriError: false })
   const classes = dialogStyle()
   const [images, setImages] = useState([])
   const textFieldClasses = customTextfieldStyle()
@@ -226,6 +227,19 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
     setImages(images => images.filter(image => image.file.name !== filename))
   }
 
+  const validateInput = () => {
+    
+    setErrors({
+        ...errors,
+        nameError: name === '',
+        UriError: !/^[a-z0-9-]+$/.test(URI)
+    })
+    if(!((name === '')||(!/^[a-z0-9-]+$/.test(URI)))){
+      onCreate(name, URI, general, units, images)
+    }
+  }
+  console.log(errors)
+
   return (
     <Dialog
       open={dialogOpen}
@@ -239,8 +253,9 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
       </Typography>
       <DialogContent className={classes.content}>
         <TextField
+          error={errors.nameError}
           label='Όνομα'
-          helperText='Το όνομα του νέου θέματος'
+          helperText={errors.nameError?'To όνομα είναι κενό':'Το όνομα του νέου θέματος'}
           margin='normal'
           variant='outlined'
           value={name}
@@ -250,8 +265,9 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
           onChange={e => setName(e.target.value)}
         />
         <TextField
+          error={errors.UriError}
           label='URI'
-          helperText='Mόνο λατινικοί χαρακτήρες και παύλα'
+          helperText='Mόνο πεζοί λατινικοί χαρακτήρες και παύλα'
           margin='normal'
           variant='outlined'
           value={URI}
@@ -348,8 +364,8 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                               {image.default ? (
                                 <CheckBoxIcon fontSize='small' />
                               ) : (
-                                <CheckBoxOutlineBlankIcon fontSize='small' />
-                              )}
+                                  <CheckBoxOutlineBlankIcon fontSize='small' />
+                                )}
                             </IconButton>
                           </Tooltip>
                         </Grid>
@@ -377,7 +393,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
           ΑΚΥΡΟ
         </Button>
         <Button
-          onClick={() => onCreate(name, URI, general, units, images)}
+          onClick={validateInput}
           color='primary'
           variant='contained'
         >

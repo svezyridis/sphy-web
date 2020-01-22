@@ -10,6 +10,7 @@ import { baseURL } from '../../general/constants'
 import { useSelector } from 'react-redux'
 import { fetch } from 'whatwg-fetch'
 import find from 'lodash.find'
+import ImageLoader from './ImageLoader'
 
 const cardStyle = makeStyles(theme => ({
   card: {
