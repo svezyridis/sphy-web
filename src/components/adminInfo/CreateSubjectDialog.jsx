@@ -259,7 +259,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                     </GridListTile>
                   )
                 })}
-              </GridList>
+                </GridList>
               : <Typography align='center'> Δεν έχετε επιλέξει εικόνες</Typography>}
           </Grid>
         </Grid>
