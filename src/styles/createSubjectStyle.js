@@ -21,8 +21,7 @@ const createSubjectStyle = makeStyles(theme => ({
     }
   },
   dialog: {
-    minWidth: '800px',
-    maxHeight: '900px'
+    minWidth: '810px'
   },
   input: {
     maxWidth: '300px',
@@ -91,7 +90,7 @@ const createSubjectStyle = makeStyles(theme => ({
     borderRadius: '5px',
     width: 440,
     height: 340,
-    padding: '4px',
+    padding: '2px',
     display: 'inline-block',
     flexWrap: 'wrap',
     justifyContent: 'space-around'

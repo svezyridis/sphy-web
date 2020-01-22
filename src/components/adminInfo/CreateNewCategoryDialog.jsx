@@ -10,8 +10,13 @@ import { Typography } from '@material-ui/core'
 const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
   const [name, setName] = useState('')
   const [URI, setURI] = useState('')
+  const cleanState = () => {
+    console.log('close')
+    setName('')
+    setURI('')
+  }
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} onExit={cleanState}>
       <Typography color='secondary' align='center' variant='h5'>
         Δημιουργία νέας κατηγορίας
       </Typography>

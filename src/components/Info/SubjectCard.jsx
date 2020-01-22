@@ -12,7 +12,7 @@ import Fab from '@material-ui/core/Fab'
 import { Grid } from '@material-ui/core'
 import DeleteSubjectDialog from '../adminInfo/DeleteSubjectDialog'
 import { baseURL } from '../../general/constants'
-import { deleteCategory, deleteSubject } from '../../store/actions'
+import EditSubjectDialog from '../adminInfo/EditSubjectDialog'
 
 const cardStyle = makeStyles(theme => ({
   card: {
@@ -49,9 +49,10 @@ const SubjectCard = ({ subject, admin, branch, deleteSubject }) => {
   const classes = cardStyle()
   const history = useHistory()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
 
   const handleEdit = () => {
-    console.log('edit')
+    setEditDialogOpen(true)
   }
 
   const handleDelete = () => {
@@ -66,6 +67,7 @@ const SubjectCard = ({ subject, admin, branch, deleteSubject }) => {
         onDeleteSubject={handleDelete}
         subject={subject.name}
       />
+      <EditSubjectDialog dialogOpen={editDialogOpen} onClose={() => setEditDialogOpen(false)} subject={subject} />
       <Grid container direction='column' spacing={1}>
         <Grid item>
           <Card

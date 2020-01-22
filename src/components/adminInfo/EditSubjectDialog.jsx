@@ -6,12 +6,23 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import { Typography } from '@material-ui/core'
 import createSubjectStyle from '../../styles/createSubjectStyle'
+import Grid from '@material-ui/core/Grid'
+import Card from '@material-ui/core/Card'
+import CardMedia from '@material-ui/core/CardMedia'
+import EditIcon from '@material-ui/icons/Edit'
+import Fab from '@material-ui/core/Fab'
+import Tooltip from '@material-ui/core/Tooltip'
+import unavailableImage from '../../images/unavailable.png'
 
-const CreateSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
+const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
   const [name, setName] = useState(subject.name)
   const [URI, setURI] = useState(subject.uri)
   const [general, setGeneral] = useState(subject.general)
   const [units, setUnits] = useState(subject.units)
+  const [images, setImages] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [imageDialogOpen, setImageDialogOpen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState(subject.image)
   const classes = createSubjectStyle()
 
   return (
@@ -23,12 +34,12 @@ const CreateSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
       disableBackdropClick
     >
       <Typography color='secondary' align='center' variant='h5'>
-        Δημιουργία νέου θέματος
+        Επεξεργασία θέματος
       </Typography>
       <DialogContent className={classes.content}>
         <TextField
           label='Όνομα'
-          helperText='Το όνομα του νέου θέματος'
+          helperText='Το όνομα του θέματος'
           margin='normal'
           variant='outlined'
           value={name}
@@ -69,6 +80,33 @@ const CreateSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
           className={classes.text}
           onChange={e => setUnits(e.target.value)}
         />
+        <Grid container alignItems='flex-end' spacing={1}>
+          <Grid item>
+            <Typography variant='subtitle2'>Κεντρική εικόνα</Typography>
+            <Card className={classes.card}>
+              <CardMedia
+                className={classes.media}
+                image={subject.image ? subject.image : unavailableImage}
+                title={
+                  subject.defaultImage.label
+                    ? subject.defaultImage.label
+                    : 'Δεν υπάρχει διαθέσιμη εικόνα'
+                }
+              />
+            </Card>
+          </Grid>
+          <Grid item>
+            <Tooltip title='Επεξεργασία εικόνων'>
+              <Fab
+                size='medium'
+                onClick={() => setImageDialogOpen(true)}
+                className={classes.fab}
+              >
+                <EditIcon color='secondary' />
+              </Fab>
+            </Tooltip>
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color='primary' variant='outlined'>
@@ -86,4 +124,4 @@ const CreateSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
   )
 }
 
-export default CreateSubjectDialog
+export default EditSubjectDialog
