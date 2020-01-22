@@ -13,13 +13,18 @@ const dialogStyle = makeStyles(theme => ({
   root: {
     width: 'min-content',
     margin: 'auto',
-    outline: 'none'
+    outline: 'none',
+    height: 'min-content',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0
   },
   grid: {
     minWidth: '950px',
-    height: '900px',
     backgroundColor: 'transparent',
-    margin: 'auto',
+    marginTop: 'auto',
     zIndex: 1500
   },
   img: {
@@ -46,7 +51,7 @@ const ImageDialog = ({ open, images, index, onNext, onPrevious, onClose }) => {
   img.src = images[index].image
 
   return (
-    <Modal open={open} onClose={onClose} className={classes.root}>
+    <Modal open={open} onClose={onClose} className={classes.modal}>
       <div className={classes.root}>
         <Grid
           container

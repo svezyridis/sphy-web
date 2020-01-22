@@ -11,7 +11,6 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Fab from '@material-ui/core/Fab'
 import { Grid } from '@material-ui/core'
 import DeleteCategoryDialog from '../adminInfo/DeleteCategoryDialog'
-import classNames from 'classnames'
 import EditCategoryDialog from '../adminInfo/EditCategoryDialog'
 
 const cardStyle = makeStyles(theme => ({
