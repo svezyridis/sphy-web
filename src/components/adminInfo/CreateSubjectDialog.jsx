@@ -19,129 +19,8 @@ import classNames from 'classnames'
 import find from 'lodash.find'
 import IconButton from '@material-ui/core/IconButton'
 import DeleteIcon from '@material-ui/icons/Delete'
-
-const dialogStyle = makeStyles(theme => ({
-  '@global': {
-    '*::-webkit-scrollbar': {
-      width: '0.4em'
-    },
-    '*::-webkit-scrollbar-track': {
-      boxShadow: 'inset 0 0 5px grey',
-      color: '#8a9c8a',
-      borderRadius: '10px',
-      backgroundColor: '#cbd3cb'
-    },
-    '*::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.primary.light,
-      borderRadius: '10px',
-      outline: '3px solid black',
-      '&:hover': {
-        backgroundColor: theme.palette.primary.dark
-      }
-    }
-  },
-  dialog: {
-    minWidth: '800px',
-    maxHeight: '900px'
-  },
-  input: {
-    maxWidth: '300px',
-    marginRight: '25px'
-  },
-  text: {
-    marginTop: '20px',
-    marginBottom: '15px',
-    '&::-webkit-scrollbar': {
-      width: '0.6em'
-    },
-    '&::-webkit-scrollbar-track': {
-      boxShadow: 'inset 0 0 5px grey',
-      color: '#8a9c8a',
-      borderRadius: '10px',
-      backgroundColor: '#cbd3cb'
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.primary.light,
-      borderRadius: '10px',
-      outline: '3px solid black',
-      '&:hover': {
-        backgroundColor: theme.palette.primary.dark
-      }
-    }
-  },
-  gridList: {
-    maxHeight: '100%'
-  },
-  card: {
-    width: '300px',
-    height: '250px'
-  },
-  dropzone: {
-    border: '3px',
-    borderStyle: 'dashed',
-    display: 'inline-block'
-  },
-  dropzoneActive: {
-    borderColor: 'green',
-    filter: 'brightness(115%)'
-  },
-  media: {
-    backgroundColor: 'white',
-    height: '100%',
-    width: 'auto',
-    overflow: 'hidden',
-    position: 'relative',
-    transition: '300ms'
-  },
-  mediaCaption: {
-    position: 'absolute',
-    bottom: 0,
-    backgroundColor: 'black',
-    color: 'white',
-    opacity: 0.8,
-    width: '100%',
-    height: '30px',
-    fontSize: '20px',
-    fontWeight: 200
-  },
-  imageList: {
-    border: '1px',
-    borderStyle: 'solid',
-    borderColor: 'grey',
-    borderRadius: '5px',
-    width: 440,
-    height: 340,
-    padding: '4px',
-    display: 'inline-block',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around'
-  },
-  label: {
-    color: 'white',
-    borderColor: 'white',
-    position: 'absolute',
-    bottom: 0
-  },
-  icon: {
-    color: 'rgba(255,255,255,0.8)'
-  },
-  tile: {
-    position: 'relative',
-    height: '100%'
-  },
-  image: {
-    height: '100%',
-    position: 'absolute',
-    width: '100%'
-  },
-  actionIcons: {
-    position: 'absolute',
-    top: 0
-  },
-  MuiIconButton: {
-    backgroundColor: 'red'
-  }
-}))
+import createSubjectStyle from '../../styles/createSubjectStyle'
+import Fab from '@material-ui/core/Fab'
 
 const customTextfieldStyle = makeStyles(theme => ({
   root: {
@@ -158,8 +37,9 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
   const [URI, setURI] = useState('')
   const [general, setGeneral] = useState('')
   const [units, setUnits] = useState('')
+
   const [errors, setErrors] = useState({ nameError: false, UriError: false })
-  const classes = dialogStyle()
+  const classes = createSubjectStyle()
   const [images, setImages] = useState([])
   const textFieldClasses = customTextfieldStyle()
 
@@ -244,7 +124,6 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
     <Dialog
       open={dialogOpen}
       onClose={onClose}
-      className={classes.dialog}
       classes={{ paper: classes.dialog }}
       disableBackdropClick
     >
@@ -297,7 +176,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
           className={classes.text}
           onChange={e => setUnits(e.target.value)}
         />
-        <Grid container spacing={2}>
+        <Grid container spacing={3}>
           <Grid item>
             <div
               {...getRootProps({
@@ -335,56 +214,55 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
             </p>
           </Grid>
           <Grid item className={classes.imageList}>
-            <GridList cellHeight={180} className={classes.gridList}>
-              {images.map((image, index) => {
-                return (
-                  <GridListTile key={index}>
-                    <div className={classes.tile}>
-                      <img src={image.src} className={classes.image} />
-                      <TextField
-                        placeholder='  Προσθέστε περιγραφή'
-                        fullWidth
-                        className={classes.label}
-                        value={image.label ? image.label : ''}
-                        inputProps={{ style: { textAlign: 'center' } }} // the change is here
-                        InputProps={{
-                          classes: textFieldClasses
-                        }}
-                        onChange={e =>
-                          setLabel(image.file.name, e.target.value)
-                        }
-                      />
-                      <Grid container justify='flex-end'>
-                        <Grid item>
-                          <Tooltip title='Εικόνα εξοφύλλου'>
-                            <IconButton
-                              className={classes.icon}
-                              onClick={() => setDefaultImage(image)}
-                            >
-                              {image.default ? (
-                                <CheckBoxIcon fontSize='small' />
-                              ) : (
+            {images.length > 0
+              ? <GridList cellHeight={180} className={classes.gridList}>
+                {images.map((image, index) => {
+                  return (
+                    <GridListTile key={index}>
+                      <div className={classes.tile}>
+                        <img src={image.src} className={classes.image} />
+                        <TextField
+                          placeholder='  Προσθέστε περιγραφή'
+                          fullWidth
+                          className={classes.label}
+                          value={image.label ? image.label : ''}
+                          inputProps={{ style: { textAlign: 'center', fontSize: '18px' } }}
+                          InputProps={{
+                            classes: textFieldClasses
+                          }}
+                          onChange={e =>
+                            setLabel(image.file.name, e.target.value)}
+                        />
+                        <Grid container justify='flex-end'>
+                          <Grid item>
+                            <Tooltip title='Εικόνα εξοφύλλου'>
+                              <Fab
+                                onClick={() => setDefaultImage(image)}
+                                color='primary'
+                                size='small'
+                              >
+                                {image.default ? (
+                                  <CheckBoxIcon fontSize='small' />
+                                ) : (
                                   <CheckBoxOutlineBlankIcon fontSize='small' />
                                 )}
-                            </IconButton>
-                          </Tooltip>
+                              </Fab>
+                            </Tooltip>
+                          </Grid>
+                          <Grid item>
+                            <Tooltip title='Διαγραφή εικόνας' color='primary'>
+                              <Fab onClick={() => deleteImage(image.file.name)} size='small'>
+                                <DeleteIcon fontSize='small' />
+                              </Fab>
+                            </Tooltip>
+                          </Grid>
                         </Grid>
-                        <Grid item>
-                          <Tooltip title='Διαγραφή εικόνας'>
-                            <IconButton
-                              className={classes.icon}
-                              onClick={() => deleteImage(image.file.name)}
-                            >
-                              <DeleteIcon fontSize='small' />
-                            </IconButton>
-                          </Tooltip>
-                        </Grid>
-                      </Grid>
-                    </div>
-                  </GridListTile>
-                )
-              })}
-            </GridList>
+                      </div>
+                    </GridListTile>
+                  )
+                })}
+              </GridList>
+              : <Typography align='center'> Δεν έχετε επιλέξει εικόνες</Typography>}
           </Grid>
         </Grid>
       </DialogContent>

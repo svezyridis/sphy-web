@@ -83,6 +83,9 @@ export const CategoryContainer = connect(
     },
     addSubject (subject) {
       dispatch(addSubject(subject))
+    },
+    deleteSubject (id) {
+      dispatch(deleteSubject(id))
     }
   })
 )(Category)

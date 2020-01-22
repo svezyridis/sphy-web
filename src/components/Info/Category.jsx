@@ -30,6 +30,7 @@ const Category = ({
   setSubjects,
   addImage,
   addSubject,
+  deleteSubject,
   match,
   history,
   location
@@ -39,14 +40,37 @@ const Category = ({
   const branch = match.params.weapon
   const category = match.params.category
   subjects = subjects.filter(subject => subject.category === category)
+  const controller = new window.AbortController()
+  const signal = controller.signal
+
+  const handleDelete = subject => {
+    fetch(subjectsURL + branch + '/' + category + '/' + subject.uri, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        authorization: 'Bearer ' + account.token
+      },
+      signal: signal
+    })
+      .then(response => response.json())
+      .then(data => {
+        const { status, message } = data
+        console.log(message)
+        if (status === 'success') {
+          deleteSubject(subject.id)
+        }
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+  }
 
   useEffect(() => {
-    var controller = new window.AbortController()
-    var signal = controller.signal
     if (isEmpty(account)) {
       return
     }
-
     fetch(subjectsURL + branch + '/' + category, {
       method: 'GET',
       credentials: 'include',
@@ -180,7 +204,14 @@ const Category = ({
           {subjects.map((subject, index) => {
             return (
               <Grid key={index} item>
-                <SubjectCard subject={subject} weapon={branch} />
+                <SubjectCard
+                  subject={subject}
+                  branch={branch}
+                  token={account.token}
+                  admin={isAdmin}
+                  category={category}
+                  deleteSubject={() => handleDelete(subject)}
+                />
               </Grid>
             )
           })}
