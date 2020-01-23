@@ -139,21 +139,16 @@ const NewSubjectCard = ({ addSubject, addImage }) => {
       })
     setCreateDialogOpen(false)
   }
-  console.log("Outside:"+imageUploadCounter)
-  
-  let loader = null
-
-  if(imageUploadCounter > 0){
-    loader= (
-      <LoadingDialog
-            open={imageUploadCounter > 0} 
-            reason={`Απομένουν ${imageUploadCounter} φωτογραφίες`}/>
-    )
-  }
+  console.log('Outside:' + imageUploadCounter)
 
   return (
     <>
-      {loader}
+      {imageUploadCounter > 0 ? (
+        <LoadingDialog
+          open={imageUploadCounter > 0}
+          reason={`Απομένουν ${imageUploadCounter} φωτογραφίες`}
+        />
+      ) : null}
       <CreateSubjectDialog
         dialogOpen={createDialogOpen}
         onCreate={onCreate}

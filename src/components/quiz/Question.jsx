@@ -79,7 +79,6 @@ const Question = ({
       })
   }
   const question = myQuiz.questions[questionIndex]
-  const answer = find(myQuiz.answers, { questionID: question.id })
 
   useEffect(() => {
     console.log(question)
@@ -105,6 +104,7 @@ const Question = ({
     history.push('/question/1')
     return null
   }
+  const answer = find(myQuiz.answers, { questionID: question.id })
 
   const handleRight = () => {
     console.log('right')
@@ -150,12 +150,15 @@ const Question = ({
             Quiz
           </Link>
         </Breadcrumbs>
-        <Grid container className={classes.questionGrid} alignItems='center' wrap='nowrap' justify='center'>
+        <Grid
+          container
+          className={classes.questionGrid}
+          alignItems='center'
+          wrap='nowrap'
+          justify='center'
+        >
           <Grid item>
-            <Fab
-              color={dark ? 'secondary' : 'primary'}
-              onClick={handleLeft}
-            >
+            <Fab color={dark ? 'secondary' : 'primary'} onClick={handleLeft}>
               <ChevronLeftRoundedIcon />
             </Fab>
           </Grid>
@@ -170,16 +173,14 @@ const Question = ({
             />
           </Grid>
           <Grid item>
-            <Fab
-              color='secondary'
-              onClick={handleRight}
-            >
+            <Fab color='secondary' onClick={handleRight}>
               <ChevronRightRoundedIcon />
             </Fab>
           </Grid>
         </Grid>
-        <Typography variant='subtitle1' align='center'>{`Ερώτηση ${parseInt(questionIndex) + 1} από ${myQuiz.questions.length}`}</Typography>
-
+        <Typography variant='subtitle1' align='center'>{`Ερώτηση ${parseInt(
+          questionIndex
+        ) + 1} από ${myQuiz.questions.length}`}</Typography>
       </div>
       <Copyright open={open} />
     </div>

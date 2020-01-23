@@ -1,5 +1,4 @@
 import React, { useState, useReducer, useEffect, Fragment } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
@@ -27,68 +26,9 @@ import { baseURL } from '../../general/constants'
 import classNames from 'classnames'
 import { Typography, Divider } from '@material-ui/core'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener'
+import quizCardStyle from '../../styles/quizCardStyle'
 
 const categoriesURL = baseURL + 'category/'
-
-const useStyles = makeStyles(theme => ({
-  card: {
-    width: '400px'
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%' // 16:9
-  },
-  innerMedia: {
-    backgroundColor: 'white',
-    height: '100%',
-    width: 'auto',
-    overflow: 'hidden',
-    position: 'relative',
-    transition: '300ms',
-    cursor: 'pointer',
-    '&:hover': {
-      filter: 'brightness(115%)'
-    }
-  },
-  innerCard: {
-    height: '200px',
-    width: '300px',
-    marginBottom: '1%'
-  },
-  mediaCaption: {
-    width: '100%',
-    background: 'rgba(0, 0, 0, 0.3)',
-    margin: 'auto'
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest
-    })
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)'
-  },
-  avatar: {
-    backgroundColor: theme.palette.info.main
-  },
-  darkAvatar: {
-    backgroundColor: theme.palette.info.light
-  },
-  checkbox: {
-    color: theme.palette.primary.main,
-    '&$checked': {
-      color: theme.palette.primary.main
-    }
-  },
-  darkCheckbox: {
-    color: theme.palette.secondary.main,
-    '&$checked': {
-      color: theme.palette.secondary.main
-    }
-  }
-}))
 
 const QuizWeaponCard = ({
   dark,
@@ -101,7 +41,7 @@ const QuizWeaponCard = ({
   deleteCategory,
   setChecked
 }) => {
-  const classes = useStyles()
+  const classes = quizCardStyle()
   const [expanded, setExpanded] = useState(false)
   const [error, setError] = useState('')
   var controller = new window.AbortController()
@@ -122,7 +62,7 @@ const QuizWeaponCard = ({
     category => category.branch === branch
   )
 
-  const handleChange = event => {
+  const handleBranchChecked = event => {
     categoriesOfBranch.forEach(category => {
       setChecked(category.id, event.target.checked)
     })
@@ -198,10 +138,6 @@ const QuizWeaponCard = ({
     }
   }, [])
 
-  useEffect(() => {
-    onCategoriesChange(categories)
-  })
-
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
       <Card elevation={8} className={classes.card}>
@@ -216,10 +152,10 @@ const QuizWeaponCard = ({
           action={
             <Checkbox
               checked={noOfCheckedCategories > 0}
-              onChange={handleChange}
+              onChange={handleBranchChecked}
               indeterminate={
                 noOfCheckedCategories > 0 &&
-                noOfCheckedCategories < categories.length
+                noOfCheckedCategories < categoriesOfBranch.length
               }
               color='default'
               className={classNames(

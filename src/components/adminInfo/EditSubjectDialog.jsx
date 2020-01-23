@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Dialog from '@material-ui/core/Dialog'
@@ -19,10 +19,6 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
   const [URI, setURI] = useState(subject.uri)
   const [general, setGeneral] = useState(subject.general)
   const [units, setUnits] = useState(subject.units)
-  const [images, setImages] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [imageDialogOpen, setImageDialogOpen] = useState(false)
-  const [selectedImage, setSelectedImage] = useState(subject.image)
   const classes = createSubjectStyle()
 
   return (
@@ -88,7 +84,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
                 className={classes.media}
                 image={subject.image ? subject.image : unavailableImage}
                 title={
-                  subject.defaultImage.label
+                  subject.defaultImage && subject.defaultImage.label
                     ? subject.defaultImage.label
                     : 'Δεν υπάρχει διαθέσιμη εικόνα'
                 }
@@ -99,7 +95,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
             <Tooltip title='Επεξεργασία εικόνων'>
               <Fab
                 size='medium'
-                onClick={() => setImageDialogOpen(true)}
+                onClick={() => console.log('open images')}
                 className={classes.fab}
               >
                 <EditIcon color='secondary' />
