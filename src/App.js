@@ -16,6 +16,7 @@ import {
 } from './components/containers/quizContainer'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { useSelector } from 'react-redux'
+import { UserManagementContainer } from './components/containers/adminContainer'
 
 const themeObject = {
   palette: {
@@ -61,9 +62,10 @@ function App () {
       <MuiThemeProvider theme={themeConfig}>
         <CssBaseline />
         <Switch>
-          <Route exact path='/login' component={LoginContainer} />
           <Route exact path='/' component={HomeContainer} />
+          <Route exact path='/login' component={LoginContainer} />
           <Route exact path='/info' component={InfoContainer} />
+          <Route exact path='/users' component={UserManagementContainer} />
           <Route exact path='/info/:weapon' component={WeaponContainer} />
           <Route
             exact

@@ -13,7 +13,6 @@ import { useHistory } from 'react-router-dom'
 const Home = ({ open, toogleDrawer, account, deleteAccount }) => {
   const classes = homeStyle()
   const history = useHistory()
-  console.log(account)
   if (isEmpty(account)) {
     history.push('/login')
     return null
@@ -26,7 +25,8 @@ const Home = ({ open, toogleDrawer, account, deleteAccount }) => {
         account={account}
         deleteAccount={deleteAccount}
         classes={classes}
-      />}
+      />
+      }
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <HomeCarousel items={items} classes={classes} />
         <Announcments />

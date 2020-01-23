@@ -12,6 +12,7 @@ import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { toogleDrawer } from '../../store/actions'
 import find from 'lodash.find'
+import { AdminListItems } from '../adminInfo/AdminListItems'
 
 const HomeDrawer = ({
   account,
@@ -22,10 +23,11 @@ const HomeDrawer = ({
   onReviewQuestionClick,
   quiz
 }) => {
-  const { firstName, lastName } = account.metadata
+  const { firstName, lastName, role } = account.metadata
   const history = useHistory()
   const open = useSelector(state => state.open)
   const dispatch = useDispatch()
+  const isAdmin = role === 'ADMIN'
   const logout = () => {
     deleteAccount()
     history.push('/login')
@@ -54,6 +56,11 @@ const HomeDrawer = ({
       </IconButton>
       <Divider />
       <MainListItems />
+      {isAdmin ? (
+        <>
+          <Divider /> <AdminListItems />
+        </>
+      ) : null}
       {onReviewQuestionClick && open ? (
         <>
           <Divider />
