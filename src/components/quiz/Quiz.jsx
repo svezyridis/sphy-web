@@ -124,12 +124,8 @@ const Quiz = ({
   const onQuizStart = () => {
     createQuiz(username)
     setLoading(true)
-    const categoriesToFetch = []
-    Object.entries(categories).forEach(([branch, branchCategories]) => {
-      branchCategories.forEach(category => {
-        categoriesToFetch.push({ ...category, branch })
-      })
-    })
+    const categoriesToFetch = categories.filter(category => category.checked)
+    console.log(categoriesToFetch)
     Promise.all(
       categoriesToFetch.map(category =>
         getQuestionsOfCategory(category.branch, category)
