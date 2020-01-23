@@ -49,13 +49,13 @@ const Review = ({
     const subject = question.subject.uri
     fetch(
       imagesURL +
-        branch +
-        '/' +
-        category +
-        '/' +
-        subject +
-        '/' +
-        question.image.filename,
+      branch +
+      '/' +
+      category +
+      '/' +
+      subject +
+      '/' +
+      question.image.filename,
       {
         method: 'GET',
         credentials: 'include',
@@ -94,7 +94,7 @@ const Review = ({
     if (!myQuiz) return
     if (!question) return
     getImagesOfQuestion(question)
-    return () => {}
+    return () => { }
   }, [question])
 
   if (!myQuiz) {
@@ -159,8 +159,10 @@ const Review = ({
           </Link>
         </Breadcrumbs>
         <Typography variant='h4' align='center'>
-          {`Η βαθμολογία σας είναι: ${score} από ${myQuiz.questions.length}`}
+          {`Η βαθμολογία σας είναι:
+          `}<h3 className={((score / myQuiz.questions.length).toFixed(2)*100 > 50)?classes.correct:classes.incorrect}>{`${(score / myQuiz.questions.length).toFixed(2)*100} %`}</h3>
         </Typography>
+
         <Grid
           container
           className={classes.questionGrid}
@@ -192,7 +194,7 @@ const Review = ({
         <Typography variant='subtitle1' align='center'>
           {`Ερώτηση ${parseInt(questionIndex) + 1} από ${
             myQuiz.questions.length
-          }`}
+            }`}
         </Typography>
       </div>
       <Copyright open={open} />
