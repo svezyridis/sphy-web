@@ -16,6 +16,7 @@ import MaterialTable from 'material-table'
 import tableIcons from '../../styles/tableIcons'
 import { fetch } from 'whatwg-fetch'
 import { baseURL } from '../../general/constants'
+import { objectToQueryString } from '../../general/helperFunctions'
 
 const testData = {
   columns: [
@@ -58,8 +59,7 @@ const UserManagement = ({
       .then(response => response.json())
       .then(data => {
         console.log(data)
-        if (data.status === 'success')
-          setUsers(data.result.map(user => ({ ...user, password: '********' })))
+        if (data.status === 'success') { setUsers(data.result.map(user => ({ ...user, password: '********' }))) }
       })
     return () => {
       controller.abort()
@@ -71,12 +71,40 @@ const UserManagement = ({
     return null
   }
 
+  const deleteUser = (user) => new Promise((resolve, reject) => {
+    const queryParams = {
+      username: user.username
+    }
+    fetch(usersURL + objectToQueryString(queryParams), {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        authorization: 'Bearer ' + account.token,
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      signal: signal
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        if (data.status === 'success') {
+          const oldDataIndex = users.indexOf(user)
+          setUsers(users =>
+            users.filter((row, index) => index !== oldDataIndex)
+          )
+          resolve()
+        } else reject(data.message)
+      })
+      .catch(err => reject(err))
+  })
+
   const addNewUseR = newUser => {
     const temp = [...users]
     temp.push(newUser)
     const requestData = JSON.stringify({
       newUser: {
-        serialNumber: newUser.SN,
+        serialNumber: newUser.serialNumber,
         username: newUser.username,
         password: newUser.password,
         firstName: newUser.firstName,
@@ -100,11 +128,12 @@ const UserManagement = ({
         .then(response => response.json())
         .then(data => {
           console.log(data)
+          if (data.status === 'success') {
+            setUsers(temp)
+            resolve()
+          } else reject(data.message)
         })
-      setTimeout(() => {
-        setUsers(temp)
-        resolve()
-      }, 1000)
+        .catch(err => reject(err))
     })
   }
 
@@ -169,18 +198,37 @@ const UserManagement = ({
                   resolve()
                 }, 1000)
               }),
-            onRowDelete: oldData =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  {
-                    const oldDataIndex = users.indexOf(oldData)
-                    setUsers(users =>
-                      users.filter((row, index) => index !== oldDataIndex)
-                    )
-                  }
-                  resolve()
-                }, 1000)
-              })
+            onRowDelete: oldData => deleteUser(oldData)
+          }}
+          localization={{
+            body: {
+              addTooltip: 'Προσθήκη Χρήστη',
+              deleteTooltip: 'Διαγραφή Χρήστη',
+              editTooltip: 'Επεξεργασία',
+              editRow: {
+                deleteText: 'Είστε σίγουροι ότι θέλετε να διαγράψετε αυτόν τον χρήστη;',
+                cancelTooltip: 'Ακύρωση',
+                saveTooltip: 'Επιβεβαίωση'
+              }
+            },
+            header: {
+              actions: 'Ενέργειες'
+            },
+            grouping: {
+              placeholder: 'Σύρετε στήλη για ομαδοποίηση'
+            },
+            pagination: {
+              firstTooltip: 'Πρώτη σελίδα',
+              lastTooltip: 'Τελευταία σελίδα',
+              nextTooltip: 'Επόμενη σελίδα',
+              previousTooltip: 'Προηγούμενη σελίδα',
+              labelRowsSelect: 'γραμμές',
+              labelDisplayedRows: '{from}-{to} από {count}'
+            },
+            toolbar: {
+              searchTooltip: 'Αναζήτηση',
+              searchPlaceholder: 'Αναζήτηση'
+            }
           }}
         />
 
