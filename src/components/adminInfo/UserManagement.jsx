@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import HomeDrawer from '../home/HomeDrawer'
 import Copyright from '../Copyright'
@@ -14,10 +14,12 @@ import HomeIcon from '@material-ui/icons/Home'
 import Typography from '@material-ui/core/Typography'
 import MaterialTable from 'material-table'
 import tableIcons from '../../styles/tableIcons'
+import { fetch } from 'whatwg-fetch'
+import { baseURL } from '../../general/constants'
 
 const testData = {
   columns: [
-    { title: 'ΑΜ', field: 'SN' },
+    { title: 'ΑΜ', field: 'serialNumber' },
     { title: 'Όνομα', field: 'firstName' },
     { title: 'Επίθετο', field: 'lastName' },
     { title: 'username', field: 'username' },
@@ -25,31 +27,9 @@ const testData = {
     { title: 'Μονάδα', field: 'unit' },
     { title: 'Βαθμός', field: 'rank' },
     { title: 'Ρόλος', field: 'role' }
-  ],
-  data: [
-    {
-      SN: 1,
-      firstName: 'Savvas',
-      lastName: 'Vezyridis',
-      username: 'boubis12',
-      password: '*******',
-      unit: '115ΠΜ',
-      rank: 'Ανθσγος',
-      role: 'ADMIN'
-    },
-    {
-      SN: 2,
-      firstName: 'SavvDSADASDas',
-      lastName: 'VezyDSADSAridis',
-      username: 'boDASDSAubis12',
-      password: '*******',
-      unit: '115ΠΜ',
-      rank: 'Ανθσγος',
-      role: 'ADMIN'
-    }
   ]
 }
-
+const usersURL = baseURL + 'user'
 const UserManagement = ({
   open,
   toogleDrawer,
@@ -59,11 +39,73 @@ const UserManagement = ({
 }) => {
   const classes = homeStyle()
   const history = useHistory()
-  const [data, setData] = useState(testData.data)
+  const [users, setUsers] = useState([])
   console.log(account)
+  const controller = new window.AbortController()
+  const signal = controller.signal
+
+  useEffect(() => {
+    fetch(usersURL, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        authorization: 'Bearer ' + account.token,
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      signal: signal
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        if (data.status === 'success')
+          setUsers(data.result.map(user => ({ ...user, password: '********' })))
+      })
+    return () => {
+      controller.abort()
+    }
+  }, [])
+
   if (isEmpty(account)) {
     history.push('/login')
     return null
+  }
+
+  const addNewUseR = newUser => {
+    const temp = [...users]
+    temp.push(newUser)
+    const requestData = JSON.stringify({
+      newUser: {
+        serialNumber: newUser.SN,
+        username: newUser.username,
+        password: newUser.password,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        role: newUser.role,
+        rank: newUser.rank
+      }
+    })
+    return new Promise((resolve, reject) => {
+      fetch(usersURL, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          authorization: 'Bearer ' + account.token,
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: requestData,
+        signal: signal
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+        })
+      setTimeout(() => {
+        setUsers(temp)
+        resolve()
+      }, 1000)
+    })
   }
 
   return (
@@ -105,24 +147,21 @@ const UserManagement = ({
         </Typography>
         <MaterialTable
           icons={tableIcons}
+          options={{
+            grouping: true
+          }}
           title='Χρήστες'
           columns={testData.columns}
-          data={data}
+          data={users}
           editable={{
-            onRowAdd: newData =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  setData(data => ({ ...data, newData }))
-                  resolve()
-                }, 1000)
-              }),
+            onRowAdd: newData => addNewUseR(newData),
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
                   {
-                    const oldDataIndex = data.indexOf(oldData)
-                    setData(data =>
-                      data.map((row, index) =>
+                    const oldDataIndex = users.indexOf(oldData)
+                    setUsers(users =>
+                      users.map((row, index) =>
                         index === oldDataIndex ? newData : row
                       )
                     )
@@ -134,9 +173,9 @@ const UserManagement = ({
               new Promise((resolve, reject) => {
                 setTimeout(() => {
                   {
-                    const oldDataIndex = data.indexOf(oldData)
-                    setData(data =>
-                      data.filter((row, index) => index !== oldDataIndex)
+                    const oldDataIndex = users.indexOf(oldData)
+                    setUsers(users =>
+                      users.filter((row, index) => index !== oldDataIndex)
                     )
                   }
                   resolve()

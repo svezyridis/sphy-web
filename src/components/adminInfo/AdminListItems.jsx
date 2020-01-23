@@ -10,7 +10,7 @@ export const AdminListItems = () => {
   const history = useHistory()
   return (
     <List>
-      <ListItem button onClick={() => history.push('/info')}>
+      <ListItem button onClick={() => history.push('/users')}>
         <ListItemIcon>
           <AccountBoxIcon />
         </ListItemIcon>
