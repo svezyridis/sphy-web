@@ -10,11 +10,26 @@ import { Typography } from '@material-ui/core'
 const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
   const [name, setName] = useState('')
   const [URI, setURI] = useState('')
+  const [errors, setErrors] = useState({ nameError: false, UriError: false })
   const cleanState = () => {
     console.log('close')
     setName('')
     setURI('')
   }
+
+  const validateInput = () => {   
+    setErrors({
+        ...errors,
+        nameError: name === '',
+        UriError: !/^[a-z0-9-]+$/.test(URI)
+    })
+    if(!((name === '')||(!/^[a-z0-9-]+$/.test(URI)))){
+      onCreate(name, URI)
+    }
+  }
+
+  console.log(errors)
+  
   return (
     <Dialog open={open} onClose={onClose} onExit={cleanState}>
       <Typography color='secondary' align='center' variant='h5'>
@@ -22,6 +37,7 @@ const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
       </Typography>
       <DialogContent className={classes.content}>
         <TextField
+          error={errors.nameError}
           label='Όνομα'
           helperText='Το όνομα της νέας κατηγορίας'
           margin='normal'
@@ -33,6 +49,7 @@ const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
           onChange={e => setName(e.target.value)}
         />
         <TextField
+          error={errors.UriError}
           label='URI'
           helperText='Mόνο λατινικοί χαρακτήρες και παύλα'
           margin='normal'
@@ -48,7 +65,7 @@ const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
           ΑΚΥΡΟ
         </Button>
         <Button
-          onClick={() => onCreate(name, URI)}
+          onClick={validateInput}
           color='primary'
           variant='contained'
         >
