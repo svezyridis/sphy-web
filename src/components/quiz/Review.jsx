@@ -79,15 +79,7 @@ const Review = ({
       })
   }
   const question = myQuiz.questions[questionIndex]
-  const answer = find(myQuiz.answers, { questionID: question.id })
-  const score = myQuiz.answers.reduce((accumulator, answer) => {
-    const question = find(myQuiz.questions, { id: answer.questionID })
-    const selectedOption = find(question.optionList, {
-      id: parseInt(answer.optionID)
-    })
-    const increment = selectedOption && selectedOption.correct ? 1 : 0
-    return accumulator + increment
-  }, 0)
+  
 
   useEffect(() => {
     console.log(question)
@@ -101,6 +93,26 @@ const Review = ({
     history.push('/quiz')
     return null
   }
+
+  if(questionIndex<0 || questionIndex>=myQuiz.questions.length){
+    history.push('/review/1')
+    return null
+  }
+
+  
+
+  const answer = find(myQuiz.answers, { questionID: question.id })
+  const score = myQuiz.answers.reduce((accumulator, answer) => {
+    const question = find(myQuiz.questions, { id: answer.questionID })
+    const selectedOption = find(question.optionList, {
+      id: parseInt(answer.optionID)
+    })
+    const increment = selectedOption && selectedOption.correct ? 1 : 0
+    return accumulator + increment
+  }, 0)
+
+ 
+
   if (isEmpty(account)) {
     console.log('account is empty')
     var tempAccount = window.sessionStorage.getItem('account')

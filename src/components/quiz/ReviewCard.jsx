@@ -4,6 +4,8 @@ import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import Radio from '@material-ui/core/Radio'
+import Checkbox from '@material-ui/core/Checkbox'
+import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked'
 import RadioGroup from '@material-ui/core/RadioGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormControl from '@material-ui/core/FormControl'
@@ -30,31 +32,32 @@ const ReviewCard = ({ question, classes, dark, image, answer }) => {
         </Grid>
         <Grid item>
           <Typography align='center' variant='h5'>
-          {(answer.optionID == (find(question.optionList, { correct: true }).id)) ? <CheckCircleTwoToneIcon  /> : <HighlightOffTwoToneIcon />}
+
             {question.text}
           </Typography>
           <FormControl component='fieldset' className={classes.formControl}>
-            <FormLabel component='legend'>Η επιλογή σας:</FormLabel>
-            <RadioGroup value={answer.optionID}>
-              {question.optionList.map((option, index) => {
-                const selected = option.id === parseInt(answer.optionID)
-                console.log("this answer is: " + option.correct)
-                return (
-                  <Fragment>
-                    <FormControlLabel
-                      key={index}
-                      value={option.id.toString()}
-                      control={<Radio />}
-                      label={option.text}
-                      className={classNames(
-                        option.correct && classes.correct,
-                        selected && !option.correct && classes.incorrect
-                      )}
-                    />
-                  </Fragment>
-                )
-              })}
-            </RadioGroup>
+            {(answer.optionID == (find(question.optionList, { correct: true }).id)) ?
+              <FormLabel component='text'>Απαντήσατε ΣΩΣΤΑ </FormLabel> :
+              <FormLabel component='text'>Απαντήσατε ΛΑΝΘΑΣΜΕΝΑ </FormLabel>}
+
+            {question.optionList.map((option, index) => {
+              const selected = option.id === parseInt(answer.optionID)
+              return (
+                <FormControlLabel
+                  key={index}
+                  control={
+                    <Checkbox
+                      checked={selected}
+                      icon={option.correct ? <CheckCircleTwoToneIcon className={classes.correct} /> : <CircleUnchecked />}
+                      checkedIcon={(answer.optionID == (find(question.optionList, { correct: true }).id)) ?
+                        <CheckCircleTwoToneIcon className={classes.correct} /> :
+                        <HighlightOffTwoToneIcon className={classes.incorrect} />}
+                      value={option.id.toString()} />}
+                  label={option.text}
+                />
+              )
+            })}
+
           </FormControl>
         </Grid>
       </Grid>
