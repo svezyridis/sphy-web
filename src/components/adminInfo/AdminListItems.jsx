@@ -14,7 +14,7 @@ export const AdminListItems = () => {
         <ListItemIcon>
           <AccountBoxIcon />
         </ListItemIcon>
-        <ListItemText primary='Διαχείρηση Χρηστών' />
+        <ListItemText primary='Διαχείριση Χρηστών' />
       </ListItem>
     </List>
   )
