@@ -44,6 +44,8 @@ export const quizes = (state = [], action) => {
       return state.map(userQuiz => quiz(userQuiz, action))
     case C.SELECT_OPTION:
       return state.map(userQuiz => quiz(userQuiz, action))
+    case C.COMPLETE_QUIZ:
+      return state.map(userQuiz => quiz(userQuiz, action))
     case C.DELETE_QUIZ:
       return state.filter(quiz => quiz.username !== action.username)
     default:
@@ -63,25 +65,31 @@ export const quiz = (state, action) => {
       return state.username !== action.username
         ? state
         : {
-          ...state,
-          questions: questions(state.questions, action),
-          answers: answers(state.answers, action)
-        }
+            ...state,
+            questions: questions(state.questions, action),
+            answers: answers(state.answers, action)
+          }
     case C.SELECT_OPTION:
       return state.username !== action.username
         ? state
         : {
-          ...state,
-          answers: answers(state.answers, action)
-        }
+            ...state,
+            answers: answers(state.answers, action)
+          }
     case C.ADD_QUESTION_IMAGE:
-      console.log('addding image')
       return state.username !== action.username
         ? state
         : {
-          ...state,
-          questions: questions(state.questions, action)
-        }
+            ...state,
+            questions: questions(state.questions, action)
+          }
+    case C.COMPLETE_QUIZ:
+      return state.username !== action.username
+        ? state
+        : {
+            ...state,
+            finished: true
+          }
     default:
       return state
   }
@@ -96,11 +104,9 @@ const questions = (state, action) => {
     case C.ADD_QUESTION_IMAGE:
       return state.map(question => {
         console.log(question)
-        return (
-          question.id === action.questionID
-            ? { ...question, imageURL: action.url }
-            : { ...question, imageURL: action.url }
-        )
+        return question.id === action.questionID
+          ? { ...question, imageURL: action.url }
+          : { ...question, imageURL: action.url }
       })
     default:
       return state
@@ -132,9 +138,9 @@ export const subjects = (state = [], action) => {
       return state.map(subject =>
         subject.id === action.id
           ? {
-            ...subject,
-            image: action.image
-          }
+              ...subject,
+              image: action.image
+            }
           : subject
       )
     case C.DELETE_SUBJECT:
@@ -154,9 +160,9 @@ export const imagesReducer = (state, action) => {
       return state.map(image =>
         image.id === action.id
           ? {
-            ...image,
-            image: action.image
-          }
+              ...image,
+              image: action.image
+            }
           : image
       )
     default:
@@ -179,18 +185,18 @@ export const categories = (state = [], action) => {
       return state.map(category =>
         category.id === action.id
           ? {
-            ...category,
-            imageURL: action.image
-          }
+              ...category,
+              imageURL: action.image
+            }
           : category
       )
     case C.SET_CHECKED:
       return state.map(category =>
         category.id === action.id
           ? {
-            ...category,
-            checked: action.checked
-          }
+              ...category,
+              checked: action.checked
+            }
           : category
       )
     default:

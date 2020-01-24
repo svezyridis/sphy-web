@@ -10,7 +10,8 @@ import {
   setCategories,
   setChecked,
   deleteCategory,
-  addCategory
+  addCategory,
+  completeQuiz
 } from '../../store/actions'
 import Quiz from '../quiz/Quiz'
 import Question from '../quiz/Question'
@@ -77,6 +78,9 @@ export const QuestionContainer = connect(
     },
     selectOption (username, questionID, optionID) {
       dispatch(selectOption(username, questionID, optionID))
+    },
+    onSubmitQuiz (username) {
+      dispatch(completeQuiz(username))
     }
   })
 )(Question)

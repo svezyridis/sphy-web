@@ -30,6 +30,7 @@ const Question = ({
   deleteAccount,
   addQuestionImage,
   selectOption,
+  onSubmitQuiz,
   quizes,
   history,
   match
@@ -127,6 +128,7 @@ const Question = ({
         classes={classes}
         onQuestionClick={onQuestionClick}
         quiz={myQuiz}
+        onSubmit={onSubmitQuiz}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs separator={<NavigateNextIcon fontSize='small' />}>
@@ -170,6 +172,7 @@ const Question = ({
               dark={dark}
               image={image}
               answer={answer}
+              finished={myQuiz.finished}
             />
           </Grid>
           <Grid item>

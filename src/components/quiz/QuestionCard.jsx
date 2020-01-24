@@ -13,7 +13,15 @@ import { Grid, CardHeader } from '@material-ui/core'
 import classNames from 'classnames'
 import Avatar from '@material-ui/core/Avatar'
 
-const QuestionCard = ({ question, classes, setOption, dark, image, answer }) => {
+const QuestionCard = ({
+  question,
+  classes,
+  setOption,
+  dark,
+  image,
+  answer,
+  finished
+}) => {
   const handleChange = event => {
     setOption(event.target.value)
   }
@@ -30,7 +38,11 @@ const QuestionCard = ({ question, classes, setOption, dark, image, answer }) => 
           <Typography align='center' variant='h5'>
             {question.text}
           </Typography>
-          <FormControl component='fieldset' className={classes.formControl}>
+          <FormControl
+            component='fieldset'
+            className={classes.formControl}
+            disabled={finished}
+          >
             <FormLabel component='legend'>Η επιλογή σας:</FormLabel>
             <RadioGroup value={answer.optionID} onChange={handleChange}>
               {question.optionList.map((option, index) => {

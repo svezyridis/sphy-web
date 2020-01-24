@@ -43,19 +43,18 @@ const Review = ({
   var signal = controller.signal
 
   const getImagesOfQuestion = question => {
-    console.log(question)
     const branch = question.branch
     const category = question.category
     const subject = question.subject.uri
     fetch(
       imagesURL +
-      branch +
-      '/' +
-      category +
-      '/' +
-      subject +
-      '/' +
-      question.image.filename,
+        branch +
+        '/' +
+        category +
+        '/' +
+        subject +
+        '/' +
+        question.image.filename,
       {
         method: 'GET',
         credentials: 'include',
@@ -79,14 +78,12 @@ const Review = ({
       })
   }
   const question = myQuiz.questions[questionIndex]
-  
 
   useEffect(() => {
-    console.log(question)
     if (!myQuiz) return
     if (!question) return
     getImagesOfQuestion(question)
-    return () => { }
+    return () => {}
   }, [question])
 
   if (!myQuiz) {
@@ -94,12 +91,10 @@ const Review = ({
     return null
   }
 
-  if(questionIndex<0 || questionIndex>=myQuiz.questions.length){
+  if (questionIndex < 0 || questionIndex >= myQuiz.questions.length) {
     history.push('/review/1')
     return null
   }
-
-  
 
   const answer = find(myQuiz.answers, { questionID: question.id })
   const score = myQuiz.answers.reduce((accumulator, answer) => {
@@ -110,8 +105,6 @@ const Review = ({
     const increment = selectedOption && selectedOption.correct ? 1 : 0
     return accumulator + increment
   }, 0)
-
- 
 
   if (isEmpty(account)) {
     console.log('account is empty')
@@ -167,12 +160,23 @@ const Review = ({
             className={classNames(classes.link, dark && classes.dark)}
           >
             <FormatListNumberedIcon className={classes.icon} />
-            Review
+            Επισκόπηση
           </Link>
         </Breadcrumbs>
         <Typography variant='h4' align='center'>
           {`Η βαθμολογία σας είναι:
-          `}<h3 className={((score / myQuiz.questions.length).toFixed(2)*100 > 50)?classes.correct:classes.incorrect}>{`${(score / myQuiz.questions.length).toFixed(2)*100} %`}</h3>
+          `}
+          <h3
+            className={
+              (score / myQuiz.questions.length).toFixed(2) * 100 > 50
+                ? classes.correct
+                : classes.incorrect
+            }
+          >
+            {`${(parseFloat(score / myQuiz.questions.length) * 100).toFixed(
+              1
+            )} %`}
+          </h3>
         </Typography>
 
         <Grid
@@ -206,7 +210,7 @@ const Review = ({
         <Typography variant='subtitle1' align='center'>
           {`Ερώτηση ${parseInt(questionIndex) + 1} από ${
             myQuiz.questions.length
-            }`}
+          }`}
         </Typography>
       </div>
       <Copyright open={open} />

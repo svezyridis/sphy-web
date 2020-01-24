@@ -21,9 +21,10 @@ const HomeDrawer = ({
   onQuizStart,
   onQuestionClick,
   onReviewQuestionClick,
+  onSubmit,
   quiz
 }) => {
-  const { firstName, lastName, role } = account.metadata
+  const { firstName, lastName, role, username } = account.metadata
   const history = useHistory()
   const open = useSelector(state => state.open)
   const dispatch = useDispatch()
@@ -32,6 +33,11 @@ const HomeDrawer = ({
     deleteAccount()
     history.push('/login')
     return null
+  }
+
+  const submitQuiz = () => {
+    onSubmit(username)
+    history.push('/review/1')
   }
 
   const setOpen = open => dispatch(toogleDrawer(open))
@@ -80,8 +86,8 @@ const HomeDrawer = ({
                 <Grid item key={index}>
                   <Button
                     className={classNames(
-                      classes.questionBox,
-                      correct && classes.questionBoxAnswered
+                      classes.reviewBox,
+                      correct && classes.reviewBoxCorrect
                     )}
                     onClick={() => history.push(`/review/${index + 1}`)}
                   >
@@ -124,7 +130,7 @@ const HomeDrawer = ({
           <Button
             variant='contained'
             className={classNames(classes.logout, classes.button)}
-            onClick={() => history.push('/review/1')}
+            onClick={submitQuiz}
           >
             ΥΠΟΒΟΛΗ
           </Button>

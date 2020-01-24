@@ -263,7 +263,8 @@ const homeStyle = makeStyles(theme => ({
     height: 48,
     padding: '0 30px',
     '&:hover': {
-      background: `linear-gradient(45deg, ${theme.palette.secondary.main} 40%, ${theme.palette.secondary.dark} 70%)`
+      background: `linear-gradient(45deg, ${theme.palette.secondary.main} 40%, ${theme.palette.secondary.dark} 70%)`,
+      boxShadow: `0 3px 5px 2px ${theme.palette.primary.light}`
     }
   },
   questionGrid: {
@@ -288,14 +289,17 @@ const homeStyle = makeStyles(theme => ({
     width: 40,
     background: `linear-gradient(45deg, #a8976e 20%, ${theme.palette.secondary.light} 90%)`,
     borderRadius: 4,
-    boxShadow: '0 5px 7px 4px #661a00',
+    boxShadow: `0 3px 5px 2px ${theme.palette.primary.main}`,
     color: 'white',
     '&:hover': {
-      background: `linear-gradient(45deg, #a8976e 20%, ${theme.palette.secondary.dark} 90%)`
+      background: `linear-gradient(45deg, #a8976e 20%, ${theme.palette.secondary.main} 90%)`
     }
   },
   questionBoxAnswered: {
-    boxShadow: '0 5px 7px 4px  #004d00'
+    background: `linear-gradient(45deg, ${theme.palette.primary.light} 40%, ${theme.palette.secondary.main} 90%)`,
+    '&:hover': {
+      background: `linear-gradient(45deg, ${theme.palette.primary.light} 40%, ${theme.palette.secondary.dark} 70%)`
+    }
   },
   reviewBox: {
     height: 40,
@@ -307,6 +311,9 @@ const homeStyle = makeStyles(theme => ({
     '&:hover': {
       background: `linear-gradient(45deg, #a8976e 20%, ${theme.palette.secondary.dark} 90%)`
     }
+  },
+  reviewBoxCorrect: {
+    boxShadow: '0 5px 7px 4px  #004d00'
   },
   correct: {
     color: 'green'

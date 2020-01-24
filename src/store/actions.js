@@ -43,7 +43,7 @@ export const addSubjectImage = (id, image) => ({
   image: image
 })
 
-export const addSubject = (subject) => ({
+export const addSubject = subject => ({
   type: C.ADD_SUBJECT,
   subject: subject
 })
@@ -67,6 +67,11 @@ export const setChecked = (id, checked) => ({
 
 export const createQuiz = username => ({
   type: C.CREATE_QUIZ,
+  username: username
+})
+
+export const completeQuiz = username => ({
+  type: C.COMPLETE_QUIZ,
   username: username
 })
 
@@ -96,12 +101,12 @@ export const addQuestionImage = (username, questionID, url) => ({
   url: url
 })
 
-export const deleteCategory = (id) => ({
+export const deleteCategory = id => ({
   type: C.DELETE_CATEGORY,
   id: id
 })
 
-export const addCategory = (category) => ({
+export const addCategory = category => ({
   type: C.ADD_CATEGORY,
   category: category
 })
