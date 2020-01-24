@@ -63,8 +63,8 @@ const QuizWeaponCard = ({
   )
 
   const handleBranchChecked = event => {
-    categoriesOfBranch.forEach(category => {
-      setChecked(category.id, event.target.checked)
+    categories.forEach(category => {
+      if (category.branch === branch) { setChecked(category.id, event.target.checked) }
     })
   }
 

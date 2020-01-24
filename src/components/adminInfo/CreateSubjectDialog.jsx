@@ -37,7 +37,6 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
   const [URI, setURI] = useState('')
   const [general, setGeneral] = useState('')
   const [units, setUnits] = useState('')
-
   const [errors, setErrors] = useState({ nameError: false, UriError: false })
   const classes = createSubjectStyle()
   const [images, setImages] = useState([])
@@ -108,13 +107,12 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
   }
 
   const validateInput = () => {
-    
     setErrors({
-        ...errors,
-        nameError: name === '',
-        UriError: !/^[a-z0-9-]+$/.test(URI)
+      ...errors,
+      nameError: name === '',
+      UriError: !/^[a-z0-9-]+$/.test(URI)
     })
-    if(!((name === '')||(!/^[a-z0-9-]+$/.test(URI)))){
+    if (!((name === '') || (!/^[a-z0-9-]+$/.test(URI)))) {
       onCreate(name, URI, general, units, images)
     }
   }
@@ -134,7 +132,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
         <TextField
           error={errors.nameError}
           label='Όνομα'
-          helperText={errors.nameError?'To όνομα είναι κενό':'Το όνομα του νέου θέματος'}
+          helperText={errors.nameError ? 'To όνομα είναι κενό' : 'Το όνομα του νέου θέματος'}
           margin='normal'
           variant='outlined'
           value={name}
@@ -261,7 +259,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                     </GridListTile>
                   )
                 })}
-              </GridList>
+                </GridList>
               : <Typography align='center'> Δεν έχετε επιλέξει εικόνες</Typography>}
           </Grid>
         </Grid>

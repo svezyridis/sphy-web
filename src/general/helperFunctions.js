@@ -11,9 +11,25 @@ export const titleCase = str => {
     for (const word of str) {
       final.push(word.charAt(0).toUpperCase() + word.slice(1))
     }
-
     return final.join(' ')
-  } else { return null }
+  } else {
+    return null
+  }
+}
+
+export const getTranslatedRole = role => {
+  switch (role) {
+    case 'ADMIN':
+      return 'Κεντρικός Διαχειρηστής'
+    case 'UNIT_ADMIN':
+      return 'Διαχειριστής Μονάδας'
+    case 'TEACHER':
+      return 'Καθηγητής'
+    case 'USER':
+      return 'Χρήστης'
+    default:
+      return ''
+  }
 }
 
 export const getBranchInitials = branch => {
