@@ -41,6 +41,7 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
     ...category.image,
     URL: category.imageURL
   })
+  const [nameErrors, setNameErrors] = useState(false)
   const [imageDialogOpen, setImageDialogOpen] = useState(false)
   const classes = dialogStyle()
   const [images, setImages] = useState([])
@@ -76,13 +77,13 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
             try {
               const response = await fetch(
                 imagesURL +
-                  category.branch +
-                  '/' +
-                  category.uri +
-                  '/' +
-                  subject.uri +
-                  '/' +
-                  subject.defaultImage.filename,
+                category.branch +
+                '/' +
+                category.uri +
+                '/' +
+                subject.uri +
+                '/' +
+                subject.defaultImage.filename,
                 {
                   method: 'GET',
                   credentials: 'include',
@@ -110,6 +111,15 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
   }
   console.log(category)
 
+  const validateInput = () => {
+
+    setNameErrors(name === '')
+    if (!(name === '')) {
+      onClose()
+      onEdit(category, name, URI, image.id)
+    }
+  }
+
   return (
     <Dialog open={open} onClose={onClose}>
       <ImageListDialog
@@ -129,6 +139,7 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
         <Grid container direction='column'>
           <Grid item>
             <TextField
+              error={nameErrors}
               label='Όνομα'
               helperText='Το όνομα της νέας κατηγορίας'
               margin='normal'
@@ -140,6 +151,7 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
               onChange={e => setName(e.target.value)}
             />
             <TextField
+              disabled
               label='URI'
               helperText='Mόνο λατινικοί χαρακτήρες και παύλα'
               margin='normal'
@@ -186,10 +198,7 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
           ΑΚΥΡΟ
         </Button>
         <Button
-          onClick={() => {
-            onClose()
-            onEdit(category, name, URI, image.id)
-          }}
+          onClick={validateInput}
           color='primary'
           variant='contained'
         >

@@ -49,13 +49,13 @@ const Review = ({
     const subject = question.subject.uri
     fetch(
       imagesURL +
-        branch +
-        '/' +
-        category +
-        '/' +
-        subject +
-        '/' +
-        question.image.filename,
+      branch +
+      '/' +
+      category +
+      '/' +
+      subject +
+      '/' +
+      question.image.filename,
       {
         method: 'GET',
         credentials: 'include',
@@ -79,6 +79,28 @@ const Review = ({
       })
   }
   const question = myQuiz.questions[questionIndex]
+  
+
+  useEffect(() => {
+    console.log(question)
+    if (!myQuiz) return
+    if (!question) return
+    getImagesOfQuestion(question)
+    return () => { }
+  }, [question])
+
+  if (!myQuiz) {
+    history.push('/quiz')
+    return null
+  }
+
+  if(questionIndex<0 || questionIndex>=myQuiz.questions.length){
+    history.push('/review/1')
+    return null
+  }
+
+  
+
   const answer = find(myQuiz.answers, { questionID: question.id })
   const score = myQuiz.answers.reduce((accumulator, answer) => {
     const question = find(myQuiz.questions, { id: answer.questionID })
@@ -89,18 +111,8 @@ const Review = ({
     return accumulator + increment
   }, 0)
 
-  useEffect(() => {
-    console.log(question)
-    if (!myQuiz) return
-    if (!question) return
-    getImagesOfQuestion(question)
-    return () => {}
-  }, [question])
+ 
 
-  if (!myQuiz) {
-    history.push('/quiz')
-    return null
-  }
   if (isEmpty(account)) {
     console.log('account is empty')
     var tempAccount = window.sessionStorage.getItem('account')
@@ -159,8 +171,10 @@ const Review = ({
           </Link>
         </Breadcrumbs>
         <Typography variant='h4' align='center'>
-          {`Η βαθμολογία σας είναι: ${score} από ${myQuiz.questions.length}`}
+          {`Η βαθμολογία σας είναι:
+          `}<h3 className={((score / myQuiz.questions.length).toFixed(2)*100 > 50)?classes.correct:classes.incorrect}>{`${(score / myQuiz.questions.length).toFixed(2)*100} %`}</h3>
         </Typography>
+
         <Grid
           container
           className={classes.questionGrid}
@@ -192,7 +206,7 @@ const Review = ({
         <Typography variant='subtitle1' align='center'>
           {`Ερώτηση ${parseInt(questionIndex) + 1} από ${
             myQuiz.questions.length
-          }`}
+            }`}
         </Typography>
       </div>
       <Copyright open={open} />
