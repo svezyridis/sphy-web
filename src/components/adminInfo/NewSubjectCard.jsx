@@ -87,7 +87,6 @@ const NewSubjectCard = ({ addSubject, addImage }) => {
             method: 'POST',
             credentials: 'include',
             headers: {
-              authorization: 'Bearer ' + account.token,
               Accept: 'application/json'
             },
             body: formData
@@ -110,7 +109,6 @@ const NewSubjectCard = ({ addSubject, addImage }) => {
       method: 'POST',
       credentials: 'include',
       headers: {
-        authorization: 'Bearer ' + account.token,
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },

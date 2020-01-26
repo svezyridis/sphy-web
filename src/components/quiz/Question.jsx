@@ -60,9 +60,6 @@ const Question = ({
       {
         method: 'GET',
         credentials: 'include',
-        headers: {
-          authorization: 'Bearer ' + account.token
-        },
         signal: signal
       }
     )
@@ -183,7 +180,8 @@ const Question = ({
         </Grid>
         <Typography variant='subtitle1' align='center'>{`Ερώτηση ${parseInt(
           questionIndex
-        ) + 1} από ${myQuiz.questions.length}`}</Typography>
+        ) + 1} από ${myQuiz.questions.length}`}
+        </Typography>
       </div>
       <Copyright open={open} />
     </div>

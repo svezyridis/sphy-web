@@ -47,7 +47,6 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const account = useSelector(state => state.account)
 
   const onImageChange = image => {
     setImage(image)
@@ -59,10 +58,7 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
     if (images.length > 0) return
     fetch(subjectsURL + category.branch + '/' + category.uri, {
       method: 'GET',
-      credentials: 'include',
-      headers: {
-        authorization: 'Bearer ' + account.token
-      }
+      credentials: 'include'
     })
       .then(response => response.json())
       .then(data => {
@@ -70,38 +66,19 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
         console.log(data)
         if (status === 'error' || status === 500) setError(message)
         else {
-          result.forEach(async (subject, index) => {
-            if (!subject.defaultImage) {
-              return
-            }
-            try {
-              const response = await fetch(
-                imagesURL +
-                category.branch +
-                '/' +
-                category.uri +
-                '/' +
-                subject.uri +
-                '/' +
-                subject.defaultImage.filename,
-                {
-                  method: 'GET',
-                  credentials: 'include',
-                  headers: {
-                    authorization: 'Bearer ' + account.token
-                  }
-                }
-              )
-              const image = await response.blob()
-              var imageURL = URL.createObjectURL(image)
-              console.log(imageURL)
-              setImages(images => [
-                ...images,
-                { ...subject.defaultImage, URL: imageURL }
-              ])
-            } catch (error) {
-              console.log(error)
-            }
+          result.forEach(subject => {
+            var imageURL = imagesURL +
+              category.branch +
+              '/' +
+              category.uri +
+              '/' +
+              subject.uri +
+              '/' +
+              subject.defaultImage.filename
+            setImages(images => [
+              ...images,
+              { ...subject.defaultImage, URL: imageURL }
+            ])
           })
         }
       })
@@ -112,7 +89,6 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
   console.log(category)
 
   const validateInput = () => {
-
     setNameErrors(name === '')
     if (!(name === '')) {
       onClose()

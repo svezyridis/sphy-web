@@ -31,7 +31,9 @@ const LoginDrawer = ({ account, addAccount, dark }) => {
       username: username,
       password: password
     }
-    fetch(loginURL + objectToQueryString(queryParams))
+    fetch(loginURL + objectToQueryString(queryParams), {
+      credentials: 'include'
+    })
       .then(response => response.json())
       .then(data => {
         const { status, result, message } = data

@@ -42,45 +42,16 @@ const Weapon = ({
   const [error, setError] = useState('')
   const branch = match.params.weapon
 
-  const getImageOfCategory = async category => {
-    if (!(category.image && category.image.filename)) {
-      return
-    }
-    try {
-      const response = await fetch(
-        imagesURL +
-          branch +
-          '/' +
-          category.uri +
-          '/' +
-          category.image.subject +
-          '/' +
-          category.image.filename,
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            authorization: 'Bearer ' + account.token
-          },
-          signal: signal
-        }
-      )
-      const image = await response.blob()
-      var imageUrl = URL.createObjectURL(image)
-      addImage(category.id, imageUrl)
-    } catch (error) {
-      if (!controller.signal.aborted) {
-        console.error(error)
-      }
-    }
+  const getImageOfCategory = category => {
+    if (!(category.image && category.image.filename)) { return }
+    const imageUrl = imagesURL + branch + '/' + category.uri + '/' + category.image.subject + '/' + category.image.filename
+    console.log(imageUrl)
+    addImage(category.id, imageUrl)
   }
   const getCategories = () => {
     fetch(categoriesURL + branch, {
       method: 'GET',
       credentials: 'include',
-      headers: {
-        authorization: 'Bearer ' + account.token
-      },
       signal: signal,
       cache: 'force-cache'
     })
@@ -143,9 +114,6 @@ const Weapon = ({
     fetch(categoriesURL + branch + '/' + category.uri, {
       method: 'DELETE',
       credentials: 'include',
-      headers: {
-        authorization: 'Bearer ' + account.token
-      },
       signal: signal
     })
       .then(response => response.json())
@@ -169,7 +137,6 @@ const Weapon = ({
       method: 'POST',
       credentials: 'include',
       headers: {
-        authorization: 'Bearer ' + account.token,
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
@@ -196,9 +163,6 @@ const Weapon = ({
     fetch(categoriesURL + 'uri/' + newURI, {
       method: 'GET',
       credentials: 'include',
-      headers: {
-        authorization: 'Bearer ' + account.token
-      },
       signal: signal,
       cache: 'force-cache'
     })
@@ -227,7 +191,6 @@ const Weapon = ({
       method: 'PUT',
       credentials: 'include',
       headers: {
-        authorization: 'Bearer ' + account.token,
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },

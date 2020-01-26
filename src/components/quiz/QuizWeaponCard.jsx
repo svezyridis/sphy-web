@@ -78,9 +78,6 @@ const QuizWeaponCard = ({
     fetch(categoriesURL + branch, {
       method: 'GET',
       credentials: 'include',
-      headers: {
-        authorization: 'Bearer ' + account.token
-      },
       signal: signal
     })
       .then(response => response.json())

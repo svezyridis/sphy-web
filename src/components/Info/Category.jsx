@@ -47,9 +47,6 @@ const Category = ({
     fetch(subjectsURL + branch + '/' + category + '/' + subject.uri, {
       method: 'DELETE',
       credentials: 'include',
-      headers: {
-        authorization: 'Bearer ' + account.token
-      },
       signal: signal
     })
       .then(response => response.json())
@@ -74,9 +71,6 @@ const Category = ({
     fetch(subjectsURL + branch + '/' + category, {
       method: 'GET',
       credentials: 'include',
-      headers: {
-        authorization: 'Bearer ' + account.token
-      },
       signal: signal
     })
       .then(response => response.json())
@@ -90,33 +84,15 @@ const Category = ({
             if (!(subject.defaultImage && subject.defaultImage.filename)) {
               return
             }
-            try {
-              const response = await fetch(
-                imagesURL +
-                  branch +
-                  '/' +
-                  category +
-                  '/' +
-                  subject.uri +
-                  '/' +
-                  subject.defaultImage.filename,
-                {
-                  method: 'GET',
-                  credentials: 'include',
-                  headers: {
-                    authorization: 'Bearer ' + account.token
-                  },
-                  signal: signal
-                }
-              )
-              const image = await response.blob()
-              var imageUrl = URL.createObjectURL(image)
-              addImage(subject.id, imageUrl)
-            } catch (error) {
-              if (!controller.signal.aborted) {
-                console.error(error)
-              }
-            }
+            var imageUrl = imagesURL +
+              branch +
+              '/' +
+              category +
+              '/' +
+              subject.uri +
+              '/' +
+              subject.defaultImage.filename
+            addImage(subject.id, imageUrl)
           })
         }
       })

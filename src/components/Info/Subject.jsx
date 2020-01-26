@@ -51,34 +51,16 @@ const Subject = ({
   var controller = new window.AbortController()
   var signal = controller.signal
   const getImages = imageArray => {
-    imageArray.forEach(async image => {
-      try {
-        const response = await fetch(
-          imagesURL +
-            branch +
-            '/' +
-            category.toLowerCase() +
-            '/' +
-            subjectURI +
-            '/' +
-            image.filename,
-          {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-              authorization: 'Bearer ' + account.token
-            },
-            signal: signal
-          }
-        )
-        const imageFile = await response.blob()
-        var imageUrl = URL.createObjectURL(imageFile)
-        dispatchImages(addImage(image.id, imageUrl))
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          console.error(error)
-        }
-      }
+    imageArray.forEach(image => {
+      var imageUrl = imagesURL +
+        branch +
+        '/' +
+        category.toLowerCase() +
+        '/' +
+        subjectURI +
+        '/' +
+        image.filename
+      dispatchImages(addImage(image.id, imageUrl))
     })
   }
 
@@ -116,9 +98,6 @@ const Subject = ({
       fetch(subjectsURL + subjectURI, {
         method: 'GET',
         credentials: 'include',
-        headers: {
-          authorization: 'Bearer ' + account.token
-        },
         signal: signal
       })
         .then(response => response.json())
@@ -282,8 +261,8 @@ const Subject = ({
               </b>
               {subject.general
                 ? subject.general
-                    .split('\n')
-                    .map((paragraph, key) => <p key={key}>{paragraph}</p>)
+                  .split('\n')
+                  .map((paragraph, key) => <p key={key}>{paragraph}</p>)
                 : null}
             </Typography>
           </div>

@@ -60,7 +60,6 @@ const UserManagement = ({
       method: 'GET',
       credentials: 'include',
       headers: {
-        authorization: 'Bearer ' + account.token,
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
@@ -86,7 +85,6 @@ const UserManagement = ({
       method: 'GET',
       credentials: 'include',
       headers: {
-        authorization: 'Bearer ' + account.token,
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
@@ -112,7 +110,6 @@ const UserManagement = ({
       method: 'GET',
       credentials: 'include',
       headers: {
-        authorization: 'Bearer ' + account.token,
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
@@ -150,7 +147,6 @@ const UserManagement = ({
         method: 'DELETE',
         credentials: 'include',
         headers: {
-          authorization: 'Bearer ' + account.token,
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
@@ -190,7 +186,6 @@ const UserManagement = ({
         method: 'POST',
         credentials: 'include',
         headers: {
-          authorization: 'Bearer ' + account.token,
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },

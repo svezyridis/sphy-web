@@ -64,10 +64,7 @@ const Quiz = ({
     new Promise((resolve, reject) => {
       fetch(questionsURL + subject.uri, {
         method: 'GET',
-        credentials: 'include',
-        headers: {
-          authorization: 'Bearer ' + account.token
-        }
+        credentials: 'include'
       })
         .then(response => response.json())
         .then(data => {
@@ -87,9 +84,6 @@ const Quiz = ({
       fetch(subjectsURL + branch + '/' + category.uri, {
         method: 'GET',
         credentials: 'include',
-        headers: {
-          authorization: 'Bearer ' + account.token
-        },
         signal: signal
       })
         .then(response => response.json())
