@@ -307,7 +307,6 @@ const Weapon = ({
             <Grid item>
               <NewCategoryCard
                 branch={branch}
-                token={account.token}
                 createCategory={handleCreateCategory}
               />
             </Grid>

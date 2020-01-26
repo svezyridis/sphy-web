@@ -50,7 +50,7 @@ const cardStyle = makeStyles(theme => ({
   }
 }))
 
-const NewCategoryCard = ({ branch, token, createCategory }) => {
+const NewCategoryCard = ({ branch, createCategory }) => {
   const classes = cardStyle()
   const [error, setError] = useState('')
   const [createDialogOpen, setCreateDialogOpen] = useState(false)

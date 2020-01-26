@@ -183,7 +183,6 @@ const Category = ({
                 <SubjectCard
                   subject={subject}
                   branch={branch}
-                  token={account.token}
                   admin={isAdmin}
                   category={category}
                   deleteSubject={() => handleDelete(subject)}

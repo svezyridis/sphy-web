@@ -8,7 +8,6 @@ export const newAccount = token => {
   var decoded = jwt.decode(token, { complete: true })
   return {
     type: C.ADD_ACCOUNT,
-    token: token,
     metadata: JSON.parse(decoded.payload.metadata)
   }
 }
