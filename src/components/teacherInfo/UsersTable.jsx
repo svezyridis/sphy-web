@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react'
 import homeStyle from '../../styles/homeStyle'
 import { useHistory } from 'react-router-dom'
 import MaterialTable from 'material-table'
-import tableIcons from '../../styles/tableIcons'
+import tableIcons from '../../styles/userTableIcons'
 import { baseURL } from '../../general/constants'
 import { Box, Typography, Paper } from '@material-ui/core'
 

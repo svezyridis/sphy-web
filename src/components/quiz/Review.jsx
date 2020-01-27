@@ -38,8 +38,6 @@ const Review = ({
   const username = account.metadata.username
   const [image, setImage] = useState(null)
   const myQuiz = find(quizes, { username: username })
-  var controller = new window.AbortController()
-  var signal = controller.signal
 
   const getImagesOfQuestion = question => {
     const branch = question.branch

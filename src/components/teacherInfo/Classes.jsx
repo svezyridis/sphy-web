@@ -1,95 +1,86 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, forwardRef } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import HomeDrawer from '../home/HomeDrawer'
 import Copyright from '../Copyright'
-import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import Link from '@material-ui/core/Link'
 import homeStyle from '../../styles/homeStyle'
 import classNames from 'classnames'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
-import isEmpty from 'lodash.isempty'
 import { useHistory } from 'react-router-dom'
 import { Paper, Button } from '@material-ui/core'
 import HomeIcon from '@material-ui/icons/Home'
 import Typography from '@material-ui/core/Typography'
 import MaterialTable from 'material-table'
-import tableIcons from '../../styles/tableIcons'
+import tableIcons from '../../styles/classTableIcons'
 import { fetch } from 'whatwg-fetch'
 import { baseURL } from '../../general/constants'
 import EventSeatIcon from '@material-ui/icons/EventSeat'
-import { objectToQueryString } from '../../general/helperFunctions'
 import UsersTable from './UsersTable'
-
-const data = [
-  {
-    id: 23,
-    index: 1,
-    name: 'ονομα',
-    count: 13,
-    creationDate: Date.now(),
-    tests: 10,
-    users: [
-      {
-        serialNumber: 65324,
-        firstName: 'savvas',
-        lastName: 'vezyridis',
-        username: 'boubis12',
-        rank: 'anthsgos'
-      },
-      {
-        serialNumber: 65324,
-        firstName: 'savvas',
-        lastName: 'vezyridis',
-        username: 'boubis12',
-        rank: 'anthsgos'
-      }
-    ]
-  },
-  {
-    id: 15,
-    index: 1,
-    name: 'ονομα',
-    count: 13,
-    creationDate: Date.now(),
-    users: []
-  }
-]
-
+import Badge from '@material-ui/core/Badge'
 const classesURL = baseURL + 'class/'
 
 const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
-  const originalColumns = [
+  const columns = [
     { title: 'ΑΑ', field: 'index', editable: 'never' },
     { title: 'Όνομα Τάξης', field: 'name' },
-    { title: 'Αριθμός συμμετεχόντων', field: 'count', editable: 'never' },
+    { title: 'Αριθμός μαθητών', field: 'count', editable: 'never' },
     {
       title: 'Ημερομηνία δημιουργίας',
       field: 'creationDate',
       editable: 'never'
     },
     {
-      title: 'Αρ.Διαγωνισμάτων',
+      title: 'Διαγωνίσματα',
       field: 'tests',
       editable: 'never',
       render: rowData => (
-        <Typography variant='body2'>
-          {rowData.tests}
-          <Button
-            variant='contained'
-            onClick={() => history.push(`tests/${rowData.id}`)}
-          >
+        rowData
+          ? <Badge color='secondary' badgeContent={3} showZero>
+            <Button
+              variant='contained'
+              onClick={() => history.push(`tests/${rowData.id}`)}
+            >
             ΠΡΟΒΟΛΗ
-          </Button>
-        </Typography>
+            </Button>
+            </Badge>
+          : null
       )
     }
   ]
-  const [columns, setColumns] = useState(originalColumns)
+
   const classes = homeStyle()
   const history = useHistory()
-  const [classRooms, setClassRooms] = useState(data)
+  const [classRooms, setClassRooms] = useState([])
   const controller = new window.AbortController()
   const signal = controller.signal
+
+  useEffect(() => {
+    fetch(classesURL, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json'
+      },
+      signal: signal
+    })
+      .then(result => result.json())
+      .then(data => {
+        console.log(data)
+        if (data.status === 'success') {
+          const { result } = data
+          setClassRooms(result.map((classRoom, index) => {
+            return ({
+              ...classRoom,
+              index,
+              count: classRoom.students ? classRoom.students.length : 0
+            })
+          }))
+        }
+      })
+    return () => {
+      controller.abort()
+    }
+  }, [])
 
   const deleteClass = classToDelete =>
     new Promise((resolve, reject) => {
@@ -97,7 +88,6 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         method: 'DELETE',
         credentials: 'include',
         headers: {
-          authorization: 'Bearer ' + account.token,
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
@@ -117,15 +107,14 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         .catch(err => reject(err))
     })
 
-  const createClass = className => {
-    const temp = [...classRooms]
-    temp.push({ index: classRooms.length, name: className, count: 0 })
-    return new Promise((resolve, reject) => {
+  const createClass = className =>
+    new Promise((resolve, reject) => {
+      console.log(className)
+      const temp = [...classRooms]
       fetch(classesURL + className, {
         method: 'POST',
         credentials: 'include',
         headers: {
-          authorization: 'Bearer ' + account.token,
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
@@ -135,13 +124,14 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         .then(data => {
           console.log(data)
           if (data.status === 'success') {
+            var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '/')
+            temp.push({ ...data.result, index: temp.length, count: 0, creationDate: utc })
             setClassRooms(temp)
             resolve()
           } else reject(data.message)
         })
         .catch(err => reject(err))
     })
-  }
 
   return (
     <div className={classes.root}>
@@ -186,7 +176,7 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
           columns={columns}
           data={classRooms}
           editable={{
-            onRowAdd: newData => createClass(newData),
+            onRowAdd: newData => createClass(newData.name),
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
@@ -203,9 +193,12 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
               }),
             onRowDelete: oldData => deleteClass(oldData)
           }}
-          detailPanel={rowData => {
-            return <UsersTable students={rowData.users} />
-          }}
+          detailPanel={[{
+            tooltip: 'Προβολή μαθητών',
+            render: rowData => {
+              return <UsersTable students={rowData.students} />
+            }
+          }]}
           localization={{
             body: {
               addTooltip: 'Δημιουργία Τάξης',

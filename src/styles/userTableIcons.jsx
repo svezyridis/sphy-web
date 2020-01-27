@@ -17,7 +17,7 @@ import ViewColumn from '@material-ui/icons/ViewColumn'
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import AddLocationIcon from '@material-ui/icons/AddLocation'
 
-const tableIcons = {
+const userTableIcons = {
   Add: forwardRef((props, ref) => <PersonAddIcon {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
@@ -42,4 +42,4 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 }
 
-export default tableIcons
+export default userTableIcons

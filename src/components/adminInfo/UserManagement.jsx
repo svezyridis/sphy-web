@@ -13,7 +13,7 @@ import { Paper } from '@material-ui/core'
 import HomeIcon from '@material-ui/icons/Home'
 import Typography from '@material-ui/core/Typography'
 import MaterialTable from 'material-table'
-import tableIcons from '../../styles/tableIcons'
+import tableIcons from '../../styles/userTableIcons'
 import { fetch } from 'whatwg-fetch'
 import { baseURL } from '../../general/constants'
 import {
