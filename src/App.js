@@ -17,6 +17,7 @@ import {
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { useSelector } from 'react-redux'
 import { UserManagementContainer } from './components/containers/adminContainer'
+import { ClassesContainer } from './components/containers/teacherContainer'
 
 const themeObject = {
   palette: {
@@ -66,6 +67,7 @@ function App () {
           <Route exact path='/login' component={LoginContainer} />
           <Route exact path='/info' component={InfoContainer} />
           <Route exact path='/users' component={UserManagementContainer} />
+          <Route exact path='/classes' component={ClassesContainer} />
           <Route exact path='/info/:weapon' component={WeaponContainer} />
           <Route
             exact

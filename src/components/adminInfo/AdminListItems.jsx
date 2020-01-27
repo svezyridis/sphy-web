@@ -4,6 +4,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import List from '@material-ui/core/List'
+import GroupIcon from '@material-ui/icons/Group'
 import { useHistory } from 'react-router-dom'
 
 export const AdminListItems = () => {
@@ -12,7 +13,7 @@ export const AdminListItems = () => {
     <List>
       <ListItem button onClick={() => history.push('/users')}>
         <ListItemIcon>
-          <AccountBoxIcon />
+          <GroupIcon />
         </ListItemIcon>
         <ListItemText primary='Διαχείριση Χρηστών' />
       </ListItem>

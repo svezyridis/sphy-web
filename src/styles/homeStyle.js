@@ -325,6 +325,9 @@ const homeStyle = makeStyles(theme => ({
     '&$checked': {
       color: '#4B8DF8'
     }
+  },
+  innerTable: {
+    paddingLeft: '5%'
   }
 }))
 

@@ -46,34 +46,19 @@ const Review = ({
     const branch = question.branch
     const category = question.category
     const subject = question.subject.uri
-    fetch(
+    var imageUrl =
       imagesURL +
-        branch +
-        '/' +
-        category +
-        '/' +
-        subject +
-        '/' +
-        question.image.filename,
-      {
-        method: 'GET',
-        credentials: 'include',
-        signal: signal
-      }
-    )
-      .then(response => response.blob())
-      .then(imageFile => {
-        var imageUrl = URL.createObjectURL(imageFile)
-        console.log(imageUrl)
-        addQuestionImage(username, question.id, imageUrl)
-        setImage(imageUrl)
-      })
-      .catch(error => {
-        if (!controller.signal.aborted) {
-          console.error(error)
-        }
-      })
+      branch +
+      '/' +
+      category +
+      '/' +
+      subject +
+      '/' +
+      question.image.filename
+    addQuestionImage(username, question.id, imageUrl)
+    setImage(imageUrl)
   }
+
   const question = myQuiz.questions[questionIndex]
 
   useEffect(() => {
