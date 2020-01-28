@@ -16,6 +16,7 @@ import Fab from '@material-ui/core/Fab'
 import Tooltip from '@material-ui/core/Tooltip'
 import unavailableImage from '../../images/unavailable.png'
 import EditSubjectImageDialog2 from './EditSubjectImagesDialog2'
+import { baseURL } from '../../general/constants'
 
 const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
   const [name, setName] = useState(subject.name)
@@ -38,7 +39,12 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
 
   if (addImage) {
     imageEditor = (
-      <EditSubjectImageDialog2 addImage={addImage} handleClose={handleClose} imageArray={subject.images} uri={subject.uri} category={subject.category} />)
+      <EditSubjectImageDialog2 
+      addImage={addImage} 
+      handleClose={handleClose} 
+      imageArray={subject.images} 
+      uri={subject.uri} 
+      category={subject.category}/>)
   }
   console.log(subject)
   return (
