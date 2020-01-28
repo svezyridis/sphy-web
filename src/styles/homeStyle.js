@@ -198,6 +198,20 @@ const homeStyle = makeStyles(theme => ({
     top: '5%',
     opacity: 0.8
   },
+  leftThemeIcon: {
+    position: 'absolute',
+    zIndex: 1,
+    left: '10px',
+    top: '50%',
+    opacity: 0.8
+  },
+  rightThemeIcon: {
+    position: 'absolute',
+    zIndex: 1,
+    right: '10px',
+    top: '50%',
+    opacity: 0.8
+  },
   paragraph: {
     textIndent: '20px',
     overflowY: 'auto',

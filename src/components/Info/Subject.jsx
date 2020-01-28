@@ -24,6 +24,10 @@ import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded'
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import ImageDialog from './ImageDialog'
 import { Divider } from '@material-ui/core'
+import ArrowForwardRoundedIcon from '@material-ui/icons/ArrowForwardRounded'
+import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded'
+import find from 'lodash.find'
+import findIndex from 'lodash.findindex'
 
 const subjectsURL = baseURL + 'subject/'
 const imagesURL = baseURL + 'image/'
@@ -32,6 +36,7 @@ const Subject = ({
   open,
   dark,
   toogleDrawer,
+  subjects,
   account,
   deleteAccount,
   match,
@@ -76,6 +81,28 @@ const Subject = ({
       left: gridList.current.scrollLeft + 400,
       behavior: 'smooth'
     })
+  }
+
+  const nextSubjectHandler = () => {
+    var subjectFoundIndex = findIndex(subjects, { uri: subjectURI })
+    if (subjectFoundIndex === subjects.length - 1) {
+      var nextURI = subjects[0].uri
+    } else {
+      var nextURI = subjects[subjectFoundIndex + 1].uri
+    }
+    var nextSubjectURI = '/info/' + branch + '/' + category.toLowerCase() + '/' + nextURI
+    history.push(nextSubjectURI)
+  }
+
+  const previousSubjectHandler = () => {
+    var subjectFoundIndex = findIndex(subjects, { uri: subjectURI })
+    if (subjectFoundIndex === 0) {
+      var nextURI = subjects[subjects.length - 1].uri
+    } else {
+      var nextURI = subjects[subjectFoundIndex - 1].uri
+    }
+    var nextSubjectURI = '/info/' + branch + '/' + category.toLowerCase() + '/' + nextURI
+    history.push(nextSubjectURI)
   }
 
   const nextSelectedImage = () => {
@@ -128,7 +155,7 @@ const Subject = ({
     return () => {
       controller.abort()
     }
-  }, [])
+  }, [subjectURI])
 
   return (
     <div className={classes.root}>
@@ -267,6 +294,20 @@ const Subject = ({
             </Typography>
           </div>
         </Paper>
+        <Fab
+          color={dark ? 'secondary' : 'primary'}
+          className={classes.leftThemeIcon}
+          onClick={previousSubjectHandler}
+        >
+          <ArrowBackRoundedIcon />
+        </Fab>
+        <Fab
+          color={dark ? 'secondary' : 'primary'}
+          className={classes.rightThemeIcon}
+          onClick={nextSubjectHandler}
+        >
+          <ArrowForwardRoundedIcon />
+        </Fab>
       </div>
       <Copyright open={open} />
     </div>
