@@ -33,18 +33,17 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
       title: 'Διαγωνίσματα',
       field: 'tests',
       editable: 'never',
-      render: rowData => (
-        rowData
-          ? <Badge color='secondary' badgeContent={3} showZero>
+      render: rowData =>
+        rowData ? (
+          <Badge color='secondary' badgeContent={rowData.noOfTests} showZero>
             <Button
               variant='contained'
               onClick={() => history.push(`tests/${rowData.id}`)}
             >
-            ΠΡΟΒΟΛΗ
+              ΠΡΟΒΟΛΗ
             </Button>
-            </Badge>
-          : null
-      )
+          </Badge>
+        ) : null
     }
   ]
 
@@ -68,13 +67,15 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         console.log(data)
         if (data.status === 'success') {
           const { result } = data
-          setClassRooms(result.map((classRoom, index) => {
-            return ({
-              ...classRoom,
-              index,
-              count: classRoom.students ? classRoom.students.length : 0
+          setClassRooms(
+            result.map((classRoom, index) => {
+              return {
+                ...classRoom,
+                index,
+                count: classRoom.students ? classRoom.students.length : 0
+              }
             })
-          }))
+          )
         }
       })
     return () => {
@@ -124,8 +125,16 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         .then(data => {
           console.log(data)
           if (data.status === 'success') {
-            var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '/')
-            temp.push({ ...data.result, index: temp.length, count: 0, creationDate: utc })
+            var utc = new Date()
+              .toJSON()
+              .slice(0, 10)
+              .replace(/-/g, '/')
+            temp.push({
+              ...data.result,
+              index: temp.length,
+              count: 0,
+              creationDate: utc
+            })
             setClassRooms(temp)
             resolve()
           } else reject(data.message)
@@ -193,12 +202,14 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
               }),
             onRowDelete: oldData => deleteClass(oldData)
           }}
-          detailPanel={[{
-            tooltip: 'Προβολή μαθητών',
-            render: rowData => {
-              return <UsersTable students={rowData.students} />
+          detailPanel={[
+            {
+              tooltip: 'Προβολή μαθητών',
+              render: rowData => {
+                return <UsersTable students={rowData.students} />
+              }
             }
-          }]}
+          ]}
           localization={{
             body: {
               addTooltip: 'Δημιουργία Τάξης',
