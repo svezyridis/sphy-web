@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import HomeDrawer from '../home/HomeDrawer'
 import Copyright from '../Copyright'
@@ -184,6 +184,9 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
           title='Τάξεις'
           columns={columns}
           data={classRooms}
+          options={{
+            search: false
+          }}
           editable={{
             onRowAdd: newData => createClass(newData.name),
             onRowUpdate: (newData, oldData) =>
@@ -206,7 +209,7 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
             {
               tooltip: 'Προβολή μαθητών',
               render: rowData => {
-                return <UsersTable students={rowData.students} />
+                return <UsersTable students={rowData.students} classID={rowData.id} />
               }
             }
           ]}

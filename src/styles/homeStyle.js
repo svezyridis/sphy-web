@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/styles'
-import backgroundImage from '../images/backgroundLight.jpeg'
 
 export const drawerWidth = 400
 const imageHeight = 40

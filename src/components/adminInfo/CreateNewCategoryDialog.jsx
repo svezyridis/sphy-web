@@ -4,7 +4,6 @@ import TextField from '@material-ui/core/TextField'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
 import { Typography } from '@material-ui/core'
 
 const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
@@ -17,19 +16,19 @@ const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
     setURI('')
   }
 
-  const validateInput = () => {   
+  const validateInput = () => {
     setErrors({
-        ...errors,
-        nameError: name === '',
-        UriError: !/^[a-z0-9-]+$/.test(URI)
+      ...errors,
+      nameError: name === '',
+      UriError: !/^[a-z0-9-]+$/.test(URI)
     })
-    if(!((name === '')||(!/^[a-z0-9-]+$/.test(URI)))){
+    if (!((name === '') || (!/^[a-z0-9-]+$/.test(URI)))) {
       onCreate(name, URI)
     }
   }
 
   console.log(errors)
-  
+
   return (
     <Dialog open={open} onClose={onClose} onExit={cleanState}>
       <Typography color='secondary' align='center' variant='h5'>

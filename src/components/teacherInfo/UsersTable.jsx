@@ -1,12 +1,12 @@
-import React, { useState, Fragment } from 'react'
+import React, { useState } from 'react'
 import homeStyle from '../../styles/homeStyle'
 import { useHistory } from 'react-router-dom'
 import MaterialTable from 'material-table'
 import tableIcons from '../../styles/userTableIcons'
 import { baseURL } from '../../general/constants'
-import { Box, Typography, Paper } from '@material-ui/core'
+import { Typography, Paper } from '@material-ui/core'
 
-const originalColumns = [
+const columns = [
   { title: 'ΑΜ', field: 'serialNumber' },
   { title: 'Όνομα', field: 'firstName' },
   { title: 'Επίθετο', field: 'lastName' },
@@ -16,12 +16,17 @@ const originalColumns = [
 
 const usersURL = baseURL + 'user/'
 
-const UsersTable = ({ students }) => {
-  const [columns, setColumns] = useState(originalColumns)
+const UsersTable = ({ students, classID }) => {
   const classes = homeStyle()
   const history = useHistory()
   const [users, setUsers] = useState(students)
   console.log(students)
+
+  const removeUserFromClass = (user) =>
+    new Promise((resolve, reject) => {
+      console.log(classID, user.id)
+      resolve()
+    })
 
   return (
     <Paper className={classes.innerTable}>
@@ -29,24 +34,26 @@ const UsersTable = ({ students }) => {
         icons={tableIcons}
         columns={columns}
         data={users}
-        components={{
-          Toolbar: props => (
-            <Typography variant='h6' align='left'>
-              Μαθητές
-            </Typography>
-          )
-        }}
-        options={{
-          search: false
+        title='Μαθητές'
+        actions={[
+          {
+            icon: tableIcons.Add,
+            tooltip: 'Προσθήκη μαθητών',
+            isFreeAction: true,
+            onClick: event => alert('You want to add a new unit')
+          }
+        ]}
+        editable={{
+          onRowDelete: oldData =>
+            removeUserFromClass(oldData)
         }}
         localization={{
           body: {
-            addTooltip: 'Προσθήκη Χρήστη',
-            deleteTooltip: 'Διαγραφή Χρήστη',
-            editTooltip: 'Επεξεργασία',
+            addTooltip: 'Προσθήκη Μαθητή',
+            deleteTooltip: 'Αφαίρεση Μαθητή',
             editRow: {
               deleteText:
-                'Είστε σίγουροι ότι θέλετε να διαγράψετε αυτόν τον χρήστη;',
+                'Είστε σίγουροι ότι θέλετε να αφαιρέσετε τον χρήστη από την τάξη;',
               cancelTooltip: 'Ακύρωση',
               saveTooltip: 'Επιβεβαίωση'
             }

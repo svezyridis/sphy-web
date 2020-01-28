@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Card from '@material-ui/core/Card'
 import CardMedia from '@material-ui/core/CardMedia'
-import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import Radio from '@material-ui/core/Radio'
 import RadioGroup from '@material-ui/core/RadioGroup'
@@ -10,8 +9,6 @@ import FormControl from '@material-ui/core/FormControl'
 import FormLabel from '@material-ui/core/FormLabel'
 import Paper from '@material-ui/core/Paper'
 import { Grid, CardHeader } from '@material-ui/core'
-import classNames from 'classnames'
-import Avatar from '@material-ui/core/Avatar'
 
 const QuestionCard = ({
   question,

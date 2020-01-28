@@ -15,7 +15,6 @@ import { makeStyles } from '@material-ui/styles'
 import Fab from '@material-ui/core/Fab'
 import Tooltip from '@material-ui/core/Tooltip'
 import { fetch } from 'whatwg-fetch'
-import { useSelector } from 'react-redux'
 import { baseURL } from '../../general/constants'
 
 const dialogStyle = makeStyles(theme => ({

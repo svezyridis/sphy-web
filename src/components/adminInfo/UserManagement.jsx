@@ -17,8 +17,7 @@ import tableIcons from '../../styles/userTableIcons'
 import { fetch } from 'whatwg-fetch'
 import { baseURL } from '../../general/constants'
 import {
-  objectToQueryString,
-  getTranslatedRole
+  objectToQueryString
 } from '../../general/helperFunctions'
 
 const originalColumns = [

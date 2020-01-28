@@ -9,17 +9,14 @@ import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import { fetch } from 'whatwg-fetch'
 import Grid from '@material-ui/core/Grid'
-import SubjectCard from './SubjectCard'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
-import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import HomeIcon from '@material-ui/icons/Home'
 import { titleCase, getBranchName } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
-import NewSubjectCard from '../adminInfo/NewSubjectCard'
 import TestCard from './TestCard'
+import EventSeatIcon from '@material-ui/icons/EventSeat'
 
-const subjectsURL = baseURL + 'subject/'
-const imagesURL = baseURL + 'image/'
+const testsURL = baseURL + 'test/'
 
 const Tests = ({
   open,
@@ -47,7 +44,7 @@ const Tests = ({
     if (isEmpty(account)) {
       return
     }
-    fetch(subjectsURL + branch + '/' + category, {
+    fetch(testsURL, {
       method: 'GET',
       credentials: 'include',
       signal: signal
@@ -58,22 +55,7 @@ const Tests = ({
         console.log(data)
         if (status === 'error' || status === 500) setError(message)
         else {
-          setSubjects(result)
-          result.forEach(async (subject, index) => {
-            if (!(subject.defaultImage && subject.defaultImage.filename)) {
-              return
-            }
-            var imageUrl =
-              imagesURL +
-              branch +
-              '/' +
-              category +
-              '/' +
-              subject.uri +
-              '/' +
-              subject.defaultImage.filename
-            addImage(subject.id, imageUrl)
-          })
+          setTests(result)
         }
       })
       .catch(error => {
@@ -90,7 +72,6 @@ const Tests = ({
     history.push('/login')
     return null
   }
-  const isAdmin = account.metadata.role === 'ADMIN'
 
   return (
     <div className={classes.root}>
@@ -119,12 +100,12 @@ const Tests = ({
             component='button'
             variant='body1'
             onClick={() => {
-              history.push('/info')
+              history.push('/classes')
             }}
             className={classNames(classes.link, dark && classes.dark)}
           >
-            <LocalLibraryIcon className={classes.icon} />
-            Εκπαίδευση
+            <EventSeatIcon className={classes.icon} />
+            Οι τάξεις μου
           </Link>
           <Link
             component='button'
