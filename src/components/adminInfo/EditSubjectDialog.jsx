@@ -4,6 +4,8 @@ import TextField from '@material-ui/core/TextField'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
 import { Typography } from '@material-ui/core'
 import createSubjectStyle from '../../styles/createSubjectStyle'
 import Grid from '@material-ui/core/Grid'
@@ -13,6 +15,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import Fab from '@material-ui/core/Fab'
 import Tooltip from '@material-ui/core/Tooltip'
 import unavailableImage from '../../images/unavailable.png'
+import EditSubjectImageDialog2 from './EditSubjectImagesDialog2'
 
 const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
   const [name, setName] = useState(subject.name)
@@ -20,7 +23,24 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
   const [general, setGeneral] = useState(subject.general)
   const [units, setUnits] = useState(subject.units)
   const classes = createSubjectStyle()
+  const [addImage, setAddImage] = useState(false)
 
+  const imageEditorHandler = () => {
+    setAddImage(true)
+  }
+
+  const handleClose = () => {
+    setAddImage(false)
+  }
+
+
+  var imageEditor = null
+
+  if (addImage) {
+    imageEditor = (
+      <EditSubjectImageDialog2 addImage={addImage} handleClose={handleClose} imageArray={subject.images} uri={subject.uri} category={subject.category} />)
+  }
+  console.log(subject)
   return (
     <Dialog
       open={dialogOpen}
@@ -29,6 +49,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
       classes={{ paper: classes.dialog }}
       disableBackdropClick
     >
+      {imageEditor}
       <Typography color='secondary' align='center' variant='h5'>
         Επεξεργασία θέματος
       </Typography>
@@ -95,7 +116,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
             <Tooltip title='Επεξεργασία εικόνων'>
               <Fab
                 size='medium'
-                onClick={() => console.log('open images')}
+                onClick={imageEditorHandler}
                 className={classes.fab}
               >
                 <EditIcon color='secondary' />
