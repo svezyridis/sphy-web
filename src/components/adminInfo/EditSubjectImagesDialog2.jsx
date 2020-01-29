@@ -30,13 +30,15 @@ const cardStyle = makeStyles(theme => ({
 }))
 
 const EditSubjectImageDialog2 = (props) => {
-
-    const classes = cardStyle()
     console.log(props.imageArray)
+    const classes = cardStyle()
     const [createDialogOpen, setCreateDialogOpen] = useState(false)
     const [zoomState, setZoomState] = useState(false)
     const [zoomedImage, setZoomedImage] = useState({})
     const [imagesArray, setImagesArray] = useState([...props.imageArray])
+    const [uploadImages, setUploadImages] = useState([])
+    const [imageUploadCounter, setImageUploadCounter] = useState(0)
+    const [imageUploadError, setImageUploadError] = useState(false)
 
     const zoomImageHandler = (image) => {
         setZoomState(true)
@@ -59,12 +61,49 @@ const EditSubjectImageDialog2 = (props) => {
                 newImageArray.splice(deleteImageIndex, 1)
                 props.imageArray.splice(deleteImageIndex, 1)
                 setImagesArray(newImageArray)
+                props.getSubjects()
                 return json;
             }))
             .catch(error => console.log(error))
     }
 
-    console.log(imagesArray)
+    const imageUploadHandler = (file) => {
+        setUploadImages(
+            file
+        )
+    }
+
+    const imageUploadEdit = (imageArray) => {
+        imageArray.forEach(async image => {
+            console.log(image)
+            const formData = new FormData()
+            formData.append('file', image)
+            formData.append('label', '')
+            formData.append('isDefault', false)
+
+            try {
+                const response = await fetch(
+                    baseURL + 'image/army/' + props.category + '/' + props.uri,
+                    {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            Accept: 'application/json'
+                        },
+                        body: formData
+                    }
+                )
+                const data = await response.json()
+                props.getSubjects()
+                console.log(data)
+            } catch (error) {
+                console.error(error)
+            }
+        })
+    }
+
+    console.log(uploadImages)
+
     return (
         <Dialog open={props.addImage} onClose={props.handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title" align='center'>Επεξεργασία φωτογραφιών θέματος</DialogTitle>
@@ -90,18 +129,23 @@ const EditSubjectImageDialog2 = (props) => {
                     <DropzoneArea
                         acceptedFiles={['image/*']}
                         maxFileSize={10000000}
+                        onChange={(files) => imageUploadHandler(files)}
                     />
                 </GridList>
                 <Dialog open={zoomState} onClose={unzoomImageHandler}>
-                    <img style={{ height: '100%', width: '100%' }} src={baseURL + 'image/army/' + props.category + '/' + props.uri + '/' + zoomedImage.filename} alt={zoomedImage.suject} />
+                    <img
+                        style={{ height: '100%', width: '100%' }}
+                        src={baseURL + 'image/army/' + props.category + '/' + props.uri + '/' + zoomedImage.filename}
+                        alt={zoomedImage.suject}
+                    />
                 </Dialog>
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.handleClose} color="primary">
-                    Cancel
+                    KΛΕΙΣΙΜΟ
                 </Button>
-                <Button onClick={props.handleClose} color="primary">
-                    Subscribe
+                <Button onClick={() => imageUploadEdit(uploadImages)} color="primary">
+                    ΑΠΟΘΗΚΕΥΣΗ
                 </Button>
             </DialogActions>
         </Dialog>

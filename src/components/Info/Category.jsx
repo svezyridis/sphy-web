@@ -64,10 +64,7 @@ const Category = ({
       })
   }
 
-  useEffect(() => {
-    if (isEmpty(account)) {
-      return
-    }
+  const getSubjects=()=>{
     fetch(subjectsURL + branch + '/' + category, {
       method: 'GET',
       credentials: 'include',
@@ -101,6 +98,13 @@ const Category = ({
           console.error(error)
         }
       })
+  }
+
+  useEffect(() => {
+    if (isEmpty(account)) {
+      return
+    }
+    getSubjects()
     return () => {
       controller.abort()
     }
@@ -185,6 +189,7 @@ const Category = ({
                   branch={branch}
                   admin={isAdmin}
                   category={category}
+                  getSubjects={getSubjects}
                   deleteSubject={() => handleDelete(subject)}
                 />
               </Grid>
@@ -192,7 +197,7 @@ const Category = ({
           })}
           {isAdmin ? (
             <Grid item>
-              <NewSubjectCard addSubject={addSubject} addImage={addImage} />
+              <NewSubjectCard addSubject={addSubject} addImage={addImage} getSubjects={getSubjects}/>
             </Grid>
           ) : null}
         </Grid>

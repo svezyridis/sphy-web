@@ -18,7 +18,7 @@ import unavailableImage from '../../images/unavailable.png'
 import EditSubjectImageDialog2 from './EditSubjectImagesDialog2'
 import { baseURL } from '../../general/constants'
 
-const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
+const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects}) => {
   const [name, setName] = useState(subject.name)
   const [URI, setURI] = useState(subject.uri)
   const [general, setGeneral] = useState(subject.general)
@@ -44,7 +44,8 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject }) => {
       handleClose={handleClose} 
       imageArray={subject.images} 
       uri={subject.uri} 
-      category={subject.category}/>)
+      category={subject.category}
+      getSubjects={getSubjects}/>)
   }
   console.log(subject)
   return (

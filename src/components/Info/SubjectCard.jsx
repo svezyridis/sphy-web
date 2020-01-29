@@ -45,7 +45,7 @@ const cardStyle = makeStyles(theme => ({
   }
 }))
 
-const SubjectCard = ({ subject, admin, branch, deleteSubject }) => {
+const SubjectCard = ({ subject, admin, branch, deleteSubject, getSubjects }) => {
   const classes = cardStyle()
   const history = useHistory()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -67,7 +67,7 @@ const SubjectCard = ({ subject, admin, branch, deleteSubject }) => {
         onDeleteSubject={handleDelete}
         subject={subject.name}
       />
-      <EditSubjectDialog dialogOpen={editDialogOpen} onClose={() => setEditDialogOpen(false)} subject={subject} />
+      <EditSubjectDialog dialogOpen={editDialogOpen} onClose={() => setEditDialogOpen(false)} subject={subject} getSubjects={getSubjects}/>
       <Grid container direction='column' spacing={1}>
         <Grid item>
           <Card
