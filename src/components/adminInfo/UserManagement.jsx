@@ -29,9 +29,9 @@ const originalColumns = [
   { title: 'Βαθμός', field: 'rank' }
 ]
 
-const usersURL = baseURL + 'user'
-const rolesURL = baseURL + 'role'
-const unitsURL = baseURL + 'unit'
+const usersURL = baseURL + 'users'
+const rolesURL = baseURL + 'roles'
+const unitsURL = baseURL + 'units'
 
 const UserManagement = ({
   open,

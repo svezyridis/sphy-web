@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import homeStyle from '../../styles/homeStyle'
-import { useHistory } from 'react-router-dom'
 import MaterialTable from 'material-table'
 import tableIcons from '../../styles/userTableIcons'
 import { baseURL } from '../../general/constants'
-import { Typography, Paper } from '@material-ui/core'
+import Paper from '@material-ui/core/Paper'
+import { fetch } from 'whatwg-fetch'
+import EditUsersDialog from './EditUsersDIalog'
 
 const columns = [
   { title: 'ΑΜ', field: 'serialNumber' },
@@ -14,68 +15,122 @@ const columns = [
   { title: 'Βαθμός', field: 'rank' }
 ]
 
-const usersURL = baseURL + 'user/'
-
 const UsersTable = ({ students, classID }) => {
   const classes = homeStyle()
-  const history = useHistory()
   const [users, setUsers] = useState(students)
   console.log(students)
+  const editStudentsURL = baseURL + 'classes/' + classID + '/students/'
+  const controller = new window.AbortController()
+  const signal = controller.signal
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  const addUsers = newUsers => {
+    fetch(editStudentsURL,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        signal: signal,
+        body: JSON.stringify(newUsers.map(user => user.id))
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        if (data.status === 'success') {
+          const temp = [...users]
+          newUsers.forEach(user => temp.push(user))
+          setUsers(temp)
+          setDialogOpen(false)
+        }
+      })
+      .catch(err => console.log(err))
+  }
 
   const removeUserFromClass = (user) =>
     new Promise((resolve, reject) => {
-      console.log(classID, user.id)
+      fetch(editStudentsURL + user.id,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: {
+            Accept: 'application/json'
+          },
+          signal: signal
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          if (data.status === 'success') {
+            const oldDataIndex = users.indexOf(user)
+            setUsers(users =>
+              users.filter((row, index) => index !== oldDataIndex)
+            )
+            resolve()
+          } else { reject(data.message) }
+        })
+        .catch(err => reject(err))
       resolve()
     })
+  useEffect(() => {
+    return () => {
+      controller.abort()
+    }
+  }, [])
 
   return (
-    <Paper className={classes.innerTable}>
-      <MaterialTable
-        icons={tableIcons}
-        columns={columns}
-        data={users}
-        title='Μαθητές'
-        actions={[
-          {
-            icon: tableIcons.Add,
-            tooltip: 'Προσθήκη μαθητών',
-            isFreeAction: true,
-            onClick: event => alert('You want to add a new unit')
-          }
-        ]}
-        editable={{
-          onRowDelete: oldData =>
-            removeUserFromClass(oldData)
-        }}
-        localization={{
-          body: {
-            addTooltip: 'Προσθήκη Μαθητή',
-            deleteTooltip: 'Αφαίρεση Μαθητή',
-            editRow: {
-              deleteText:
-                'Είστε σίγουροι ότι θέλετε να αφαιρέσετε τον χρήστη από την τάξη;',
-              cancelTooltip: 'Ακύρωση',
-              saveTooltip: 'Επιβεβαίωση'
+    <>
+      <EditUsersDialog dialogOpen={dialogOpen} onClose={() => setDialogOpen(false)} students={users} addUsers={addUsers} />
+      <Paper className={classes.innerTable}>
+        <MaterialTable
+          icons={tableIcons}
+          columns={columns}
+          data={users}
+          title='Μαθητές'
+          actions={[
+            {
+              icon: tableIcons.Add,
+              tooltip: 'Προσθήκη μαθητών',
+              isFreeAction: true,
+              onClick: () => setDialogOpen(true)
             }
-          },
-          header: {
-            actions: 'Ενέργειες'
-          },
-          pagination: {
-            firstTooltip: 'Πρώτη σελίδα',
-            lastTooltip: 'Τελευταία σελίδα',
-            nextTooltip: 'Επόμενη σελίδα',
-            previousTooltip: 'Προηγούμενη σελίδα',
-            labelRowsSelect: 'γραμμές',
-            labelDisplayedRows: '{from}-{to} από {count}'
-          },
-          toolbar: {
-            searchTooltip: 'Αναζήτηση',
-            searchPlaceholder: 'Αναζήτηση'
-          }
-        }}
-      />
-    </Paper>
+          ]}
+          editable={{
+            onRowDelete: oldData =>
+              removeUserFromClass(oldData)
+          }}
+          localization={{
+            body: {
+              addTooltip: 'Προσθήκη Μαθητή',
+              deleteTooltip: 'Αφαίρεση Μαθητή',
+              editRow: {
+                deleteText:
+                'Είστε σίγουροι ότι θέλετε να αφαιρέσετε τον χρήστη από την τάξη;',
+                cancelTooltip: 'Ακύρωση',
+                saveTooltip: 'Επιβεβαίωση'
+              }
+            },
+            header: {
+              actions: 'Ενέργειες'
+            },
+            pagination: {
+              firstTooltip: 'Πρώτη σελίδα',
+              lastTooltip: 'Τελευταία σελίδα',
+              nextTooltip: 'Επόμενη σελίδα',
+              previousTooltip: 'Προηγούμενη σελίδα',
+              labelRowsSelect: 'γραμμές',
+              labelDisplayedRows: '{from}-{to} από {count}'
+            },
+            toolbar: {
+              searchTooltip: 'Αναζήτηση',
+              searchPlaceholder: 'Αναζήτηση'
+            }
+          }}
+        />
+      </Paper>
+    </>
   )
 }
 export default UsersTable

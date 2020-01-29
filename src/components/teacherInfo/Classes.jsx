@@ -17,7 +17,9 @@ import { baseURL } from '../../general/constants'
 import EventSeatIcon from '@material-ui/icons/EventSeat'
 import UsersTable from './UsersTable'
 import Badge from '@material-ui/core/Badge'
-const classesURL = baseURL + 'class/'
+import isEmpty from 'lodash.isempty'
+
+const classesURL = baseURL + 'classes/'
 
 const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
   const columns = [
@@ -30,9 +32,15 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
       editable: 'never'
     },
     {
+      title: 'Μονάδα',
+      field: 'unit',
+      editable: 'never'
+    },
+    {
       title: 'Διαγωνίσματα',
       field: 'tests',
       editable: 'never',
+      grouping: false,
       render: rowData =>
         rowData ? (
           <Badge color='secondary' badgeContent={rowData.noOfTests} showZero>
@@ -46,7 +54,6 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         ) : null
     }
   ]
-
   const classes = homeStyle()
   const history = useHistory()
   const [classRooms, setClassRooms] = useState([])
@@ -82,10 +89,14 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
       controller.abort()
     }
   }, [])
+  if (isEmpty(account)) {
+    history.push('/login')
+    return null
+  }
 
   const deleteClass = classToDelete =>
     new Promise((resolve, reject) => {
-      fetch(classesURL + classToDelete.name, {
+      fetch(classesURL + classToDelete.id, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -133,9 +144,39 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
               ...data.result,
               index: temp.length,
               count: 0,
-              creationDate: utc
+              creationDate: utc,
+              unit: account.metadata.unit
             })
             setClassRooms(temp)
+            resolve()
+          } else reject(data.message)
+        })
+        .catch(err => reject(err))
+    })
+
+  const editClass = (newData, oldData) =>
+    new Promise((resolve, reject) => {
+      console.log(oldData)
+      fetch(classesURL + oldData.id, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: newData.name,
+        signal: signal
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          if (data.status === 'success') {
+            const oldDataIndex = classRooms.indexOf(oldData)
+            setClassRooms(classRooms =>
+              classRooms.map((row, index) =>
+                index === oldDataIndex ? newData : row
+              )
+            )
             resolve()
           } else reject(data.message)
         })
@@ -185,24 +226,12 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
           columns={columns}
           data={classRooms}
           options={{
-            search: false
+            search: false,
+            grouping: true
           }}
           editable={{
             onRowAdd: newData => createClass(newData.name),
-            onRowUpdate: (newData, oldData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  {
-                    const oldDataIndex = classRooms.indexOf(oldData)
-                    setClassRooms(users =>
-                      users.map((row, index) =>
-                        index === oldDataIndex ? newData : row
-                      )
-                    )
-                  }
-                  resolve()
-                }, 1000)
-              }),
+            onRowUpdate: (newData, oldData) => editClass(newData, oldData),
             onRowDelete: oldData => deleteClass(oldData)
           }}
           detailPanel={[
