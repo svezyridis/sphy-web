@@ -19,7 +19,7 @@ import find from 'lodash.find'
 import isEqual from 'lodash.isequal'
 import NewCategoryCard from '../adminInfo/NewCategoryCard'
 
-const categoriesURL = baseURL + 'category/'
+const categoriesURL = baseURL + 'categories/'
 const imagesURL = baseURL + 'image/'
 
 const Weapon = ({

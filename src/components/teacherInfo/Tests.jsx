@@ -56,9 +56,7 @@ const Tests = ({
       .then(data => {
         const { status, result, message } = data
         console.log(data)
-        if (status === 'error' || status === 500 || status === 400)
-          setError(message)
-        else {
+        if (status === 'error' || status === 500 || status === 400) { setError(message) } else {
           setTests(result)
         }
       })
@@ -70,19 +68,25 @@ const Tests = ({
   }
 
   const createTest = test => {
+    const classID = location.state.classroom.id
     fetch(testsURL, {
       method: 'POST',
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
       signal: signal,
-      body: JSON.stringify(test)
+      body: JSON.stringify({ ...test, classID })
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) return response.json()
+        else throw Error(`Request rejected with status ${response.status}`)
+      })
       .then(data => {
         const { status, result, message } = data
         console.log(data)
-        if (status === 'error' || status === 500 || status === 400)
-          setError(message)
-        else {
+        if (status === 'error') { setError(message) } else {
           getTests()
         }
       })

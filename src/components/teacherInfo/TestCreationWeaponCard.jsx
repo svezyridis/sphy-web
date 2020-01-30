@@ -14,8 +14,6 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItem from '@material-ui/core/ListItem'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Checkbox from '@material-ui/core/Checkbox'
-import find from 'lodash.find'
-import isEqual from 'lodash.isequal'
 import { fetch } from 'whatwg-fetch'
 import {
   getBranchInitials,
@@ -30,14 +28,12 @@ import quizCardStyle from '../../styles/quizCardStyle'
 
 const categoriesURL = baseURL + 'categories/'
 
-const QuizWeaponCard = ({
+const TestCreationWeaponCard = ({
   dark,
   image,
   branch,
-  account,
   categories,
-  addCategory,
-  deleteCategory,
+  addCategories,
   setChecked
 }) => {
   const classes = quizCardStyle()
@@ -54,7 +50,7 @@ const QuizWeaponCard = ({
   }
 
   const handleCategoryChecked = category => event => {
-    setChecked(category.id, !category.checked)
+    setChecked(category.id, event.target.checked)
   }
 
   const categoriesOfBranch = categories.filter(
@@ -74,54 +70,22 @@ const QuizWeaponCard = ({
   )
 
   useEffect(() => {
+    console.log('hello from ' + branch)
     fetch(categoriesURL + branch, {
       method: 'GET',
       credentials: 'include',
       signal: signal
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
       .then(data => {
         const { status, result, message } = data
         console.log(data)
         if (status === 'error') setError(message)
         else {
-          // Compare new categories with stored ones and make the necessary changes
-          const newCategories = []
-          const categoriesToDelete = []
-          result.forEach(category => {
-            category = { ...category, branch }
-            const storedCategory = find(categories, { id: category.id })
-            if (!storedCategory) {
-              newCategories.push(category)
-              return
-            }
-            const {
-              imageURL,
-              checked,
-              ...originalCategoryObject
-            } = storedCategory
-            if (
-              !isEqual(originalCategoryObject, category) &&
-              category.branch === branch
-            ) {
-              console.log('category found but not equal')
-              newCategories.push(category)
-              categoriesToDelete.push(storedCategory)
-            }
-          })
-          categories.forEach(category => {
-            if (
-              !find(result, { id: category.id }) &&
-              category.branch === branch
-            ) {
-              categoriesToDelete.push(category)
-            }
-          })
-          categoriesToDelete.forEach(category => deleteCategory(category.id))
-          // add new categories and fetch their images
-          newCategories.forEach(category => {
-            addCategory({ ...category, branch })
-          })
+          console.log('setting categories')
+          addCategories(result.map(category => ({ ...category, branch, checked: true })))
         }
       })
       .catch(error => {
@@ -136,7 +100,7 @@ const QuizWeaponCard = ({
 
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
-      <Card elevation={8} className={classes.card}>
+      <Card elevation={8} className={classes.testCard}>
         <CardHeader
           avatar={
             <Avatar
@@ -215,4 +179,4 @@ const QuizWeaponCard = ({
   )
 }
 
-export default QuizWeaponCard
+export default TestCreationWeaponCard

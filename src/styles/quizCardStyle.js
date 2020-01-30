@@ -3,6 +3,9 @@ const quizCardStyle = makeStyles(theme => ({
   card: {
     width: '400px'
   },
+  testCard: {
+    width: '300px'
+  },
   media: {
     height: 0,
     paddingTop: '56.25%' // 16:9
