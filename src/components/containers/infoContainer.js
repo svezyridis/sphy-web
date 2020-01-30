@@ -91,10 +91,11 @@ export const CategoryContainer = connect(
 )(Category)
 
 export const SubjectContainer = connect(
-  ({ open, account, dark }) => ({
+  ({ open, account, dark, subjects }) => ({
     open: open,
     account: account,
-    dark: dark
+    dark: dark,
+    subjects: subjects
   }),
   dispatch => ({
     toogleDrawer (toogle) {

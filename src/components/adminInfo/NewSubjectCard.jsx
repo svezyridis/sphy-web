@@ -56,7 +56,7 @@ const cardStyle = makeStyles(theme => ({
 const subjectsURL = baseURL + 'subject/'
 const imagesURL = baseURL + 'image/'
 
-const NewSubjectCard = ({ addSubject, addImage }) => {
+const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
   const classes = cardStyle()
   const [error, setError] = useState('')
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
@@ -68,6 +68,7 @@ const NewSubjectCard = ({ addSubject, addImage }) => {
   const onClose = () => setCreateDialogOpen(false)
   const [imageUploadCounter, setImageUploadCounter] = useState(0)
   const [imageUploadError, setImageUploadError] = useState(false)
+  const [uploadComplete, setUploadComplete] = useState(true)
 
   const postImages = (subjectURI, imageArray) => {
     setImageUploadCounter(imageArray.length)
@@ -99,6 +100,7 @@ const NewSubjectCard = ({ addSubject, addImage }) => {
         setImageUploadError(true)
       }
     })
+    setUploadComplete(false)
   }
   const onCreate = (name, uri, general, units, images) => {
     console.log('creating subject')
@@ -136,6 +138,11 @@ const NewSubjectCard = ({ addSubject, addImage }) => {
     setCreateDialogOpen(false)
   }
   console.log('Outside:' + imageUploadCounter)
+
+  if(uploadComplete === false && imageUploadCounter === 0 ){
+    getSubjects()
+    setUploadComplete(true)
+  }
 
   return (
     <>
