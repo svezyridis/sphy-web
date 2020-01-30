@@ -25,6 +25,7 @@ import classNames from 'classnames'
 import { Typography, Divider } from '@material-ui/core'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 import quizCardStyle from '../../styles/quizCardStyle'
+import isEmpty from 'lodash.isempty'
 
 const categoriesURL = baseURL + 'categories/'
 
@@ -84,8 +85,7 @@ const TestCreationWeaponCard = ({
         console.log(data)
         if (status === 'error') setError(message)
         else {
-          console.log('setting categories')
-          addCategories(result.map(category => ({ ...category, branch, checked: true })))
+          if (isEmpty(categoriesOfBranch)) { addCategories(result.map(category => ({ ...category, branch, checked: true }))) }
         }
       })
       .catch(error => {

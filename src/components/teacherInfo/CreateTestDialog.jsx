@@ -32,7 +32,7 @@ const createTestStyle = makeStyles(theme => ({
     }
   },
   paper: {
-    minWidth: '950px'
+    minWidth: '1000px'
   },
   input: {
     maxWidth: '300px',
@@ -42,8 +42,9 @@ const createTestStyle = makeStyles(theme => ({
 
 const CreateTestDialog = ({ open, onCreate, onClose }) => {
   const [name, setName] = useState('')
-  const [duration, setDuration] = useState(0)
+  const [duration, setDuration] = useState(30)
   const [categories, setCategories] = useState([])
+  const [noOfQuestions, setNoOfQuestions] = useState(30)
   const classes = createTestStyle()
 
   const setChecked = (id, checked) => {
@@ -52,7 +53,7 @@ const CreateTestDialog = ({ open, onCreate, onClose }) => {
   }
   const validateInput = () => {
     // validate first
-    onCreate({ name: name, duration: duration })
+    onCreate(name, duration, noOfQuestions, categories.filter(category => category.checked))
   }
   const cleanState = () => {
     setName('')
@@ -82,17 +83,23 @@ const CreateTestDialog = ({ open, onCreate, onClose }) => {
           label='Διάρκεια (λεπτά)'
           type='number'
           margin='normal'
+          inputProps={{ min: '0', step: '1' }}
           className={classes.input}
           variant='outlined'
+          value={duration}
+          onChange={e => setDuration(e.target.value)}
         />
         <TextField
           label='Αριθμός ερωτήσεων'
+          inputProps={{ min: '0', step: '1' }}
           margin='normal'
           type='number'
+          value={noOfQuestions}
           className={classes.input}
           variant='outlined'
+          onChange={e => setNoOfQuestions(e.target.value)}
         />
-        <Grid container spacing={1}>
+        <Grid container spacing={1} justify='space-evenly'>
           <Grid item>
             <TestCreationWeaponCard branch='army' image={armyImage} categories={categories} addCategories={handleNewCategories} setChecked={setChecked} />
           </Grid>
