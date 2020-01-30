@@ -15,6 +15,9 @@ import { objectToQueryString } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
 import TestCard from './TestCard'
 import EventSeatIcon from '@material-ui/icons/EventSeat'
+import { Tooltip, Fab, IconButton } from '@material-ui/core'
+import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRounded'
+import CreateTestDialog from './CreateTestDialog'
 
 const testsURL = baseURL + 'tests'
 
@@ -31,6 +34,7 @@ const Tests = ({
   const classes = homeStyle()
   const [error, setError] = useState('')
   const [tests, setTests] = useState([])
+  const [createTestDialogOpen, setCreateTestDialogOpen] = useState(false)
   const controller = new window.AbortController()
   const signal = controller.signal
   const className = match.params.className
@@ -39,9 +43,9 @@ const Tests = ({
     console.log(test)
   }
 
-  useEffect(() => {
-    if (!location.state) { return }
-    const classID = location.state.classID
+  const getTests = () => {
+    console.log(location.state)
+    const classID = location.state.classroom.id
     const queryParams = objectToQueryString({ classID: classID })
     fetch(testsURL + queryParams, {
       method: 'GET',
@@ -52,7 +56,8 @@ const Tests = ({
       .then(data => {
         const { status, result, message } = data
         console.log(data)
-        if (status === 'error' || status === 500 || status === 400) setError(message)
+        if (status === 'error' || status === 500 || status === 400)
+          setError(message)
         else {
           setTests(result)
         }
@@ -62,6 +67,37 @@ const Tests = ({
           console.error(error)
         }
       })
+  }
+
+  const createTest = test => {
+    fetch(testsURL, {
+      method: 'POST',
+      credentials: 'include',
+      signal: signal,
+      body: JSON.stringify(test)
+    })
+      .then(response => response.json())
+      .then(data => {
+        const { status, result, message } = data
+        console.log(data)
+        if (status === 'error' || status === 500 || status === 400)
+          setError(message)
+        else {
+          getTests()
+        }
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+  }
+
+  useEffect(() => {
+    if (!location.state) {
+      return
+    }
+    getTests()
     return () => {
       controller.abort()
     }
@@ -78,6 +114,12 @@ const Tests = ({
 
   return (
     <div className={classes.root}>
+      <CreateTestDialog
+        open={createTestDialogOpen}
+        onClose={() => setCreateTestDialogOpen(false)}
+        onCreate={createTest}
+        classes={classes}
+      />
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
       <HomeDrawer
         open={open}
@@ -124,10 +166,21 @@ const Tests = ({
           {tests.map((test, index) => {
             return (
               <Grid key={index} item>
-                <TestCard test={test} />
+                <TestCard test={test} onUpdate={getTests} />
               </Grid>
             )
           })}
+          <Grid item>
+            <Tooltip title='Δημιουργία νέου τεστ'>
+              <Fab
+                size='large'
+                color='secondary'
+                onClick={() => setCreateTestDialogOpen(true)}
+              >
+                <AddCircleOutlineRoundedIcon fontSize='large' />
+              </Fab>
+            </Tooltip>
+          </Grid>
         </Grid>
       </div>
       <Copyright open={open} />

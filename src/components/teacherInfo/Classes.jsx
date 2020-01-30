@@ -46,10 +46,12 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
           <Badge color='secondary' badgeContent={rowData.noOfTests} showZero>
             <Button
               variant='contained'
-              onClick={() => history.push({
-                pathname: `classes/${rowData.name}`,
-                state: { classID: rowData.id }
-              })}
+              onClick={() =>
+                history.push({
+                  pathname: `classes/${rowData.name}`,
+                  state: { classroom: rowData }
+                })
+              }
             >
               ΠΡΟΒΟΛΗ
             </Button>
@@ -241,7 +243,12 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
             {
               tooltip: 'Προβολή μαθητών',
               render: rowData => {
-                return <UsersTable students={rowData.students} classID={rowData.id} />
+                return (
+                  <UsersTable
+                    students={rowData.students}
+                    classID={rowData.id}
+                  />
+                )
               }
             }
           ]}

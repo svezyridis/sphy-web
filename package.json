@@ -33,6 +33,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-persist": "^6.0.0",
     "standard": "^14.3.1",
+    "time-stamp": "^2.2.0",
     "whatwg-fetch": "^3.0.0"
   },
   "scripts": {
