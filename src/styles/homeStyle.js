@@ -1,10 +1,28 @@
 import { makeStyles } from '@material-ui/styles'
-import backgroundImage from '../images/backgroundLight.jpeg'
 
 export const drawerWidth = 400
 const imageHeight = 40
 
 const homeStyle = makeStyles(theme => ({
+  '@global': {
+    '*::-webkit-scrollbar': {
+      width: '0.4em'
+    },
+    '*::-webkit-scrollbar-track': {
+      boxShadow: 'inset 0 0 5px grey',
+      color: '#8a9c8a',
+      borderRadius: '10px',
+      backgroundColor: '#cbd3cb'
+    },
+    '*::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.primary.light,
+      borderRadius: '10px',
+      outline: '3px solid black',
+      '&:hover': {
+        backgroundColor: theme.palette.primary.dark
+      }
+    }
+  },
   root: {
     margin: 0,
     display: 'flex',
@@ -280,6 +298,9 @@ const homeStyle = makeStyles(theme => ({
       background: `linear-gradient(45deg, ${theme.palette.secondary.main} 40%, ${theme.palette.secondary.dark} 70%)`,
       boxShadow: `0 3px 5px 2px ${theme.palette.primary.light}`
     }
+  },
+  input: {
+    marginBottom: '10px'
   },
   questionGrid: {
     marginTop: '10%',

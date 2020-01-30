@@ -3,8 +3,6 @@ import Card from '@material-ui/core/Card'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
-import { baseURL } from '../../general/constants'
-import { fetch } from 'whatwg-fetch'
 import addNewImage from '../../images/addNew.png'
 import CreateNewCategoryDialog from './CreateNewCategoryDialog'
 
@@ -54,8 +52,6 @@ const NewCategoryCard = ({ branch, createCategory }) => {
   const classes = cardStyle()
   const [error, setError] = useState('')
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
-  const controller = new window.AbortController()
-  const signal = controller.signal
   const onClose = () => setCreateDialogOpen(false)
   const onCreate = (name, uri) => {
     createCategory(name, uri)

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import HomeDrawer from '../home/HomeDrawer'
 import Copyright from '../Copyright'
@@ -17,7 +17,9 @@ import { baseURL } from '../../general/constants'
 import EventSeatIcon from '@material-ui/icons/EventSeat'
 import UsersTable from './UsersTable'
 import Badge from '@material-ui/core/Badge'
-const classesURL = baseURL + 'class/'
+import isEmpty from 'lodash.isempty'
+
+const classesURL = baseURL + 'classes/'
 
 const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
   const columns = [
@@ -30,24 +32,33 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
       editable: 'never'
     },
     {
+      title: 'Μονάδα',
+      field: 'unit',
+      editable: 'never'
+    },
+    {
       title: 'Διαγωνίσματα',
       field: 'tests',
       editable: 'never',
-      render: rowData => (
-        rowData
-          ? <Badge color='secondary' badgeContent={3} showZero>
+      grouping: false,
+      render: rowData =>
+        rowData ? (
+          <Badge color='secondary' badgeContent={rowData.noOfTests} showZero>
             <Button
               variant='contained'
-              onClick={() => history.push(`tests/${rowData.id}`)}
+              onClick={() =>
+                history.push({
+                  pathname: `classes/${rowData.name}`,
+                  state: { classroom: rowData }
+                })
+              }
             >
-            ΠΡΟΒΟΛΗ
+              ΠΡΟΒΟΛΗ
             </Button>
-            </Badge>
-          : null
-      )
+          </Badge>
+        ) : null
     }
   ]
-
   const classes = homeStyle()
   const history = useHistory()
   const [classRooms, setClassRooms] = useState([])
@@ -68,23 +79,29 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         console.log(data)
         if (data.status === 'success') {
           const { result } = data
-          setClassRooms(result.map((classRoom, index) => {
-            return ({
-              ...classRoom,
-              index,
-              count: classRoom.students ? classRoom.students.length : 0
+          setClassRooms(
+            result.map((classRoom, index) => {
+              return {
+                ...classRoom,
+                index,
+                count: classRoom.students ? classRoom.students.length : 0
+              }
             })
-          }))
+          )
         }
       })
     return () => {
       controller.abort()
     }
   }, [])
+  if (isEmpty(account)) {
+    history.push('/login')
+    return null
+  }
 
   const deleteClass = classToDelete =>
     new Promise((resolve, reject) => {
-      fetch(classesURL + classToDelete.name, {
+      fetch(classesURL + classToDelete.id, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -124,9 +141,47 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         .then(data => {
           console.log(data)
           if (data.status === 'success') {
-            var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '/')
-            temp.push({ ...data.result, index: temp.length, count: 0, creationDate: utc })
+            var utc = new Date()
+              .toJSON()
+              .slice(0, 10)
+              .replace(/-/g, '/')
+            temp.push({
+              ...data.result,
+              index: temp.length,
+              count: 0,
+              creationDate: utc,
+              unit: account.metadata.unit
+            })
             setClassRooms(temp)
+            resolve()
+          } else reject(data.message)
+        })
+        .catch(err => reject(err))
+    })
+
+  const editClass = (newData, oldData) =>
+    new Promise((resolve, reject) => {
+      console.log(oldData)
+      fetch(classesURL + oldData.id, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: newData.name,
+        signal: signal
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          if (data.status === 'success') {
+            const oldDataIndex = classRooms.indexOf(oldData)
+            setClassRooms(classRooms =>
+              classRooms.map((row, index) =>
+                index === oldDataIndex ? newData : row
+              )
+            )
             resolve()
           } else reject(data.message)
         })
@@ -175,30 +230,28 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
           title='Τάξεις'
           columns={columns}
           data={classRooms}
+          options={{
+            search: false,
+            grouping: true
+          }}
           editable={{
             onRowAdd: newData => createClass(newData.name),
-            onRowUpdate: (newData, oldData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  {
-                    const oldDataIndex = classRooms.indexOf(oldData)
-                    setClassRooms(users =>
-                      users.map((row, index) =>
-                        index === oldDataIndex ? newData : row
-                      )
-                    )
-                  }
-                  resolve()
-                }, 1000)
-              }),
+            onRowUpdate: (newData, oldData) => editClass(newData, oldData),
             onRowDelete: oldData => deleteClass(oldData)
           }}
-          detailPanel={[{
-            tooltip: 'Προβολή μαθητών',
-            render: rowData => {
-              return <UsersTable students={rowData.students} />
+          detailPanel={[
+            {
+              tooltip: 'Προβολή μαθητών',
+              render: rowData => {
+                return (
+                  <UsersTable
+                    students={rowData.students}
+                    classID={rowData.id}
+                  />
+                )
+              }
             }
-          }]}
+          ]}
           localization={{
             body: {
               addTooltip: 'Δημιουργία Τάξης',

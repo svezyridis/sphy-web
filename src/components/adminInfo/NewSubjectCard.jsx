@@ -7,7 +7,6 @@ import addNewImage from '../../images/addNew.png'
 import CreateSubjectDialog from './CreateSubjectDialog'
 import { useRouteMatch } from 'react-router-dom'
 import { baseURL } from '../../general/constants'
-import { useSelector } from 'react-redux'
 import { fetch } from 'whatwg-fetch'
 import find from 'lodash.find'
 import LoadingDialog from '../quiz/LoadingDialog'
@@ -66,7 +65,6 @@ const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
   const match = useRouteMatch()
   const branch = match.params.weapon
   const category = match.params.category
-  const account = useSelector(state => state.account)
   const onClose = () => setCreateDialogOpen(false)
   const [imageUploadCounter, setImageUploadCounter] = useState(0)
   const [imageUploadError, setImageUploadError] = useState(false)
@@ -76,7 +74,7 @@ const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
     setImageUploadCounter(imageArray.length)
     imageArray.forEach(async image => {
       console.log(image)
-      const formData = new FormData()
+      const formData = new window.FormData()
       formData.append('file', image.file)
       formData.append('label', image.label)
       formData.append('isDefault', image.default)

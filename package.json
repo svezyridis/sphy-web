@@ -12,11 +12,14 @@
     "encodeurl": "^1.0.2",
     "http-proxy-middleware": "^0.20.0",
     "jsonwebtoken": "^8.5.1",
+    "lodash.difference": "^4.5.0",
+    "lodash.differencewith": "^4.5.0",
     "lodash.find": "^4.6.0",
     "lodash.findindex": "^4.6.0",
     "lodash.isempty": "^4.4.0",
     "lodash.isequal": "^4.5.0",
     "lodash.sample": "^4.2.1",
+    "lodash.uniqwith": "^4.5.0",
     "material-table": "^1.55.0",
     "material-ui-dropzone": "^2.4.7",
     "react": "^16.12.0",
@@ -31,6 +34,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-persist": "^6.0.0",
     "standard": "^14.3.1",
+    "time-stamp": "^2.2.0",
     "whatwg-fetch": "^3.0.0"
   },
   "scripts": {

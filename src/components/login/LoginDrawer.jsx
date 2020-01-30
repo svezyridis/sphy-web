@@ -5,8 +5,6 @@ import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import drawerStyle from '../../styles/drawerStyle'
 import { fetch } from 'whatwg-fetch'
@@ -22,7 +20,6 @@ const LoginDrawer = ({ account, addAccount, dark }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [isChecked, setIsChecked] = useState(false)
   const history = useHistory()
 
   const login = e => {

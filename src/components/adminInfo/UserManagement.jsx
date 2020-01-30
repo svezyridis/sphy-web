@@ -16,10 +16,6 @@ import MaterialTable from 'material-table'
 import tableIcons from '../../styles/userTableIcons'
 import { fetch } from 'whatwg-fetch'
 import { baseURL } from '../../general/constants'
-import {
-  objectToQueryString,
-  getTranslatedRole
-} from '../../general/helperFunctions'
 
 const originalColumns = [
   { title: 'ΑΜ', field: 'serialNumber' },
@@ -30,9 +26,9 @@ const originalColumns = [
   { title: 'Βαθμός', field: 'rank' }
 ]
 
-const usersURL = baseURL + 'user'
-const rolesURL = baseURL + 'role'
-const unitsURL = baseURL + 'unit'
+const usersURL = baseURL + 'users/'
+const rolesURL = baseURL + 'roles/'
+const unitsURL = baseURL + 'units/'
 
 const UserManagement = ({
   open,
@@ -140,10 +136,7 @@ const UserManagement = ({
 
   const deleteUser = user =>
     new Promise((resolve, reject) => {
-      const queryParams = {
-        username: user.username
-      }
-      fetch(usersURL + objectToQueryString(queryParams), {
+      fetch(usersURL + user.username, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -166,7 +159,7 @@ const UserManagement = ({
         .catch(err => reject(err))
     })
 
-  const addNewUseR = newUser => {
+  const addNewUser = newUser => {
     const temp = [...users]
     temp.push({ ...newUser, password: '********' })
     const requestData = JSON.stringify({
@@ -258,7 +251,7 @@ const UserManagement = ({
           columns={columns}
           data={users}
           editable={{
-            onRowAdd: newData => addNewUseR(newData),
+            onRowAdd: newData => addNewUser(newData),
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Card from '@material-ui/core/Card'
-import Link from '@material-ui/core/Link'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
@@ -11,7 +10,6 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Fab from '@material-ui/core/Fab'
 import { Grid } from '@material-ui/core'
 import DeleteSubjectDialog from '../adminInfo/DeleteSubjectDialog'
-import { baseURL } from '../../general/constants'
 import EditSubjectDialog from '../adminInfo/EditSubjectDialog'
 
 const cardStyle = makeStyles(theme => ({

@@ -28,7 +28,7 @@ const HomeDrawer = ({
   const history = useHistory()
   const open = useSelector(state => state.open)
   const dispatch = useDispatch()
-  const isAdmin = role === 'ADMIN'
+  const isUser = role === 'USER'
   const logout = () => {
     deleteAccount()
     history.push('/login')
@@ -62,7 +62,7 @@ const HomeDrawer = ({
       </IconButton>
       <Divider />
       <MainListItems />
-      {isAdmin ? (
+      {!isUser ? (
         <>
           <Divider /> <AdminListItems />
         </>

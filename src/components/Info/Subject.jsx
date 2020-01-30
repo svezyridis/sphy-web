@@ -118,7 +118,6 @@ const Subject = ({
         history.push('/login')
         return null
       }
-      account = tempAccount
     }
 
     if (!location.state) {
@@ -257,7 +256,7 @@ const Subject = ({
                   }}
                   className={classes.tile}
                 >
-                  <img src={image.image} />
+                  <img src={image.image} alt={image.filename} />
                   <GridListTileBar
                     title={
                       <Typography align='center' variant='h5'>
