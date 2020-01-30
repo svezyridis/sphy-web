@@ -44,6 +44,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects})
       handleClose={handleClose} 
       imageArray={subject.images} 
       uri={subject.uri} 
+      defaultImage={subject.defaultImage}
       category={subject.category}
       getSubjects={getSubjects}/>)
   }

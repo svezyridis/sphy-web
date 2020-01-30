@@ -18,6 +18,10 @@ import Fab from '@material-ui/core/Fab'
 import findIndex from 'lodash.findindex'
 import { DropzoneArea } from 'material-ui-dropzone'
 import LoadingDialog from '../quiz/LoadingDialog'
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked'
+import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked'
+import find from 'lodash.find'
+import addNewImage from '../../images/addNew.png'
 
 const cardStyle = makeStyles(theme => ({
     card: {
@@ -36,9 +40,9 @@ const cardStyle = makeStyles(theme => ({
         opacity: 0.6,
         width: '100%',
         height: '10%',
-        fontSize: '20px',
+        fontSize: '10px',
         fontWeight: 200
-      }
+    }
 }))
 
 const EditSubjectImageDialog2 = (props) => {
@@ -51,6 +55,9 @@ const EditSubjectImageDialog2 = (props) => {
     const [uploadImages, setUploadImages] = useState([])
     const [imageUploadCounter, setImageUploadCounter] = useState(0)
     const [uploadComplete, setUploadComplete] = useState(true)
+    const [duplicateNameError, setDuplicateNameError] = useState(false)
+    const [duplicateNameErrorIndex, setDuplicateNameErrorIndex] = useState(-1)
+    const [defaultImageID, setDefaultImageID] = useState(props.defaultImage.id)
 
     const zoomImageHandler = (image) => {
         setZoomState(true)
@@ -79,9 +86,26 @@ const EditSubjectImageDialog2 = (props) => {
     }
 
     const imageUploadHandler = (file) => {
-        setUploadImages(
-            file
-        )
+        setDuplicateNameError(false)
+        setDuplicateNameErrorIndex(-1)
+        file.forEach(element => {
+            var newUploadImageIndex = findIndex(uploadImages, { name: element.name })
+            console.log(newUploadImageIndex)
+            if (newUploadImageIndex === -1) {
+                setUploadImages([
+                    ...uploadImages,
+                    element
+                ])
+            } else {
+                setDuplicateNameError(true)
+                setDuplicateNameErrorIndex(newUploadImageIndex)
+            }
+        });
+
+    }
+
+    const defaultImageHandler = (id) =>{
+        setDefaultImageID(id)
     }
 
     const labelHandler = (event, image) => {
@@ -132,6 +156,7 @@ const EditSubjectImageDialog2 = (props) => {
         props.handleClose()
     }
 
+    console.log(defaultImageID)
 
     return (
         <Dialog open={props.addImage} onClose={props.handleClose} aria-labelledby="form-dialog-title">
@@ -153,8 +178,9 @@ const EditSubjectImageDialog2 = (props) => {
                                     image={baseURL + 'image/army/' + props.category + '/' + props.uri + '/' + image.filename}
                                     alt={image.subject}
                                     onClick={() => zoomImageHandler(image)} >
-                                        
+                                    
                                 </CardMedia>
+                                <Input className={classes.mediaCaption} value={image.label} onChange={(event) => labelHandler(event, image)} />
                             </Card>
                             <Fab
                                 onClick={() => deleteImageHandler(image)}
@@ -162,15 +188,24 @@ const EditSubjectImageDialog2 = (props) => {
                             >
                                 <DeleteForeverRoundedIcon />
                             </Fab>
-                            <Input className={classes.mediaCaption} value={image.label} onChange={(event) => labelHandler(event, image)} />
+                            <Fab
+                                size='small'
+                                onClick={()=>defaultImageHandler(image.id)}
+                            >
+                                {image.id===defaultImageID? <RadioButtonCheckedIcon />:<RadioButtonUncheckedIcon />}
+                            </Fab>
+
                         </GridListTile>
                     ))}
                     <DropzoneArea
                         acceptedFiles={['image/*']}
                         maxFileSize={10000000}
-                        onChange={(files) => imageUploadHandler(files)}
-                        dropzoneText="Σύρετε έως 3 φωτογραφίες η κάνετε κλικ για να προσθέσετε"
+                        onChange={(event) => imageUploadHandler(event)}
+                        filesLimit={10}
+                        dropzoneText={duplicateNameError
+                            ? `Η φωτογραφία στην θέση ${duplicateNameErrorIndex + 1} δεν θα προστεθεί λόγω ίδιου ονόματος παρακαλώ αλλάξτε όνομα` : "Σύρετε εδώ φωτογραφίες η κάνετε κλικ για να προσθέσετε"}
                     />
+
                 </GridList>
                 <Dialog open={zoomState} onClose={unzoomImageHandler}>
                     <img
