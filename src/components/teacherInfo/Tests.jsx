@@ -11,12 +11,12 @@ import { fetch } from 'whatwg-fetch'
 import Grid from '@material-ui/core/Grid'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import HomeIcon from '@material-ui/icons/Home'
-import { titleCase, getBranchName } from '../../general/helperFunctions'
+import { objectToQueryString } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
 import TestCard from './TestCard'
 import EventSeatIcon from '@material-ui/icons/EventSeat'
 
-const testsURL = baseURL + 'test/'
+const testsURL = baseURL + 'tests'
 
 const Tests = ({
   open,
@@ -31,20 +31,19 @@ const Tests = ({
   const classes = homeStyle()
   const [error, setError] = useState('')
   const [tests, setTests] = useState([])
-  const branch = match.params.weapon
-  const category = match.params.category
   const controller = new window.AbortController()
   const signal = controller.signal
+  const className = match.params.className
 
   const deleteTest = test => {
     console.log(test)
   }
 
   useEffect(() => {
-    if (isEmpty(account)) {
-      return
-    }
-    fetch(testsURL, {
+    if (!location.state) { return }
+    const classID = location.state.classID
+    const queryParams = objectToQueryString({ classID: classID })
+    fetch(testsURL + queryParams, {
       method: 'GET',
       credentials: 'include',
       signal: signal
@@ -53,7 +52,7 @@ const Tests = ({
       .then(data => {
         const { status, result, message } = data
         console.log(data)
-        if (status === 'error' || status === 500) setError(message)
+        if (status === 'error' || status === 500 || status === 400) setError(message)
         else {
           setTests(result)
         }
@@ -70,6 +69,10 @@ const Tests = ({
 
   if (isEmpty(account)) {
     history.push('/login')
+    return null
+  }
+  if (!location.state) {
+    history.push('/classes')
     return null
   }
 
@@ -107,29 +110,9 @@ const Tests = ({
             <EventSeatIcon className={classes.icon} />
             Οι τάξεις μου
           </Link>
-          <Link
-            component='button'
-            variant='body1'
-            onClick={() => {
-              history.push(`/info/${branch}`)
-            }}
-            className={classNames(classes.link, dark && classes.dark)}
-          >
-            {titleCase(getBranchName(branch))}
-          </Link>
-          <Link
-            component='button'
-            variant='body1'
-            onClick={() => {
-              history.push(`/info/${branch}/${category}`)
-            }}
-            className={classNames(classes.link, dark && classes.dark)}
-          >
-            {category}
-          </Link>
         </Breadcrumbs>
         <Typography variant='h3' color='textPrimary' align='center'>
-          Επιλέξτε θέμα
+          {className}
         </Typography>
         <Grid
           container
@@ -141,13 +124,7 @@ const Tests = ({
           {tests.map((test, index) => {
             return (
               <Grid key={index} item>
-                <TestCard
-                  test={test}
-                  branch={branch}
-                  admin={isAdmin}
-                  category={category}
-                  deleteTest={() => deleteTest(test)}
-                />
+                <TestCard test={test} />
               </Grid>
             )
           })}

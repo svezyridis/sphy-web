@@ -46,7 +46,10 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
           <Badge color='secondary' badgeContent={rowData.noOfTests} showZero>
             <Button
               variant='contained'
-              onClick={() => history.push(`tests/${rowData.id}`)}
+              onClick={() => history.push({
+                pathname: `classes/${rowData.name}`,
+                state: { classID: rowData.id }
+              })}
             >
               ΠΡΟΒΟΛΗ
             </Button>

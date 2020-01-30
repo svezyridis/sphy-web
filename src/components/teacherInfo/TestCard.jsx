@@ -5,6 +5,7 @@ import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import uniqWith from 'lodash.uniqwith'
 
 const useStyles = makeStyles({
   card: {
@@ -16,16 +17,15 @@ const useStyles = makeStyles({
     transform: 'scale(0.8)'
   },
   title: {
-    fontSize: 14
+    fontSize: 16
   },
   pos: {
     marginBottom: 12
   }
 })
 
-const TestCard = () => {
+const TestCard = ({ test }) => {
   const classes = useStyles()
-  const bull = <span className={classes.bullet}>•</span>
 
   return (
     <Card className={classes.card}>
@@ -35,22 +35,23 @@ const TestCard = () => {
           color='textSecondary'
           gutterBottom
         >
-          Word of the Day
+          {`Κατάσταση: ${test.creationDate}`}
         </Typography>
         <Typography variant='h5' component='h2'>
-          be{bull}nev{bull}o{bull}lent
+          {test.name}
         </Typography>
         <Typography className={classes.pos} color='textSecondary'>
-          adjective
+          {`Δημιουργήθηκε: ${test.creationDate}`}
         </Typography>
         <Typography variant='body2' component='p'>
-          well meaning and kindly.
+          {`Αριθμός ερωτήσεων: ${test.questions.length}`}
           <br />
-          {'"a benevolent smile"'}
+          {`Υποβληθήσες απαντήσεις: ${uniqWith(test.answers, (answer1, answer2) =>
+            answer1.userID === answer2.userID).length}`}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size='small'>Learn More</Button>
+        <Button size='small'>Περισσοτερα</Button>
       </CardActions>
     </Card>
   )
