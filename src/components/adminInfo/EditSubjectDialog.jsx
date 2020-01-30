@@ -18,13 +18,43 @@ import unavailableImage from '../../images/unavailable.png'
 import EditSubjectImageDialog2 from './EditSubjectImagesDialog2'
 import { baseURL } from '../../general/constants'
 
-const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects}) => {
+const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, branch}) => {
   const [name, setName] = useState(subject.name)
   const [URI, setURI] = useState(subject.uri)
   const [general, setGeneral] = useState(subject.general)
   const [units, setUnits] = useState(subject.units)
   const classes = createSubjectStyle()
   const [addImage, setAddImage] = useState(false)
+  const [defaultImage, setDefaultImage] = useState(subject.defaultImage)
+ 
+  var controller = new window.AbortController()
+  var signal = controller.signal
+
+  const onUpdate = (name, general, units, defaultImageID) =>{
+    console.log(baseURL + 'subject/'+branch+'/' + subject.category + '/' + subject.uri)
+    console.log(name, general, units, defaultImageID)
+    fetch(baseURL + 'subject/'+branch+'/' + subject.category + '/' + subject.uri, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        general: general,
+        units: units,
+        defaultImageID: defaultImageID
+      }),
+      signal: signal
+  }).then(response =>
+      response.json().then(json => {
+        console.log(json)
+        getSubjects()  
+        return json;
+      }))
+      .catch(error => console.log(error))
+  }
 
   const imageEditorHandler = () => {
     setAddImage(true)
@@ -32,6 +62,10 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects})
 
   const handleClose = () => {
     setAddImage(false)
+  }
+
+  const defaultImageHandler = (image) => {
+    setDefaultImage(image)
   }
 
 
@@ -44,9 +78,11 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects})
       handleClose={handleClose} 
       imageArray={subject.images} 
       uri={subject.uri} 
-      defaultImage={subject.defaultImage}
+      defaultImage={defaultImage}
       category={subject.category}
-      getSubjects={getSubjects}/>)
+      getSubjects={getSubjects}
+      defaultImageHandler={defaultImageHandler}
+      branch={branch}/>)
   }
   console.log(subject)
   return (
@@ -79,6 +115,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects})
           margin='normal'
           variant='outlined'
           value={URI}
+          disabled
           fullWidth
           className={classes.input}
           onChange={e => setURI(e.target.value)}
@@ -138,7 +175,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects})
           ΑΚΥΡΟ
         </Button>
         <Button
-          onClick={() => onEdit(name, URI, general, units)}
+          onClick={() => onUpdate(name, general, units, defaultImage.id)}
           color='primary'
           variant='contained'
         >

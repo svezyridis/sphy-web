@@ -67,7 +67,7 @@ const SubjectCard = ({ subject, admin, branch, deleteSubject, getSubjects }) => 
         onDeleteSubject={handleDelete}
         subject={subject.name}
       />
-      <EditSubjectDialog dialogOpen={editDialogOpen} onClose={() => setEditDialogOpen(false)} subject={subject} getSubjects={getSubjects}/>
+      <EditSubjectDialog dialogOpen={editDialogOpen} onClose={() => setEditDialogOpen(false)} subject={subject} getSubjects={getSubjects} branch={branch}/>
       <Grid container direction='column' spacing={1}>
         <Grid item>
           <Card

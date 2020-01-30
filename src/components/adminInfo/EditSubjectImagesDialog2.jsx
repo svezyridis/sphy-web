@@ -39,9 +39,39 @@ const cardStyle = makeStyles(theme => ({
         color: 'white',
         opacity: 0.6,
         width: '100%',
-        height: '10%',
-        fontSize: '10px',
+        height: '20%',
+        fontSize: '15px',
         fontWeight: 200
+    },
+    tile: {
+        position: 'relative',
+        height: '80%'
+    },
+    image: {
+        height: '100%',
+        position: 'absolute',
+        width: '100%'
+    },
+    imageGrid: {
+        height: '400px',
+        overflow: 'auto',
+        '&::-webkit-scrollbar': {
+            width: '0.6em'
+        },
+        '&::-webkit-scrollbar-track': {
+            boxShadow: 'inset 0 0 5px grey',
+            color: '#8a9c8a',
+            borderRadius: '10px',
+            backgroundColor: '#cbd3cb'
+        },
+        '&::-webkit-scrollbar-thumb': {
+            backgroundColor: theme.palette.primary.light,
+            borderRadius: '10px',
+            outline: '3px solid black',
+            '&:hover': {
+                backgroundColor: theme.palette.primary.dark
+            }
+        }
     }
 }))
 
@@ -70,7 +100,7 @@ const EditSubjectImageDialog2 = (props) => {
     }
 
     const deleteImageHandler = (image) => {
-        fetch(baseURL + 'image/army/' + props.category + '/' + props.uri + '/' + image.filename, {
+        fetch(baseURL + 'image/'+props.branch+'/' + props.category + '/' + props.uri + '/' + image.filename, {
             method: 'DELETE',
             credentials: 'include'
         }).then(response =>
@@ -86,7 +116,7 @@ const EditSubjectImageDialog2 = (props) => {
     }
 
     const imageUploadHandler = (file) => {
-        setDuplicateNameError(false)
+        /*setDuplicateNameError(false)
         setDuplicateNameErrorIndex(-1)
         file.forEach(element => {
             var newUploadImageIndex = findIndex(uploadImages, { name: element.name })
@@ -100,13 +130,15 @@ const EditSubjectImageDialog2 = (props) => {
                 setDuplicateNameError(true)
                 setDuplicateNameErrorIndex(newUploadImageIndex)
             }
-        });
+            });*/
+        setUploadImages(file)
+        
 
     }
 
-    const defaultImageHandler = (id) =>{
-        setDefaultImageID(id)
-    }
+    //const defaultImageHandler = (id) => {
+    //    setDefaultImageID(id)
+    //}
 
     const labelHandler = (event, image) => {
         let newImage = image
@@ -128,7 +160,7 @@ const EditSubjectImageDialog2 = (props) => {
 
             try {
                 const response = await fetch(
-                    baseURL + 'image/army/' + props.category + '/' + props.uri,
+                    baseURL + 'image/'+props.branch+'/' + props.category + '/' + props.uri,
                     {
                         method: 'POST',
                         credentials: 'include',
@@ -168,10 +200,11 @@ const EditSubjectImageDialog2 = (props) => {
             ) : null}
             <DialogTitle id="form-dialog-title" align='center'>Επεξεργασία φωτογραφιών θέματος</DialogTitle>
             <DialogContent>
-                <GridList cellHeight={200} cols={4} space={4}>
+                <GridList cellHeight={200} cols={4} space={4} className={classes.imageGrid}>
+
                     {imagesArray.map(image => (
                         <GridListTile key={image.id}>
-                            <Card className={classes.card} elevation={8} raised>
+                            {/*<Card className={classes.card} elevation={8} raised>
                                 <CardMedia
                                     component="img"
                                     className={classes.media}
@@ -181,32 +214,38 @@ const EditSubjectImageDialog2 = (props) => {
                                     
                                 </CardMedia>
                                 <Input className={classes.mediaCaption} value={image.label} onChange={(event) => labelHandler(event, image)} />
-                            </Card>
-                            <Fab
-                                onClick={() => deleteImageHandler(image)}
-                                size='small'
-                            >
-                                <DeleteForeverRoundedIcon />
-                            </Fab>
-                            <Fab
-                                size='small'
-                                onClick={()=>defaultImageHandler(image.id)}
-                            >
-                                {image.id===defaultImageID? <RadioButtonCheckedIcon />:<RadioButtonUncheckedIcon />}
-                            </Fab>
+                    </Card>*/}
+                            <div className={classes.tile}>
+                                <img
+                                    className={classes.image}
+                                    src={baseURL + 'image/'+props.branch+'/' + props.category + '/' + props.uri + '/' + image.filename}
+                                    onClick={() => zoomImageHandler(image)}></img>
+                                <input
+                                    className={classes.mediaCaption}
+                                    value={image.label}
+                                    onChange={(event) => labelHandler(event, image)} />
+                            </div>
+                            <DeleteForeverRoundedIcon onClick={() => deleteImageHandler(image)}
+                                size='small' />
+                            {image.id === props.defaultImage.id ? <RadioButtonCheckedIcon size='small'
+                                onClick={() => props.defaultImageHandler(image)} /> : <RadioButtonUncheckedIcon size='small'
+                                    onClick={() => props.defaultImageHandler(image)} />}
+
 
                         </GridListTile>
                     ))}
-                    <DropzoneArea
-                        acceptedFiles={['image/*']}
-                        maxFileSize={10000000}
-                        onChange={(event) => imageUploadHandler(event)}
-                        filesLimit={10}
-                        dropzoneText={duplicateNameError
-                            ? `Η φωτογραφία στην θέση ${duplicateNameErrorIndex + 1} δεν θα προστεθεί λόγω ίδιου ονόματος παρακαλώ αλλάξτε όνομα` : "Σύρετε εδώ φωτογραφίες η κάνετε κλικ για να προσθέσετε"}
-                    />
+
+
 
                 </GridList>
+                <DropzoneArea
+                    acceptedFiles={['image/*']}
+                    maxFileSize={10000000}
+                    onChange={(event) => imageUploadHandler(event)}
+                    filesLimit={10}
+                    dropzoneText={duplicateNameError
+                        ? `Η φωτογραφία στην θέση ${duplicateNameErrorIndex + 1} δεν θα προστεθεί λόγω ίδιου ονόματος παρακαλώ αλλάξτε όνομα` : "Σύρετε εδώ φωτογραφίες η κάνετε κλικ για να προσθέσετε"}
+                />
                 <Dialog open={zoomState} onClose={unzoomImageHandler}>
                     <img
                         style={{ height: '100%', width: '100%' }}
