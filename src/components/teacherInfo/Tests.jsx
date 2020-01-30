@@ -67,8 +67,13 @@ const Tests = ({
       })
   }
 
-  const createTest = test => {
+  const createTest = (name, duration, noOfQuestions, categories) => {
+    console.log(name, duration, noOfQuestions)
+    console.log(categories)
     const classID = location.state.classroom.id
+    const test = { name, duration, classID }
+    const categoryIDs = categories.map(category => category.id)
+    const newTest = { test, noOfQuestions, categoryIDs }
     fetch(testsURL, {
       method: 'POST',
       credentials: 'include',
@@ -77,7 +82,7 @@ const Tests = ({
         Accept: 'application/json'
       },
       signal: signal,
-      body: JSON.stringify({ ...test, classID })
+      body: JSON.stringify(newTest)
     })
       .then(response => {
         if (response.ok) return response.json()
