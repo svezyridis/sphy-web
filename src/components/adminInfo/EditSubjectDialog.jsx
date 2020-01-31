@@ -17,8 +17,9 @@ import Tooltip from '@material-ui/core/Tooltip'
 import unavailableImage from '../../images/unavailable.png'
 import EditSubjectImageDialog2 from './EditSubjectImagesDialog2'
 import { baseURL } from '../../general/constants'
+import { fetch } from 'whatwg-fetch'
 
-const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, branch}) => {
+const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, branch }) => {
   const [name, setName] = useState(subject.name)
   const [URI, setURI] = useState(subject.uri)
   const [general, setGeneral] = useState(subject.general)
@@ -26,32 +27,28 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
   const classes = createSubjectStyle()
   const [addImage, setAddImage] = useState(false)
   const [defaultImage, setDefaultImage] = useState(subject.defaultImage)
- 
+  console.log(subject)
+  console.log(branch)
   var controller = new window.AbortController()
   var signal = controller.signal
 
-  const onUpdate = (name, general, units, defaultImageID) =>{
-    console.log(baseURL + 'subject/'+branch+'/' + subject.category + '/' + subject.uri)
+  const onUpdate = (name, general, units, defaultImageID) => {
     console.log(name, general, units, defaultImageID)
-    fetch(baseURL + 'subject/'+branch+'/' + subject.category + '/' + subject.uri, {
+    const subjectToCreate = { name: name, general: general, units: units, defaultImageID }
+    fetch(baseURL + 'subject/' + branch + '/' + subject.category + '/' + subject.uri, {
       method: 'PUT',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
-      body: JSON.stringify({
-        name: name,
-        general: general,
-        units: units,
-        defaultImageID: defaultImageID
-      }),
+      body: JSON.stringify(subjectToCreate),
       signal: signal
-  }).then(response =>
+    }).then(response =>
       response.json().then(json => {
         console.log(json)
-        getSubjects()  
-        return json;
+        getSubjects()
+        return json
       }))
       .catch(error => console.log(error))
   }
@@ -68,23 +65,22 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
     setDefaultImage(image)
   }
 
-
   var imageEditor = null
 
   if (addImage) {
     imageEditor = (
-      <EditSubjectImageDialog2 
-      addImage={addImage} 
-      handleClose={handleClose} 
-      imageArray={subject.images} 
-      uri={subject.uri} 
-      defaultImage={defaultImage}
-      category={subject.category}
-      getSubjects={getSubjects}
-      defaultImageHandler={defaultImageHandler}
-      branch={branch}/>)
+      <EditSubjectImageDialog2
+        addImage={addImage}
+        handleClose={handleClose}
+        imageArray={subject.images}
+        uri={subject.uri}
+        defaultImage={defaultImage}
+        category={subject.category}
+        getSubjects={getSubjects}
+        defaultImageHandler={defaultImageHandler}
+        branch={branch}
+      />)
   }
-  console.log(subject)
   return (
     <Dialog
       open={dialogOpen}
