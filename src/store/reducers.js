@@ -1,6 +1,7 @@
 import { actiontypes as C } from '../general/constants'
 import find from 'lodash.find'
 import isEmpty from 'lodash.isempty'
+import findIndex from 'lodash.findindex'
 
 export const account = (state = {}, action) => {
   switch (action.type) {
@@ -28,6 +29,36 @@ export const dark = (state = false, action) => {
   switch (action.type) {
     case C.TOOGLE_DARK:
       return !state
+    default:
+      return state
+  }
+}
+
+export const tests = (state = [], action) => {
+  switch (action.type) {
+    case C.ADD_OR_UPDATE_TEST:
+      if (findIndex(state, { username: action.username }) === -1) { return [...state, { username: action.username, tests: [action.test] }] }
+      return state.map(testsOfUser => testsOfUser.username === action.username ? { username: testsOfUser.username, tests: userTests(testsOfUser.tests, action) } : testsOfUser)
+    default:
+      return state
+  }
+}
+
+export const userTests = (state = [], action) => {
+  let testToUpdate
+  switch (action.type) {
+    case C.ADD_OR_UPDATE_TEST:
+      testToUpdate = find(state, { id: action.test.id })
+      if (isEmpty(testToUpdate)) { return [...state, action.test] }
+      return state.map(userTest => test(userTest, action))
+    default:
+      return state
+  }
+}
+export const test = (state = {}, action) => {
+  switch (action.type) {
+    case C.ADD_OR_UPDATE_TEST:
+      return state.id === action.id ? { ...state, activationTime: action.test.activationTime, completionTime: action.test.completionTime } : state
     default:
       return state
   }

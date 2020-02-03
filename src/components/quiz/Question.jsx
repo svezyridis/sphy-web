@@ -47,7 +47,7 @@ const Question = ({
     console.log(question)
     const branch = question.branch
     const category = question.category
-    const subject = question.subject.uri
+    const subject = question.image.subject
 
     var imageUrl = imagesURL +
       branch +
@@ -60,7 +60,6 @@ const Question = ({
     console.log(imageUrl)
     addQuestionImage(username, question.id, imageUrl)
     setImage(imageUrl)
-
   }
   const question = myQuiz.questions[questionIndex]
 

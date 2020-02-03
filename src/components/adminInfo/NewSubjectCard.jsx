@@ -120,7 +120,9 @@ const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
       }),
       signal: signal
     })
-      .then(response => response.json())
+      .then(response => {
+      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+    })
       .then(data => {
         const { status, result, message } = data
         if (status === 'error') console.log(message)

@@ -41,8 +41,9 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
       field: 'tests',
       editable: 'never',
       grouping: false,
-      render: rowData =>
-        rowData ? (
+      render: rowData => {
+        console.log(rowData)
+        return rowData ? (
           <Badge color='secondary' badgeContent={rowData.noOfTests} showZero>
             <Button
               variant='contained'
@@ -50,13 +51,14 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
                 history.push({
                   pathname: `classes/${rowData.name}`,
                   state: { classroom: rowData }
-                })
-              }
+                })}
             >
               ΠΡΟΒΟΛΗ
             </Button>
           </Badge>
         ) : null
+      }
+
     }
   ]
   const classes = homeStyle()
@@ -65,7 +67,7 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
   const controller = new window.AbortController()
   const signal = controller.signal
 
-  useEffect(() => {
+  const getClasses = (onSuccess, onFail) => {
     fetch(classesURL, {
       method: 'GET',
       credentials: 'include',
@@ -74,7 +76,9 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
       },
       signal: signal
     })
-      .then(result => result.json())
+      .then(response => {
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
       .then(data => {
         console.log(data)
         if (data.status === 'success') {
@@ -83,13 +87,24 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
             result.map((classRoom, index) => {
               return {
                 ...classRoom,
-                index,
+                index: index + 1,
                 count: classRoom.students ? classRoom.students.length : 0
               }
             })
           )
+          onSuccess()
+        } else onFail(data.message)
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+          onFail(error)
         }
       })
+  }
+
+  useEffect(() => {
+    getClasses(console.log, console.log)
     return () => {
       controller.abort()
     }
@@ -110,15 +125,13 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         },
         signal: signal
       })
-        .then(response => response.json())
+        .then(response => {
+          if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+        })
         .then(data => {
           console.log(data)
           if (data.status === 'success') {
-            const oldDataIndex = classRooms.indexOf(classToDelete)
-            setClassRooms(classRooms =>
-              classRooms.filter((row, index) => index !== oldDataIndex)
-            )
-            resolve()
+            getClasses(resolve, reject)
           } else reject(data.message)
         })
         .catch(err => reject(err))
@@ -137,23 +150,13 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         },
         signal: signal
       })
-        .then(response => response.json())
+        .then(response => {
+          if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+        })
         .then(data => {
           console.log(data)
           if (data.status === 'success') {
-            var utc = new Date()
-              .toJSON()
-              .slice(0, 10)
-              .replace(/-/g, '/')
-            temp.push({
-              ...data.result,
-              index: temp.length,
-              count: 0,
-              creationDate: utc,
-              unit: account.metadata.unit
-            })
-            setClassRooms(temp)
-            resolve()
+            getClasses(resolve, reject)
           } else reject(data.message)
         })
         .catch(err => reject(err))
@@ -172,17 +175,13 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
         body: newData.name,
         signal: signal
       })
-        .then(response => response.json())
+        .then(response => {
+          if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+        })
         .then(data => {
           console.log(data)
           if (data.status === 'success') {
-            const oldDataIndex = classRooms.indexOf(oldData)
-            setClassRooms(classRooms =>
-              classRooms.map((row, index) =>
-                index === oldDataIndex ? newData : row
-              )
-            )
-            resolve()
+            getClasses(resolve, reject)
           } else reject(data.message)
         })
         .catch(err => reject(err))
@@ -247,6 +246,7 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
                   <UsersTable
                     students={rowData.students}
                     classID={rowData.id}
+                    getClasses={getClasses}
                   />
                 )
               }

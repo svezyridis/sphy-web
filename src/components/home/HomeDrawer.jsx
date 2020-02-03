@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import Divider from '@material-ui/core/Divider'
 import Drawer from '@material-ui/core/Drawer'
 import classNames from 'classnames'
@@ -135,6 +135,7 @@ const HomeDrawer = ({
             ΥΠΟΒΟΛΗ
           </Button>
         </>
+
       ) : null}
       {onQuizStart && open ? (
         <div>

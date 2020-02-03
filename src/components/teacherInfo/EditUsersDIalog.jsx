@@ -51,7 +51,9 @@ const EditUsersDialog = ({ dialogOpen, onClose, addUsers, students }) => {
       },
       signal: signal
     })
-      .then(response => response.json())
+      .then(response => {
+      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+    })
       .then(data => {
         console.log(data)
         if (data.status === 'success') {

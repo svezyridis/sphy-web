@@ -18,6 +18,8 @@ import EventSeatIcon from '@material-ui/icons/EventSeat'
 import { Tooltip, Fab, IconButton } from '@material-ui/core'
 import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRounded'
 import CreateTestDialog from './CreateTestDialog'
+import LoadingDialog from '../quiz/LoadingDialog'
+import DetailsDialog from './DetailsDIalog'
 
 const testsURL = baseURL + 'tests'
 
@@ -35,41 +37,115 @@ const Tests = ({
   const [error, setError] = useState('')
   const [tests, setTests] = useState([])
   const [createTestDialogOpen, setCreateTestDialogOpen] = useState(false)
+  const [testToShow, setTestToShow] = useState(null)
+  const [reason, setReason] = useState('')
   const controller = new window.AbortController()
   const signal = controller.signal
   const className = match.params.className
-
-  const deleteTest = test => {
-    console.log(test)
-  }
+  const [detailsOpen, setDetailsOpen] = useState(false)
 
   const getTests = () => {
-    console.log(location.state)
     const classID = location.state.classroom.id
     const queryParams = objectToQueryString({ classID: classID })
+    setReason('Λήψη διαγωνισμάτων')
     fetch(testsURL + queryParams, {
       method: 'GET',
       credentials: 'include',
       signal: signal
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
       .then(data => {
         const { status, result, message } = data
         console.log(data)
-        if (status === 'error' || status === 500 || status === 400) { setError(message) } else {
+        setReason('')
+        if (status === 'error') {
+          setError(message)
+        } else {
           setTests(result)
         }
       })
       .catch(error => {
+        setReason('')
         if (!controller.signal.aborted) {
           console.error(error)
         }
       })
   }
 
+  const updateTest = (test) => {
+    const controller = new window.AbortController()
+    const signal = controller.signal
+    setReason('Ενημέρωση διαγωνίσματος')
+    fetch(testsURL + '/' + test.id, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify(test),
+      signal: signal
+    })
+      .then(response => {
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
+      .then(data => {
+        const { status, message } = data
+        setReason('')
+        if (status === 'error') {
+          console.log(message)
+        } else {
+          getTests()
+        }
+      })
+      .catch(error => {
+        setReason('')
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+    console.log(test)
+  }
+
+  const deleteTest = (test) => {
+    const controller = new window.AbortController()
+    const signal = controller.signal
+    fetch(testsURL + '/' + test.id, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      signal: signal
+    })
+      .then(response => {
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
+      .then(data => {
+        const { status, message } = data
+        console.log(data)
+        setReason('')
+        if (status === 'error') {
+          console.log(message)
+        } else {
+          getTests()
+        }
+      })
+      .catch(error => {
+        setReason('')
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+    console.log(test)
+  }
+
   const createTest = (name, duration, noOfQuestions, categories) => {
-    console.log(name, duration, noOfQuestions)
-    console.log(categories)
+    setCreateTestDialogOpen(false)
+    setReason('Δημιουργία διαγωνίσματος')
     const classID = location.state.classroom.id
     const test = { name, duration, classID }
     const categoryIDs = categories.map(category => category.id)
@@ -89,17 +165,24 @@ const Tests = ({
         else throw Error(`Request rejected with status ${response.status}`)
       })
       .then(data => {
-        const { status, result, message } = data
+        setReason('')
+        const { status, message } = data
         console.log(data)
         if (status === 'error') { setError(message) } else {
           getTests()
         }
       })
       .catch(error => {
+        setReason('')
         if (!controller.signal.aborted) {
           console.error(error)
         }
       })
+  }
+
+  const openDetails = (test) => {
+    setTestToShow(test)
+    setDetailsOpen(true)
   }
 
   useEffect(() => {
@@ -123,12 +206,15 @@ const Tests = ({
 
   return (
     <div className={classes.root}>
+      <LoadingDialog reason={reason} open={reason !== ''} />
       <CreateTestDialog
         open={createTestDialogOpen}
         onClose={() => setCreateTestDialogOpen(false)}
         onCreate={createTest}
         classes={classes}
       />
+
+      <DetailsDialog open={detailsOpen} onClose={() => setDetailsOpen(false)} classroom={location.state.classroom} test={testToShow} />
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
       <HomeDrawer
         open={open}
@@ -175,7 +261,7 @@ const Tests = ({
           {tests.map((test, index) => {
             return (
               <Grid key={index} item>
-                <TestCard test={test} onUpdate={getTests} />
+                <TestCard test={test} onUpdate={getTests} updateTest={updateTest} deleteTest={deleteTest} openDetails={(test) => openDetails(test)} />
               </Grid>
             )
           })}

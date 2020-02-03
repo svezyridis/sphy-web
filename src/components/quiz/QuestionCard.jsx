@@ -8,7 +8,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormControl from '@material-ui/core/FormControl'
 import FormLabel from '@material-ui/core/FormLabel'
 import Paper from '@material-ui/core/Paper'
-import { Grid, CardHeader } from '@material-ui/core'
+import { Grid, CardHeader, Fade } from '@material-ui/core'
 
 const QuestionCard = ({
   question,
@@ -22,6 +22,7 @@ const QuestionCard = ({
   const handleChange = event => {
     setOption(event.target.value)
   }
+  console.log(image)
   return (
     <Paper elevation={7} className={classes.questionPaper}>
       <Grid container spacing={3} wrap='nowrap'>
@@ -57,6 +58,7 @@ const QuestionCard = ({
         </Grid>
       </Grid>
     </Paper>
+
   )
 }
 export default QuestionCard

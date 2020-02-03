@@ -316,6 +316,8 @@ const homeStyle = makeStyles(theme => ({
     width: '99%',
     marginBottom: 10,
     marginTop: 10,
+    overflow: 'auto',
+    maxHeight: '400px',
     marginLeft: 'auto',
     marginRight: 'auto'
   },
@@ -363,6 +365,9 @@ const homeStyle = makeStyles(theme => ({
   },
   innerTable: {
     paddingLeft: '5%'
+  },
+  navigationBox: {
+    maxHeight: 500
   }
 }))
 

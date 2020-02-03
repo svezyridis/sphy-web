@@ -21,9 +21,10 @@ import QuizInProgressDialog from './QuizInProgressDialog'
 import find from 'lodash.find'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import LoadingDialog from './LoadingDialog'
+import { objectToQueryString } from '../../general/helperFunctions'
 
 const subjectsURL = baseURL + 'subject/'
-const questionsURL = baseURL + 'question/'
+const questionsURL = baseURL + 'questions'
 const Quiz = ({
   dark,
   open,
@@ -60,84 +61,47 @@ const Quiz = ({
     categories[branch] = subjectCategories
   }
 
-  const getQuestionsOfSubject = subject =>
-    new Promise((resolve, reject) => {
-      fetch(questionsURL + subject.uri, {
-        method: 'GET',
-        credentials: 'include'
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            let questions = data.result
-            questions = questions.map(question => ({ ...question, subject }))
-            resolve(isEmpty(questions) ? null : questions)
-          } else {
-            reject(data.message)
-          }
-        })
-        .catch(error => reject(error))
+  const getQuestions = (categories) => {
+    const categoryIDs = categories.map(category => category.id)
+    const params = { categoryIDs: categoryIDs }
+    fetch(questionsURL + objectToQueryString(params), {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      signal: signal
     })
-
-  const getQuestionsOfCategory = (branch, category) =>
-    new Promise((resolve, reject) => {
-      fetch(subjectsURL + branch + '/' + category.uri, {
-        method: 'GET',
-        credentials: 'include',
-        signal: signal
+      .then(response => {
+        if (response.ok) return response.json()
+        else throw Error(`Request rejected with status ${response.status}`)
       })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'error') {
-            reject(data.message)
-          } else {
-            const subjects = data.result
-            Promise.all(
-              subjects.map(subject => getQuestionsOfSubject(subject))
-            ).then(result => {
-              result = result
-                .flat(2)
-                .filter(question => question !== null)
-                .map(question => ({
-                  ...question,
-                  branch: category.branch,
-                  category: category.uri
-                }))
-              resolve(isEmpty(result) ? null : result)
-            })
-          }
-        })
-        .catch(error => {
-          if (!controller.signal.aborted) {
-            console.error(error)
-            reject(error)
-          }
-        })
-    })
-
-  const onQuizStart = () => {
-    createQuiz(username)
-    setLoading(true)
-    const categoriesToFetch = categories.filter(category => category.checked)
-    console.log(categoriesToFetch)
-    Promise.all(
-      categoriesToFetch.map(category =>
-        getQuestionsOfCategory(category.branch, category)
-      )
-    )
-      .then(questions => {
-        questions = questions.flat().filter(questions => questions !== null)
-        questions.forEach(question => {
-          addQuestion(username, question)
-        })
-        setLoading(false)
-        history.push('/question/1')
+      .then(data => {
+        const { status, result, message } = data
+        console.log(data)
+        if (status === 'error') { console.log(message) } else {
+          result.forEach(question => {
+            addQuestion(username, question)
+          })
+          setLoading(false)
+          history.push('/question/1')
+        }
       })
       .catch(error => {
-        console.log(error)
         deleteQuiz(username)
         setLoading(false)
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
       })
+  }
+
+  const onQuizStart = () => {
+    const categoriesToFetch = categories.filter(category => category.checked)
+    getQuestions(categoriesToFetch)
+    createQuiz(username)
+    setLoading(true)
   }
   const continueQuiz = () => console.log(history.push('/question/1'))
   const onDeleteQuiz = () => deleteQuiz(username)

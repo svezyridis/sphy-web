@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
@@ -8,11 +8,14 @@ import Typography from '@material-ui/core/Typography'
 import uniqWith from 'lodash.uniqwith'
 import classNames from 'classnames'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
-import { Tooltip, IconButton, Fab } from '@material-ui/core'
+import { Tooltip, Fab, CardHeader } from '@material-ui/core'
 import timestamp from 'time-stamp'
 import { fetch } from 'whatwg-fetch'
 import { baseURL } from '../../general/constants'
 import TimerOffIcon from '@material-ui/icons/TimerOff'
+import LoadingDialog from '../quiz/LoadingDialog'
+import DeleteIcon from '@material-ui/icons/Delete'
+import DeleteTestDialog from './DeleteTestDIalog'
 
 const testsURL = baseURL + 'tests/'
 
@@ -26,12 +29,18 @@ const useStyles = makeStyles({
     transform: 'scale(0.8)'
   },
   title: {
-    fontSize: 16
+    fontSize: 16,
+    float: 'left'
+  },
+  fab: {
+    position: 'relative',
+    top: -8,
+    marginLeft: 'auto'
   },
   pos: {
     marginBottom: 12
   },
-  fab: {
+  delete: {
     marginLeft: 'auto'
   },
   active: {
@@ -42,69 +51,39 @@ const useStyles = makeStyles({
   }
 })
 
-const updateTest = (test, onUpdateSuccess, onUpdateFailure) => {
-  console.log(JSON.stringify(test))
-  const controller = new window.AbortController()
-  const signal = controller.signal
-  fetch(testsURL + test.id, {
-    method: 'PUT',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    },
-    body: JSON.stringify(test),
-    signal: signal
-  })
-    .then(response => response.json())
-    .then(data => {
-      const { status, result, message } = data
-      console.log(data)
-      if (status === 'error' || status === 500 || status === 400) {
-        onUpdateFailure(message)
-      } else {
-        onUpdateSuccess()
-      }
-    })
-    .catch(error => {
-      if (!controller.signal.aborted) {
-        console.error(error)
-      }
-    })
-  console.log(test)
+const activationButton = (onClick, classes) => {
+  return (
+    <div className={classes.fab}>
+      <Tooltip title='Ενεργοποίηση διαγωνίσματος'>
+        <Fab
+          size='small'
+          onClick={onClick}
+        >
+          <PlayArrowIcon />
+        </Fab>
+      </Tooltip>
+    </div>
+  )
 }
-
-const activationButton = (test, classes, onUpdate) => (
-  <div className={classes.fab}>
-    <Tooltip title='Ενεργοποίηση διαγωνίσματος'>
+const deleteButton = (onClick, classes) => (
+  <div className={classes.delete}>
+    <Tooltip title='Διαγραφή διαγωνίσματος'>
       <Fab
         size='small'
-        onClick={() =>
-          updateTest(
-            { ...test, activationTime: timestamp('YYYY-MM-DD HH:mm') },
-            onUpdate,
-            err => console.log(err)
-          )
-        }
+        onClick={onClick}
       >
-        <PlayArrowIcon />
+        <DeleteIcon />
       </Fab>
     </Tooltip>
   </div>
 )
 
-const completionButton = (test, classes, onUpdate) => (
+const completionButton = (onClick, classes) => (
   <div className={classes.fab}>
     <Tooltip title='Ολοκλήρωση διαγωνίσματος'>
       <Fab
         size='small'
-        onClick={() =>
-          updateTest(
-            { ...test, completionTime: timestamp('YYYY-MM-DD HH:mm') },
-            onUpdate,
-            err => console.log(err)
-          )
-        }
+        onClick={onClick}
       >
         <TimerOffIcon />
       </Fab>
@@ -112,58 +91,76 @@ const completionButton = (test, classes, onUpdate) => (
   </div>
 )
 
-const TestCard = ({ test, onUpdate }) => {
+const TestCard = ({ test, updateTest, deleteTest, openDetails }) => {
   const classes = useStyles()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const status = test.activationTime
     ? test.completionTime
-      ? 'Ολκληρωμένο'
+      ? 'Ολοκληρωμένο'
       : 'Ενεργό'
     : 'Ανενεργό'
   const isActive = status === 'Ενεργό'
-  const isComplete = status === 'Ολκληρωμένο'
+  const isComplete = status === 'Ολοκληρωμένο'
   const isInactive = status === 'Ανενεργό'
+  const onComplete = () => updateTest({ ...test, completionTime: timestamp('YYYY-MM-DD HH:mm') })
+  const onActivate = () => updateTest({ ...test, activationTime: timestamp('YYYY-MM-DD HH:mm') })
+  const onDelete = () => setDeleteDialogOpen(true)
+
   return (
-    <Card className={classes.card} elevation={5}>
-      <CardContent>
-        <Typography
-          className={classes.title}
-          color='textSecondary'
-          gutterBottom
-        >
-          {'Κατάσταση: '}
-          <span
-            className={classNames(
-              classes.inActive,
-              isComplete && classes.complete,
-              isActive && classes.active
-            )}
-          >
-            {status}
-          </span>
-        </Typography>
-        <Typography variant='h5' component='h2'>
-          {test.name}
-        </Typography>
-        <Typography className={classes.pos} color='textSecondary'>
-          {`Δημιουργήθηκε: ${test.creationDate}`}
-        </Typography>
-        <Typography variant='body2' component='p'>
-          {`Αριθμός ερωτήσεων: ${test.questions.length}`}
-          <br />
-          {`Υποβληθήσες απαντήσεις: ${
+    <>
+      <DeleteTestDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onDeleteTest={() => {
+          setDeleteDialogOpen(false)
+          deleteTest(test)
+        }}
+      />
+      <Card className={classes.card} elevation={5}>
+        <CardContent>
+          <div style={{ display: 'flex' }}>
+
+            <Typography
+              className={classes.title}
+              color='textSecondary'
+              component='div'
+            >
+              {'Κατάσταση: '}
+              <span
+                className={classNames(
+                  classes.inActive,
+                  isComplete && classes.complete,
+                  isActive && classes.active
+                )}
+              >
+                {status}
+              </span>
+            </Typography>
+            {isInactive ? activationButton(onActivate, classes) : isActive ? completionButton(onComplete, classes) : null}
+          </div>
+          <Typography variant='h5' component='h2'>
+            {test.name}
+          </Typography>
+          <Typography className={classes.pos} color='textSecondary'>
+            {`Δημιουργήθηκε: ${test.creationTime.substring(0, 10)}`}
+          </Typography>
+          <Typography variant='body2' component='p'>
+            {`Αριθμός ερωτήσεων: ${test.questions.length}`}
+            <br />
+            {`Υποβληθήσες απαντήσεις: ${
             uniqWith(
               test.answers,
               (answer1, answer2) => answer1.userID === answer2.userID
             ).length
           }`}
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <Button size='small'>Περισσοτερα</Button>
-        {isInactive ? activationButton(test, classes, onUpdate) : null}
-        {isActive ? completionButton(test, classes, onUpdate) : null}
-      </CardActions>
-    </Card>
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing>
+          <Button size='small' onClick={() => openDetails(test)}>Περισσοτερα</Button>
+          {deleteButton(onDelete, classes)}
+        </CardActions>
+      </Card>
+    </>
   )
 }
 

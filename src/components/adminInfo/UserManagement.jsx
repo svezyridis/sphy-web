@@ -16,14 +16,17 @@ import MaterialTable from 'material-table'
 import tableIcons from '../../styles/userTableIcons'
 import { fetch } from 'whatwg-fetch'
 import { baseURL } from '../../general/constants'
+import find from 'lodash.find'
 
-const originalColumns = [
+const columns = [
   { title: 'ΑΜ', field: 'serialNumber' },
   { title: 'Όνομα', field: 'firstName' },
   { title: 'Επίθετο', field: 'lastName' },
   { title: 'username', field: 'username' },
   { title: 'password', field: 'password' },
-  { title: 'Βαθμός', field: 'rank' }
+  { title: 'Βαθμός', field: 'rank' },
+  { title: 'Μονάδα', field: 'unitID', lookup: {} },
+  { title: 'Ρόλος', field: 'roleID', lookup: {} }
 ]
 
 const usersURL = baseURL + 'users/'
@@ -37,7 +40,6 @@ const UserManagement = ({
   deleteAccount,
   dark
 }) => {
-  const [columns, setColumns] = useState(originalColumns)
   const classes = homeStyle()
   const history = useHistory()
   const [users, setUsers] = useState([])
@@ -61,19 +63,23 @@ const UserManagement = ({
       },
       signal: signal
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
       .then(data => {
         console.log(data)
         if (data.status === 'success') {
           const roles = data.result
-          const column = { title: 'Ρόλος', field: 'roleID', lookup: {} }
+          const columnToEdit = find(columns, { field: 'roleID' })
+          console.log(columnToEdit)
           roles.forEach(role => {
-            column.lookup[parseInt(role.id)] = role.role
+            columnToEdit.lookup[parseInt(role.id)] = role.role
           })
-          console.log(column)
-          console.log(columns)
-          setColumns(columns => [...columns, column])
-          console.log(columns)
+        }
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
         }
       })
 
@@ -86,19 +92,22 @@ const UserManagement = ({
       },
       signal: signal
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
       .then(data => {
         console.log(data)
         if (data.status === 'success') {
           const units = data.result
-          const column = { title: 'Μονάδα', field: 'unitID', lookup: {} }
+          const columnToEdit = find(columns, { field: 'unitID' })
           units.forEach(unit => {
-            column.lookup[parseInt(unit.id)] = unit.name
+            columnToEdit.lookup[parseInt(unit.id)] = unit.name
           })
-          console.log(column)
-          console.log(columns)
-          setColumns(columns => [...columns, column])
-          console.log(columns)
+        }
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
         }
       })
 
@@ -111,7 +120,9 @@ const UserManagement = ({
       },
       signal: signal
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
       .then(data => {
         console.log(data)
         if (data.status === 'success') {
@@ -122,6 +133,11 @@ const UserManagement = ({
               roleID: parseInt(user.roleID)
             }))
           )
+        }
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
         }
       })
     return () => {
@@ -145,7 +161,9 @@ const UserManagement = ({
         },
         signal: signal
       })
-        .then(response => response.json())
+        .then(response => {
+          if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+        })
         .then(data => {
           console.log(data)
           if (data.status === 'success') {
@@ -185,7 +203,9 @@ const UserManagement = ({
         body: requestData,
         signal: signal
       })
-        .then(response => response.json())
+        .then(response => {
+          if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+        })
         .then(data => {
           console.log(data)
           if (data.status === 'success') {

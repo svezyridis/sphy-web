@@ -115,3 +115,9 @@ export const addImage = (id, image) => ({
   id: id,
   image: image
 })
+
+export const addOrUpdateTest = (username, test) => ({
+  type: C.ADD_OR_UPDATE_TEST,
+  username: username,
+  test: test
+})

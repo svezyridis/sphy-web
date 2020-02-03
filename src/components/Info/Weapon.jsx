@@ -55,7 +55,9 @@ const Weapon = ({
       signal: signal,
       cache: 'force-cache'
     })
-      .then(response => response.json())
+      .then(response => {
+      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+    })
       .then(data => {
         const { status, result, message } = data
         console.log(data)
@@ -116,7 +118,9 @@ const Weapon = ({
       credentials: 'include',
       signal: signal
     })
-      .then(response => response.json())
+      .then(response => {
+      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+    })
       .then(data => {
         const { status, message } = data
         console.log(message)
@@ -143,7 +147,9 @@ const Weapon = ({
       body: JSON.stringify({ name: name, uri: uri }),
       signal: signal
     })
-      .then(response => response.json())
+      .then(response => {
+      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+    })
       .then(data => {
         const { status, result, message } = data
         if (status === 'error') console.log(message)
@@ -166,7 +172,9 @@ const Weapon = ({
       signal: signal,
       cache: 'force-cache'
     })
-      .then(response => response.json())
+      .then(response => {
+      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+    })
       .then(data => {
         const { status, result, message } = data
         console.log(data)
@@ -201,7 +209,9 @@ const Weapon = ({
       }),
       signal: signal
     })
-      .then(response => response.json())
+      .then(response => {
+      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+    })
       .then(data => {
         const { status, message } = data
         if (status === 'error') console.log(message)

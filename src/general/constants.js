@@ -19,7 +19,10 @@ export const actiontypes = {
   DELETE_CATEGORY: 'DELETE_CATEGORY',
   ADD_CATEGORY: 'ADD_CATEGORY',
   ADD_CATEGORY_IMAGE: 'ADD_CAT_IMAGE',
-  ADD_IMAGE: 'ADD_IMAGE'
+  ADD_IMAGE: 'ADD_IMAGE',
+  ADD_OR_UPDATE_TEST: 'ADD_OR_UPDATE_TEST',
+  SELECT_ANSWER: 'SELECT_ANSWER',
+  SUBMIT_TEST: 'SUBMIT_TEST'
 }
 // export const baseURL = 'https://projectapi.ml/'
 export const baseURL = 'http://localhost:8080/'

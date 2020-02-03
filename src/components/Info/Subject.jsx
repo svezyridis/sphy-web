@@ -126,11 +126,13 @@ const Subject = ({
         credentials: 'include',
         signal: signal
       })
-        .then(response => response.json())
+        .then(response => {
+          if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+        })
         .then(data => {
           const { status, result, message } = data
           console.log(data)
-          if (status === 'error' || status === 500) setError(message)
+          if (status === 'error') setError(message)
           else {
             setsubject(result)
             if (result.images.length === 0) {

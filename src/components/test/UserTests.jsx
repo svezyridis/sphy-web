@@ -9,65 +9,39 @@ import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import { fetch } from 'whatwg-fetch'
 import Grid from '@material-ui/core/Grid'
-import SubjectCard from './SubjectCard'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
-import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import HomeIcon from '@material-ui/icons/Home'
-import { titleCase, getBranchName } from '../../general/helperFunctions'
+import { objectToQueryString } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
-import NewSubjectCard from '../adminInfo/NewSubjectCard'
+import EventSeatIcon from '@material-ui/icons/EventSeat'
+import LoadingDialog from '../quiz/LoadingDialog'
+import UserTestCard from './UserTestCard'
+import find from 'lodash.find'
 
-const subjectsURL = baseURL + 'subject/'
-const imagesURL = baseURL + 'image/'
+const testsURL = baseURL + 'tests'
+const classesURL = baseURL + 'classes/'
 
-const Category = ({
+const UserTests = ({
   open,
   toogleDrawer,
   account,
   deleteAccount,
   dark,
-  subjects,
-  setSubjects,
-  addImage,
-  addSubject,
-  deleteSubject,
-  match,
   history,
-  location
+  tests,
+  addOrUpdateTest
 }) => {
   const classes = homeStyle()
   const [error, setError] = useState('')
-  const branch = match.params.weapon
-  const category = match.params.category
-  subjects = subjects.filter(subject => subject.category === category)
+  const [reason, setReason] = useState('')
   const controller = new window.AbortController()
   const signal = controller.signal
 
-  const handleDelete = subject => {
-    fetch(subjectsURL + branch + '/' + category + '/' + subject.uri, {
-      method: 'DELETE',
-      credentials: 'include',
-      signal: signal
-    })
-      .then(response => {
-        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
-      })
-      .then(data => {
-        const { status, message } = data
-        console.log(message)
-        if (status === 'success') {
-          deleteSubject(subject.id)
-        }
-      })
-      .catch(error => {
-        if (!controller.signal.aborted) {
-          console.error(error)
-        }
-      })
-  }
-
-  const getSubjects = () => {
-    fetch(subjectsURL + branch + '/' + category, {
+  const getTests = (classroom) => {
+    const classID = classroom.id
+    const queryParams = objectToQueryString({ classID: classID })
+    setReason('Λήψη διαγωνισμάτων')
+    fetch(testsURL + queryParams, {
       method: 'GET',
       credentials: 'include',
       signal: signal
@@ -78,26 +52,18 @@ const Category = ({
       .then(data => {
         const { status, result, message } = data
         console.log(data)
-        if (status === 'error') setError(message)
-        else {
-          setSubjects(result)
-          result.forEach(async (subject, index) => {
-            if (!(subject.defaultImage && subject.defaultImage.filename)) {
-              return
-            }
-            var imageUrl = imagesURL +
-              branch +
-              '/' +
-              category +
-              '/' +
-              subject.uri +
-              '/' +
-              subject.defaultImage.filename
-            addImage(subject.id, imageUrl)
+        setReason('')
+        if (status === 'error') {
+          setError(message)
+        } else {
+          const tests = result.map(test => ({ ...test, classroom }))
+          tests.forEach(test => {
+            addOrUpdateTest(account.metadata.username, test)
           })
         }
       })
       .catch(error => {
+        setReason('')
         if (!controller.signal.aborted) {
           console.error(error)
         }
@@ -105,10 +71,34 @@ const Category = ({
   }
 
   useEffect(() => {
-    if (isEmpty(account)) {
-      return
-    }
-    getSubjects()
+    if (isEmpty(account)) { return }
+    setReason('Λήψη τάξεων')
+    fetch(classesURL, {
+      method: 'GET',
+      credentials: 'include',
+      signal: signal
+    })
+      .then(response => {
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
+      .then(data => {
+        const { status, result, message } = data
+        console.log(data)
+        setReason('')
+        if (status === 'error') {
+          setError(message)
+        } else {
+          result.forEach(classroom => {
+            getTests(classroom)
+          })
+        }
+      })
+      .catch(error => {
+        setReason('')
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
     return () => {
       controller.abort()
     }
@@ -118,10 +108,22 @@ const Category = ({
     history.push('/login')
     return null
   }
-  const isAdmin = account.metadata.role === 'ADMIN'
+  const username = account.metadata.username
+  let classTests = find(tests, { username: username })
+  classTests = classTests ? classTests.tests : []
+  const userTests = classTests.filter(test => {
+    const dateUserEnteredClass = find(test.classroom.students, { username: username }).timeAdded
+    console.log(dateUserEnteredClass)
+    const testCreationTime = test.creationTime
+    console.log(testCreationTime)
+    console.log()
+    return Date.parse(testCreationTime) > Date.parse(dateUserEnteredClass)
+  })
+  console.log(userTests)
 
   return (
     <div className={classes.root}>
+      <LoadingDialog reason={reason} open={reason !== ''} />
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
       <HomeDrawer
         open={open}
@@ -147,36 +149,16 @@ const Category = ({
             component='button'
             variant='body1'
             onClick={() => {
-              history.push('/info')
+              history.push('/classes')
             }}
             className={classNames(classes.link, dark && classes.dark)}
           >
-            <LocalLibraryIcon className={classes.icon} />
-            Εκπαίδευση
-          </Link>
-          <Link
-            component='button'
-            variant='body1'
-            onClick={() => {
-              history.push(`/info/${branch}`)
-            }}
-            className={classNames(classes.link, dark && classes.dark)}
-          >
-            {titleCase(getBranchName(branch))}
-          </Link>
-          <Link
-            component='button'
-            variant='body1'
-            onClick={() => {
-              history.push(`/info/${branch}/${category}`)
-            }}
-            className={classNames(classes.link, dark && classes.dark)}
-          >
-            {category}
+            <EventSeatIcon className={classes.icon} />
+            Τα διαγωνίσματά μου
           </Link>
         </Breadcrumbs>
         <Typography variant='h3' color='textPrimary' align='center'>
-          Επιλέξτε θέμα
+          Τα διαγωνίσματά μου
         </Typography>
         <Grid
           container
@@ -185,29 +167,17 @@ const Category = ({
           spacing={5}
           className={classes.grid}
         >
-          {subjects.map((subject, index) => {
+          {userTests.map((test, index) => {
             return (
               <Grid key={index} item>
-                <SubjectCard
-                  subject={subject}
-                  branch={branch}
-                  admin={isAdmin}
-                  category={category}
-                  getSubjects={getSubjects}
-                  deleteSubject={() => handleDelete(subject)}
-                />
+                <UserTestCard test={test} onUpdate={getTests} />
               </Grid>
             )
           })}
-          {isAdmin ? (
-            <Grid item>
-              <NewSubjectCard addSubject={addSubject} addImage={addImage} getSubjects={getSubjects} />
-            </Grid>
-          ) : null}
         </Grid>
       </div>
       <Copyright open={open} />
     </div>
   )
 }
-export default Category
+export default UserTests

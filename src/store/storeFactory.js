@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
-import { account, open, dark, quizes, categories, subjects } from './reducers'
+import { account, open, dark, quizes, categories, subjects, tests } from './reducers'
 import { composeWithDevTools } from 'redux-devtools-extension'
 
 const logger = store => next => action => {
@@ -20,7 +20,7 @@ const saver = store => next => action => {
 const storeFactory = () =>
   composeWithDevTools(
     applyMiddleware(logger, saver))(createStore)(
-    combineReducers({ account, open, dark, quizes, categories, subjects }),
+    combineReducers({ account, open, dark, quizes, categories, subjects, tests }),
     window.localStorage['redux-store']
       ? JSON.parse(window.localStorage['redux-store'])
       : {}
