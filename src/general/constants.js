@@ -24,7 +24,8 @@ export const actiontypes = {
   SELECT_ANSWER: 'SELECT_ANSWER',
   SUBMIT_TEST: 'SUBMIT_TEST',
   START_TEST: 'START_TEST',
-  FINISH_TEST: 'FINISH_TEST'
+  FINISH_TEST: 'FINISH_TEST',
+  DELETE_TESTS: 'DELETE_TESTS'
 }
-export const baseURL = 'https://projectapi.ml/'
-// export const baseURL = 'http://localhost:8080/'
+// export const baseURL = 'https://projectapi.ml/'
+export const baseURL = 'http://localhost:8080/'

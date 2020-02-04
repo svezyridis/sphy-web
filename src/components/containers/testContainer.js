@@ -5,10 +5,12 @@ import {
   addOrUpdateTest,
   beginTest,
   completeTest,
-  answerQuestion
+  answerQuestion,
+  deleteTests
 } from '../../store/actions'
 import UserTests from '../test/UserTests'
 import TestQuestion from '../test/TestQuestion'
+import TestReview from '../test/TestReview'
 
 export const UserTestsContainer = connect(
   ({ open, account, dark, tests }) => ({
@@ -32,6 +34,9 @@ export const UserTestsContainer = connect(
     },
     setFinished (username, testID) {
       dispatch(completeTest(username, testID))
+    },
+    deleteTests (username, newTests) {
+      dispatch(deleteTests(username, newTests))
     }
   })
 )(UserTests)
@@ -59,3 +64,20 @@ export const TestQuestionContainer = connect(
     }
   })
 )(TestQuestion)
+
+export const TestReviewContainer = connect(
+  ({ open, account, dark, tests }) => ({
+    open: open,
+    account: account,
+    dark: dark,
+    tests: tests
+  }),
+  dispatch => ({
+    toogleDrawer (toogle) {
+      dispatch(toogleDrawer(toogle))
+    },
+    deleteAccount () {
+      dispatch(deleteAccount())
+    }
+  })
+)(TestReview)

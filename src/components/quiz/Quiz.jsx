@@ -80,7 +80,11 @@ const Quiz = ({
       .then(data => {
         const { status, result, message } = data
         console.log(data)
-        if (status === 'error') { console.log(message) } else {
+        if (status === 'error') {
+          console.log(message)
+          setLoading(false)
+        } else {
+          createQuiz(username)
           result.forEach(question => {
             addQuestion(username, question)
           })
@@ -100,7 +104,6 @@ const Quiz = ({
   const onQuizStart = () => {
     const categoriesToFetch = categories.filter(category => category.checked)
     getQuestions(categoriesToFetch)
-    createQuiz(username)
     setLoading(true)
   }
   const continueQuiz = () => console.log(history.push('/question/1'))

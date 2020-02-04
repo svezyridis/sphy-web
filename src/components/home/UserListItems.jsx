@@ -24,7 +24,7 @@ export const MainListItems = () => {
         </ListItemIcon>
         <ListItemText primary='Αυτοαξιολόγηση' />
       </ListItem>
-      <ListItem>
+      <ListItem button onClick={() => history.push('/tests')}>
         <ListItemIcon>
           <MoodBadIcon />
         </ListItemIcon>

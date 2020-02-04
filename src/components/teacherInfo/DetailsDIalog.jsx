@@ -91,11 +91,10 @@ const ResultsTable = (classroom, test, index, value) => {
   ]
   const testStudents = classroom.students.filter(student => Date.parse(student.timeAdded) < Date.parse(test.creationTime))
   const questionsWithCorrectAnswer = test.questions.map(question => ({ questionID: question.id, optionID: find(question.optionList, { correct: true }).id }))
-  console.log(questionsWithCorrectAnswer)
   const studentsWithResults = testStudents.map((student, index) => {
     const userAswers = test.answers.filter(answer => answer.userID === student.id).map(answer => ({ questionID: answer.questionID, optionID: answer.choiceID }))
     const correctUserAnswers = intersectionWith(questionsWithCorrectAnswer, userAswers, isEqual)
-    const score = ((correctUserAnswers.length / test.questions.length) * 100).toFixed(1) + '%'
+    const score = userAswers.length > 0 ? ((correctUserAnswers.length / test.questions.length) * 100).toFixed(1) + '%' : '-'
     return ({ ...student, score: score, index: index + 1 })
   })
   return (

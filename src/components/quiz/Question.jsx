@@ -54,7 +54,7 @@ const Question = ({
     history.push('/question/1')
     return null
   }
-  const answer = find(myQuiz.answers, { questionID: question.id })
+  const answer = find(myQuiz.myAnswers, { questionID: question.id })
 
   const handleRight = () => {
     console.log('right')

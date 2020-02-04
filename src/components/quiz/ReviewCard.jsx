@@ -21,9 +21,9 @@ const ReviewCard = ({ question, classes, dark, image, answer }) => {
       </Typography>
       <FormControl component='fieldset' className={classes.formControl}>
         {answer.optionID == find(question.optionList, { correct: true }).id ? (
-          <FormLabel component='text'>Απαντήσατε ΣΩΣΤΑ </FormLabel>
+          <FormLabel>Απαντήσατε ΣΩΣΤΑ </FormLabel>
         ) : (
-          <FormLabel component='text'>Απαντήσατε ΛΑΝΘΑΣΜΕΝΑ </FormLabel>
+          <FormLabel>Απαντήσατε ΛΑΝΘΑΣΜΕΝΑ </FormLabel>
         )}
 
         {question.optionList.map((option, index) => {
@@ -45,9 +45,9 @@ const ReviewCard = ({ question, classes, dark, image, answer }) => {
                     answer.optionID ==
                     find(question.optionList, { correct: true }).id ? (
                       <CheckCircleTwoToneIcon className={classes.correct} />
-                    ) : (
-                      <HighlightOffTwoToneIcon className={classes.incorrect} />
-                    )
+                      ) : (
+                        <HighlightOffTwoToneIcon className={classes.incorrect} />
+                  )
                   }
                   value={option.id.toString()}
                 />

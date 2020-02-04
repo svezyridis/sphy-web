@@ -23,7 +23,8 @@ import {
 } from './components/containers/teacherContainer'
 import {
   UserTestsContainer,
-  TestQuestionContainer
+  TestQuestionContainer,
+  TestReviewContainer
 } from './components/containers/testContainer'
 
 const themeObject = {
@@ -78,6 +79,7 @@ function App () {
           <Route exact path='/classes/:className' component={TestsContainer} />
           <Route exact path='/info/:weapon' component={WeaponContainer} />
           <Route exact path='/tests' component={UserTestsContainer} />
+          <Route exact path='/reviewtest/:testID/:questionIndex' component={TestReviewContainer} />
           <Route
             exact
             path='/test/:testID/:questionIndex'

@@ -39,31 +39,7 @@ const Review = ({
   const [image, setImage] = useState(null)
   const myQuiz = find(quizes, { username: username })
 
-  const getImagesOfQuestion = question => {
-    const branch = question.branch
-    const category = question.category
-    const subject = question.subject.uri
-    var imageUrl =
-      imagesURL +
-      branch +
-      '/' +
-      category +
-      '/' +
-      subject +
-      '/' +
-      question.image.filename
-    addQuestionImage(username, question.id, imageUrl)
-    setImage(imageUrl)
-  }
-
   const question = myQuiz.questions[questionIndex]
-
-  useEffect(() => {
-    if (!myQuiz) return
-    if (!question) return
-    getImagesOfQuestion(question)
-    return () => {}
-  }, [question])
 
   if (!myQuiz) {
     history.push('/quiz')
@@ -75,8 +51,8 @@ const Review = ({
     return null
   }
 
-  const answer = find(myQuiz.answers, { questionID: question.id })
-  const score = myQuiz.answers.reduce((accumulator, answer) => {
+  const answer = find(myQuiz.myAnswers, { questionID: question.id })
+  const score = myQuiz.myAnswers.reduce((accumulator, answer) => {
     const question = find(myQuiz.questions, { id: answer.questionID })
     const selectedOption = find(question.optionList, {
       id: parseInt(answer.optionID)
@@ -86,12 +62,8 @@ const Review = ({
   }, 0)
 
   if (isEmpty(account)) {
-    console.log('account is empty')
-    var tempAccount = window.sessionStorage.getItem('account')
-    if (isEmpty(tempAccount)) {
-      history.push('/login')
-      return null
-    }
+    history.push('/login')
+    return null
   }
   if (questionIndex > myQuiz.questions.length - 1 || questionIndex < 0) {
     history.push('/review/1')
@@ -106,7 +78,7 @@ const Review = ({
   const handleLeft = () =>
     history.push(`/review/${parseInt(questionIndex + 1) - 1}`)
 
-  const onQuestionClick = id => console.log(id)
+  const onQuestionClick = index => history.push(`/review/${index + 1}`)
 
   return (
     <div className={classes.root}>
@@ -145,19 +117,20 @@ const Review = ({
         <Typography variant='h4' align='center'>
           {`Η βαθμολογία σας είναι:
           `}
-          <h3
-            className={
-              (score / myQuiz.questions.length).toFixed(2) * 100 > 50
-                ? classes.correct
-                : classes.incorrect
-            }
-          >
-            {`${(parseFloat(score / myQuiz.questions.length) * 100).toFixed(
-              1
-            )} %`}
-          </h3>
         </Typography>
+        <Typography
+          variant='h3'
+          align='center'
+          className={
+            (score / myQuiz.questions.length).toFixed(2) * 100 > 50
+              ? classes.correct
+              : classes.incorrect
+          }
+        > {`${(parseFloat(score / myQuiz.questions.length) * 100).toFixed(
+            1
+          )} %`}
 
+        </Typography>
         <Grid
           container
           className={classes.questionGrid}

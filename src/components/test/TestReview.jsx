@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
@@ -16,62 +16,30 @@ import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded'
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import Grid from '@material-ui/core/Grid'
 import { Typography } from '@material-ui/core'
-import QuestionCard from '../quiz/QuestionCard'
-import { fetch } from 'whatwg-fetch'
-import { baseURL } from '../../general/constants'
+import ReviewCard from '../quiz/ReviewCard'
+import intersectionWith from 'lodash.intersectionwith'
+import isEqual from 'lodash.isequal'
 
-const testsURL = baseURL + 'tests/'
-
-const TestQuestion = ({
+const TestReview = ({
   dark,
   open,
   toogleDrawer,
   account,
   deleteAccount,
-  selectOption,
-  onSubmitTest,
   tests,
   history,
   match
 }) => {
   const classes = homeStyle()
-  const controller = new window.AbortController()
-  const signal = controller.signal
-  const [remainingTime, setRemainingTime] = useState(null)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!myTest || !myTest.startedAt || !myTest.activationTime) {
-        setRemainingTime(null)
-        return
-      }
-      const timePassed = Math.floor(
-        (Date.now() - Date.parse(myTest.startedAt)) / 1000
-      )
-      const duration = myTest.duration * 60
-      const remainder = duration - timePassed
-      if (remainder < 0) {
-        setRemainingTime('Τέλος χρόνου')
-        if (!myTest.finished) { onSubmitTest(username, parseInt(testID)) }
-      }
-      const seconds = remainder % 60
-      const minutes = Math.floor(remainder / 60)
-      setRemainingTime(`Yπόλοιπο: ${minutes}:${seconds}`)
-    }, 1000)
-    return () => {
-      clearInterval(interval)
-      controller.abort()
-    }
-  }, [])
+  const questionIndex = match.params.questionIndex - 1
 
   if (isEmpty(account)) {
     history.push('/login')
     return null
   }
-  const questionIndex = match.params.questionIndex - 1
-  const testID = match.params.testID
   const username = account.metadata.username
   const myTests = find(tests, { username: username })
+  const testID = match.params.testID
 
   if (isEmpty(myTests)) {
     history.push('/tests')
@@ -82,55 +50,30 @@ const TestQuestion = ({
     history.push('/tests')
     return null
   }
-  if (questionIndex > myTest.questions.length - 1 || questionIndex < 0) {
-    history.push(`/test/${testID}/1`)
+  if (questionIndex < 0 || questionIndex >= myTest.questions.length) {
+    history.push(`/reviewtest/${testID}/1`)
     return null
   }
+
+  const userID = account.metadata.id
+  const questionsWithCorrectAnswer = myTest.questions.map(question => ({ questionID: question.id, optionID: find(question.optionList, { correct: true }).id }))
+  const userAnswers = myTest.answers.filter(answer => answer.userID === userID).map(answer => ({ questionID: answer.questionID, optionID: answer.choiceID }))
+  const correctUserAnswers = intersectionWith(questionsWithCorrectAnswer, userAnswers, isEqual)
+  const score = userAnswers.length > 0 ? ((correctUserAnswers.length / myTest.questions.length) * 100).toFixed(1) : -1
+
   const question = myTest.questions[questionIndex]
-  const answer = find(myTest.myAnswers, { questionID: question.id })
+  let answer = find(userAnswers, { questionID: question.id })
+  answer = { ...answer, optionID: answer.optionID.toString() }
 
   const handleRight = () => {
     console.log('right')
-    history.push(`/test/${testID}/${parseInt(questionIndex + 1) + 1}`)
+    history.push(`/reviewtest/${testID}/${parseInt(questionIndex + 1) + 1}`)
   }
 
   const handleLeft = () =>
-    history.push(`/test/${testID}/${parseInt(questionIndex + 1) - 1}`)
+    history.push(`/reviewtest/${testID}/${parseInt(questionIndex + 1) - 1}`)
 
-  const onQuestionClick = index => history.push(`/test/${testID}/${index + 1}`)
-  const submit = () => {
-    const answers = myTest.myAnswers.map(answer => ({
-      questionID: find(myTest.questions, { id: answer.questionID })
-        .testQuestionID,
-      choiceID:
-        parseInt(answer.optionID) === -1 ? null : parseInt(answer.optionID)
-    }))
-    fetch(testsURL + testID, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify(answers),
-      signal: signal
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json()
-        } else throw Error(`Request rejected with status ${response.status}`)
-      })
-      .then(data => {
-        console.log(data)
-        onSubmitTest(username, parseInt(testID))
-        history.push(`/reviewtest/${testID}/1`)
-      })
-      .catch(error => {
-        if (!controller.signal.aborted) {
-          console.error(error)
-        }
-      })
-  }
+  const onQuestionClick = index => history.push(`/reviewtest/${testID}/${index + 1}`)
 
   return (
     <div className={classes.root}>
@@ -141,9 +84,8 @@ const TestQuestion = ({
         account={account}
         deleteAccount={deleteAccount}
         classes={classes}
-        onQuestionClick={onQuestionClick}
-        quiz={myTest}
-        onSubmit={submit}
+        onReviewQuestionClick={onQuestionClick}
+        quiz={{ ...myTest, myAnswers: userAnswers.map(answer => ({ ...answer, optionID: answer.optionID.toString() })) }}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs separator={<NavigateNextIcon fontSize='small' />}>
@@ -164,10 +106,24 @@ const TestQuestion = ({
             className={classNames(classes.link, dark && classes.dark)}
           >
             <FormatListNumberedIcon className={classes.icon} />
-            Quiz
+            Επισκόπηση
           </Link>
         </Breadcrumbs>
-        <Typography align='center'>{remainingTime}</Typography>
+        <Typography variant='h4' align='center'>
+          {`Η βαθμολογία σας είναι:
+          `}
+        </Typography>
+        <Typography
+          variant='h3'
+          align='center'
+          className={
+            score > 50
+              ? classes.correct
+              : classes.incorrect
+          }
+        > {score >= 0 ? score + '%' : '-'}
+
+        </Typography>
         <Grid
           container
           className={classes.questionGrid}
@@ -181,14 +137,11 @@ const TestQuestion = ({
             </Fab>
           </Grid>
           <Grid item xs={12}>
-            <QuestionCard
+            <ReviewCard
               classes={classes}
-              setOption={option =>
-                selectOption(username, myTest.id, question.id, option)}
               question={question}
               dark={dark}
               answer={answer}
-              finished={myTest.finished}
             />
           </Grid>
           <Grid item>
@@ -207,4 +160,4 @@ const TestQuestion = ({
     </div>
   )
 }
-export default TestQuestion
+export default TestReview

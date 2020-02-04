@@ -31,7 +31,8 @@ const UserTests = ({
   tests,
   addOrUpdateTest,
   beginTest,
-  setFinished
+  setFinished,
+  deleteTests
 }) => {
   const classes = homeStyle()
   const [error, setError] = useState('')
@@ -145,7 +146,6 @@ const UserTests = ({
     history.push(`test/${test.id}/1`)
   }
   const reviewTest = test => {
-    console.log(test)
     history.push(`reviewtest/${test.id}/1`)
   }
 
@@ -204,6 +204,7 @@ const UserTests = ({
                   onResume={resumeTest}
                   expireTest={test => setFinished(username, test.id)}
                   onReview={reviewTest}
+                  userID={account.metadata.id}
                 />
               </Grid>
             )

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
@@ -9,6 +9,9 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import { Tooltip, Fab } from '@material-ui/core'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 import AssessmentIcon from '@material-ui/icons/Assessment'
+import find from 'lodash.find'
+import intersectionWith from 'lodash.intersectionwith'
+import isEqual from 'lodash.isequal'
 
 const useStyles = makeStyles({
   card: {
@@ -80,7 +83,8 @@ const UserTestCard = ({
   onStart,
   onResume,
   expireTest,
-  onReview
+  onReview,
+  userID
 }) => {
   const classes = useStyles()
   const status = test.activationTime
@@ -117,6 +121,11 @@ const UserTestCard = ({
     }
   }, [])
 
+  const questionsWithCorrectAnswer = test.questions.map(question => ({ questionID: question.id, optionID: find(question.optionList, { correct: true }).id }))
+  const userAswers = test.answers.filter(answer => answer.userID === userID).map(answer => ({ questionID: answer.questionID, optionID: answer.choiceID }))
+  const correctUserAnswers = intersectionWith(questionsWithCorrectAnswer, userAswers, isEqual)
+  const score = userAswers.length > 0 ? ((correctUserAnswers.length / test.questions.length) * 100).toFixed(1) + '%' : '-'
+
   return (
     <Card className={classes.card} elevation={5}>
       <CardContent>
@@ -149,7 +158,7 @@ const UserTestCard = ({
         <Typography variant='body2' component='p'>
           {`Τάξη: ${test.classroom.name}`}
           <br />
-          {`Σκορ: ${test.score}`}
+          {`Βαθμολογία: ${score}`}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>

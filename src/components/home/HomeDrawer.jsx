@@ -72,7 +72,7 @@ const HomeDrawer = ({
             justify='space-evenly'
           >
             {quiz.questions.map((question, index) => {
-              const answer = find(quiz.answers, { questionID: question.id })
+              const answer = find(quiz.myAnswers, { questionID: question.id })
               const selectedOption = find(question.optionList, {
                 id: parseInt(answer.optionID)
               })
@@ -84,7 +84,7 @@ const HomeDrawer = ({
                       classes.reviewBox,
                       correct && classes.reviewBoxCorrect
                     )}
-                    onClick={() => history.push(`/review/${index + 1}`)}
+                    onClick={() => onReviewQuestionClick(index)}
                   >
                     <Typography align='center'>{index + 1}</Typography>
                   </Button>
@@ -110,7 +110,7 @@ const HomeDrawer = ({
                   <Button
                     className={classNames(
                       classes.questionBox,
-                      find(quiz.answers, { questionID: question.id })
+                      find(quiz.myAnswers, { questionID: question.id })
                         .optionID !== '-1' && classes.questionBoxAnswered
                     )}
                     onClick={() => onQuestionClick(index)}

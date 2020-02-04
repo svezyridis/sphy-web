@@ -143,3 +143,8 @@ export const answerQuestion = (username, testID, questionID, optionID) => ({
   questionID,
   optionID
 })
+
+export const deleteTests = (username, tests) => ({
+  type: C.DELETE_TESTS,
+  tests: tests
+})
