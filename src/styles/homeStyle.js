@@ -270,8 +270,7 @@ const homeStyle = makeStyles(theme => ({
     marginTop: '5%'
   },
   questionPaper: {
-    width: '80%',
-    minWidth: '80%',
+    maxWidth: '50%',
     marginLeft: 'auto',
     marginRight: 'auto',
     display: 'flex',

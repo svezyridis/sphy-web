@@ -35,11 +35,6 @@ const HomeDrawer = ({
     return null
   }
 
-  const submitQuiz = () => {
-    onSubmit(username)
-    history.push('/review/1')
-  }
-
   const setOpen = open => dispatch(toogleDrawer(open))
   return (
     <Drawer
@@ -118,7 +113,7 @@ const HomeDrawer = ({
                       find(quiz.answers, { questionID: question.id })
                         .optionID !== '-1' && classes.questionBoxAnswered
                     )}
-                    onClick={() => history.push(`/question/${index + 1}`)}
+                    onClick={() => onQuestionClick(index)}
                   >
                     <Typography align='center'>{index + 1}</Typography>
                   </Button>
@@ -130,12 +125,11 @@ const HomeDrawer = ({
           <Button
             variant='contained'
             className={classNames(classes.logout, classes.button)}
-            onClick={submitQuiz}
+            onClick={onSubmit}
           >
             ΥΠΟΒΟΛΗ
           </Button>
         </>
-
       ) : null}
       {onQuizStart && open ? (
         <div>

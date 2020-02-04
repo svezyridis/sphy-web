@@ -1,7 +1,14 @@
-
 import { connect } from 'react-redux'
-import { toogleDrawer, deleteAccount, addOrUpdateTest } from '../../store/actions'
+import {
+  toogleDrawer,
+  deleteAccount,
+  addOrUpdateTest,
+  beginTest,
+  completeTest,
+  answerQuestion
+} from '../../store/actions'
 import UserTests from '../test/UserTests'
+import TestQuestion from '../test/TestQuestion'
 
 export const UserTestsContainer = connect(
   ({ open, account, dark, tests }) => ({
@@ -19,6 +26,36 @@ export const UserTestsContainer = connect(
     },
     addOrUpdateTest (username, test) {
       dispatch(addOrUpdateTest(username, test))
+    },
+    beginTest (username, testID) {
+      dispatch(beginTest(username, testID))
+    },
+    setFinished (username, testID) {
+      dispatch(completeTest(username, testID))
     }
   })
 )(UserTests)
+
+export const TestQuestionContainer = connect(
+  ({ open, account, dark, quizes, tests }) => ({
+    open: open,
+    account: account,
+    dark: dark,
+    quizes: quizes,
+    tests: tests
+  }),
+  dispatch => ({
+    toogleDrawer (toogle) {
+      dispatch(toogleDrawer(toogle))
+    },
+    deleteAccount () {
+      dispatch(deleteAccount())
+    },
+    selectOption (username, testID, questionID, optionID) {
+      dispatch(answerQuestion(username, testID, questionID, optionID))
+    },
+    onSubmitTest (username, testID) {
+      dispatch(completeTest(username, testID))
+    }
+  })
+)(TestQuestion)

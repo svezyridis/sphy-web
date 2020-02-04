@@ -29,15 +29,18 @@ const UserTests = ({
   dark,
   history,
   tests,
-  addOrUpdateTest
+  addOrUpdateTest,
+  beginTest,
+  setFinished
 }) => {
   const classes = homeStyle()
   const [error, setError] = useState('')
   const [reason, setReason] = useState('')
   const controller = new window.AbortController()
+  const [userTests, setUserTests] = useState([])
   const signal = controller.signal
 
-  const getTests = (classroom) => {
+  const getTests = classroom => {
     const classID = classroom.id
     const queryParams = objectToQueryString({ classID: classID })
     setReason('Λήψη διαγωνισμάτων')
@@ -47,7 +50,9 @@ const UserTests = ({
       signal: signal
     })
       .then(response => {
-        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+        if (response.ok) {
+          return response.json()
+        } else throw Error(`Request rejected with status ${response.status}`)
       })
       .then(data => {
         const { status, result, message } = data
@@ -71,7 +76,9 @@ const UserTests = ({
   }
 
   useEffect(() => {
-    if (isEmpty(account)) { return }
+    if (isEmpty(account)) {
+      return
+    }
     setReason('Λήψη τάξεων')
     fetch(classesURL, {
       method: 'GET',
@@ -79,7 +86,9 @@ const UserTests = ({
       signal: signal
     })
       .then(response => {
-        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+        if (response.ok) {
+          return response.json()
+        } else throw Error(`Request rejected with status ${response.status}`)
       })
       .then(data => {
         const { status, result, message } = data
@@ -104,22 +113,41 @@ const UserTests = ({
     }
   }, [])
 
+  useEffect(() => {
+    if (isEmpty(account)) return
+    const username = account.metadata.username
+    let classTests = find(tests, { username: username })
+    classTests = classTests ? classTests.tests : []
+    const userTests = classTests.filter(test => {
+      const userEntry = find(test.classroom.students, {
+        username: username
+      })
+      const dateUserEnteredClass = userEntry ? userEntry.timeAdded : null
+      if (dateUserEnteredClass === null) return false
+      const testCreationTime = test.creationTime
+      return Date.parse(testCreationTime) > Date.parse(dateUserEnteredClass)
+    })
+    setUserTests(userTests)
+    return () => {}
+  }, [tests, account])
+
   if (isEmpty(account)) {
     history.push('/login')
     return null
   }
   const username = account.metadata.username
-  let classTests = find(tests, { username: username })
-  classTests = classTests ? classTests.tests : []
-  const userTests = classTests.filter(test => {
-    const dateUserEnteredClass = find(test.classroom.students, { username: username }).timeAdded
-    console.log(dateUserEnteredClass)
-    const testCreationTime = test.creationTime
-    console.log(testCreationTime)
-    console.log()
-    return Date.parse(testCreationTime) > Date.parse(dateUserEnteredClass)
-  })
-  console.log(userTests)
+
+  const startTest = test => {
+    beginTest(username, test.id)
+    history.push(`test/${test.id}/1`)
+  }
+  const resumeTest = test => {
+    history.push(`test/${test.id}/1`)
+  }
+  const reviewTest = test => {
+    console.log(test)
+    history.push(`reviewtest/${test.id}/1`)
+  }
 
   return (
     <div className={classes.root}>
@@ -170,7 +198,13 @@ const UserTests = ({
           {userTests.map((test, index) => {
             return (
               <Grid key={index} item>
-                <UserTestCard test={test} onUpdate={getTests} />
+                <UserTestCard
+                  test={test}
+                  onStart={startTest}
+                  onResume={resumeTest}
+                  expireTest={test => setFinished(username, test.id)}
+                  onReview={reviewTest}
+                />
               </Grid>
             )
           })}

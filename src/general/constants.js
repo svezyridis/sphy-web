@@ -22,7 +22,9 @@ export const actiontypes = {
   ADD_IMAGE: 'ADD_IMAGE',
   ADD_OR_UPDATE_TEST: 'ADD_OR_UPDATE_TEST',
   SELECT_ANSWER: 'SELECT_ANSWER',
-  SUBMIT_TEST: 'SUBMIT_TEST'
+  SUBMIT_TEST: 'SUBMIT_TEST',
+  START_TEST: 'START_TEST',
+  FINISH_TEST: 'FINISH_TEST'
 }
-// export const baseURL = 'https://projectapi.ml/'
-export const baseURL = 'http://localhost:8080/'
+export const baseURL = 'https://projectapi.ml/'
+// export const baseURL = 'http://localhost:8080/'

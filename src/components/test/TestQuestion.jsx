@@ -14,60 +14,123 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import Fab from '@material-ui/core/Fab'
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded'
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
-import QuestionCard from './QuestionCard'
-import { baseURL } from '../../general/constants'
-import { fetch } from 'whatwg-fetch'
 import Grid from '@material-ui/core/Grid'
 import { Typography } from '@material-ui/core'
+import QuestionCard from '../quiz/QuestionCard'
+import { fetch } from 'whatwg-fetch'
+import { baseURL } from '../../general/constants'
 
-const Question = ({
+const testsURL = baseURL + 'tests/'
+
+const TestQuestion = ({
   dark,
   open,
   toogleDrawer,
   account,
   deleteAccount,
   selectOption,
-  onSubmitQuiz,
-  quizes,
+  onSubmitTest,
+  tests,
   history,
   match
 }) => {
   const classes = homeStyle()
-  const questionIndex = match.params.questionIndex - 1
-  const username = account.metadata.username
-  const myQuiz = find(quizes, { username: username })
-  const question = myQuiz.questions[questionIndex]
+  const controller = new window.AbortController()
+  const signal = controller.signal
+  const [remainingTime, setRemainingTime] = useState(null)
 
-  if (!myQuiz) {
-    history.push('/quiz')
-    return null
-  }
-  if (isEmpty(account)) {
-    console.log('account is empty')
-    var tempAccount = window.sessionStorage.getItem('account')
-    if (isEmpty(tempAccount)) {
-      history.push('/login')
-      return null
+  useEffect(() => {
+    return () => {
+      controller.abort()
     }
-  }
-  if (questionIndex > myQuiz.questions.length - 1 || questionIndex < 0) {
-    history.push('/question/1')
+  }, [])
+
+  if (isEmpty(account)) {
+    history.push('/login')
     return null
   }
-  const answer = find(myQuiz.answers, { questionID: question.id })
+  const questionIndex = match.params.questionIndex - 1
+  const testID = match.params.testID
+  const username = account.metadata.username
+  const myTests = find(tests, { username: username })
+
+  if (isEmpty(myTests)) {
+    history.push('/tests')
+    return null
+  }
+  const myTest = find(myTests.tests, { id: parseInt(testID) })
+  if (!myTest) {
+    history.push('/tests')
+    return null
+  }
+  const question = myTest.questions[questionIndex]
+
+  if (questionIndex > myTest.questions.length - 1 || questionIndex < 0) {
+    history.push(`/test/${testID}/1`)
+    return null
+  }
+  const answer = find(myTest.answers, { questionID: question.id })
+
+  setInterval(() => {
+    if (!myTest.startedAt || !myTest.activationTime) {
+      setRemainingTime(null)
+      return
+    }
+    const timePassed = Math.floor(
+      (Date.now() - Date.parse(myTest.startedAt)) / 1000
+    )
+    const duration = myTest.duration * 60
+    const remainder = duration - timePassed
+    if (remainder < 0) {
+      setRemainingTime('Τέλος χρόνου')
+      onSubmitTest(username, parseInt(testID))
+    }
+    const seconds = remainder % 60
+    const minutes = Math.floor(remainder / 60)
+    setRemainingTime(`Yπόλοιπο: ${minutes}:${seconds}`)
+  }, 1000)
 
   const handleRight = () => {
     console.log('right')
-    history.push(`/question/${parseInt(questionIndex + 1) + 1}`)
+    history.push(`/test/${testID}/${parseInt(questionIndex + 1) + 1}`)
   }
 
   const handleLeft = () =>
-    history.push(`/question/${parseInt(questionIndex + 1) - 1}`)
+    history.push(`/test/${testID}/${parseInt(questionIndex + 1) - 1}`)
 
-  const onQuestionClick = index => history.push(`/question/${index + 1}`)
-  const submitQuiz = () => {
-    onSubmitQuiz(username)
-    history.push('/review/1')
+  const onQuestionClick = index => history.push(`/test/${testID}/${index + 1}`)
+  const submit = () => {
+    const answers = myTest.answers.map(answer => ({
+      questionID: find(myTest.questions, { id: answer.questionID })
+        .testQuestionID,
+      choiceID:
+        parseInt(answer.optionID) === -1 ? null : parseInt(answer.optionID)
+    }))
+    console.log(answers)
+    fetch(testsURL + testID, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify(answers),
+      signal: signal
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else throw Error(`Request rejected with status ${response.status}`)
+      })
+      .then(data => {
+        console.log(data)
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+    onSubmitTest(username, parseInt(testID))
   }
 
   return (
@@ -80,8 +143,8 @@ const Question = ({
         deleteAccount={deleteAccount}
         classes={classes}
         onQuestionClick={onQuestionClick}
-        quiz={myQuiz}
-        onSubmit={submitQuiz}
+        quiz={myTest}
+        onSubmit={submit}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs separator={<NavigateNextIcon fontSize='small' />}>
@@ -105,6 +168,7 @@ const Question = ({
             Quiz
           </Link>
         </Breadcrumbs>
+        <Typography align='center'>{remainingTime}</Typography>
         <Grid
           container
           className={classes.questionGrid}
@@ -120,11 +184,13 @@ const Question = ({
           <Grid item xs={12}>
             <QuestionCard
               classes={classes}
-              setOption={option => selectOption(username, question.id, option)}
+              setOption={option =>
+                selectOption(username, myTest.id, question.id, option)
+              }
               question={question}
               dark={dark}
               answer={answer}
-              finished={myQuiz.finished}
+              finished={myTest.finished}
             />
           </Grid>
           <Grid item>
@@ -135,7 +201,7 @@ const Question = ({
         </Grid>
         <Typography variant='subtitle1' align='center'>
           {`Ερώτηση ${parseInt(questionIndex) + 1} από ${
-            myQuiz.questions.length
+            myTest.questions.length
           }`}
         </Typography>
       </div>
@@ -143,4 +209,4 @@ const Question = ({
     </div>
   )
 }
-export default Question
+export default TestQuestion

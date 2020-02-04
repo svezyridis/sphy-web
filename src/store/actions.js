@@ -121,3 +121,25 @@ export const addOrUpdateTest = (username, test) => ({
   username: username,
   test: test
 })
+
+export const beginTest = (username, testID) => {
+  return {
+    type: C.START_TEST,
+    username: username,
+    id: testID
+  }
+}
+
+export const completeTest = (username, testID) => ({
+  type: C.FINISH_TEST,
+  username: username,
+  id: testID
+})
+
+export const answerQuestion = (username, testID, questionID, optionID) => ({
+  type: C.SELECT_ANSWER,
+  username: username,
+  id: testID,
+  questionID,
+  optionID
+})

@@ -16,46 +16,47 @@ import find from 'lodash.find'
 const ReviewCard = ({ question, classes, dark, image, answer }) => {
   return (
     <Paper elevation={7} className={classes.questionPaper}>
-      <Grid container spacing={3} wrap='nowrap'>
-        <Grid item>
-          <Card className={classes.questionCard}>
-            <CardHeader title={question.subject.name} />
-            <CardMedia className={classes.media} image={image} />
-          </Card>
-        </Grid>
-        <Grid item>
-          <Typography align='center' variant='h5'>
+      <Typography align='center' variant='h5'>
+        {question.text}
+      </Typography>
+      <FormControl component='fieldset' className={classes.formControl}>
+        {answer.optionID == find(question.optionList, { correct: true }).id ? (
+          <FormLabel component='text'>Απαντήσατε ΣΩΣΤΑ </FormLabel>
+        ) : (
+          <FormLabel component='text'>Απαντήσατε ΛΑΝΘΑΣΜΕΝΑ </FormLabel>
+        )}
 
-            {question.text}
-          </Typography>
-          <FormControl component='fieldset' className={classes.formControl}>
-            {(answer.optionID == (find(question.optionList, { correct: true }).id))
-              ? <FormLabel component='text'>Απαντήσατε ΣΩΣΤΑ </FormLabel>
-              : <FormLabel component='text'>Απαντήσατε ΛΑΝΘΑΣΜΕΝΑ </FormLabel>}
-
-            {question.optionList.map((option, index) => {
-              const selected = option.id === parseInt(answer.optionID)
-              return (
-                <FormControlLabel
-                  key={index}
-                  control={
-                    <Checkbox
-                      checked={selected}
-                      icon={option.correct ? <CheckCircleTwoToneIcon className={classes.correct} /> : <CircleUnchecked />}
-                      checkedIcon={(answer.optionID == (find(question.optionList, { correct: true }).id))
-                        ? <CheckCircleTwoToneIcon className={classes.correct} />
-                        : <HighlightOffTwoToneIcon className={classes.incorrect} />}
-                      value={option.id.toString()}
-                    />
-}
-                  label={option.text}
+        {question.optionList.map((option, index) => {
+          const selected = option.id === parseInt(answer.optionID)
+          return (
+            <FormControlLabel
+              key={index}
+              control={
+                <Checkbox
+                  checked={selected}
+                  icon={
+                    option.correct ? (
+                      <CheckCircleTwoToneIcon className={classes.correct} />
+                    ) : (
+                      <CircleUnchecked />
+                    )
+                  }
+                  checkedIcon={
+                    answer.optionID ==
+                    find(question.optionList, { correct: true }).id ? (
+                      <CheckCircleTwoToneIcon className={classes.correct} />
+                    ) : (
+                      <HighlightOffTwoToneIcon className={classes.incorrect} />
+                    )
+                  }
+                  value={option.id.toString()}
                 />
-              )
-            })}
-
-          </FormControl>
-        </Grid>
-      </Grid>
+              }
+              label={option.text}
+            />
+          )
+        })}
+      </FormControl>
     </Paper>
   )
 }
