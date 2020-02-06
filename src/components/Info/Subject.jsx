@@ -26,8 +26,15 @@ import ImageDialog from './ImageDialog'
 import { Divider } from '@material-ui/core'
 import ArrowForwardRoundedIcon from '@material-ui/icons/ArrowForwardRounded'
 import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded'
-import find from 'lodash.find'
 import findIndex from 'lodash.findindex'
+import {
+  Magnifier,
+  GlassMagnifier,
+  SideBySideMagnifier,
+  PictureInPictureMagnifier,
+  MOUSE_ACTIVATION,
+  TOUCH_ACTIVATION
+} from 'react-image-magnifiers'
 
 const subjectsURL = baseURL + 'subject/'
 const imagesURL = baseURL + 'image/'
@@ -57,7 +64,8 @@ const Subject = ({
   var signal = controller.signal
   const getImages = imageArray => {
     imageArray.forEach(image => {
-      var imageUrl = imagesURL +
+      var imageUrl =
+        imagesURL +
         branch +
         '/' +
         category.toLowerCase() +
@@ -90,7 +98,8 @@ const Subject = ({
     } else {
       var nextURI = subjects[subjectFoundIndex + 1].uri
     }
-    var nextSubjectURI = '/info/' + branch + '/' + category.toLowerCase() + '/' + nextURI
+    var nextSubjectURI =
+      '/info/' + branch + '/' + category.toLowerCase() + '/' + nextURI
     history.push(nextSubjectURI)
   }
 
@@ -101,7 +110,8 @@ const Subject = ({
     } else {
       var nextURI = subjects[subjectFoundIndex - 1].uri
     }
-    var nextSubjectURI = '/info/' + branch + '/' + category.toLowerCase() + '/' + nextURI
+    var nextSubjectURI =
+      '/info/' + branch + '/' + category.toLowerCase() + '/' + nextURI
     history.push(nextSubjectURI)
   }
 
@@ -127,7 +137,9 @@ const Subject = ({
         signal: signal
       })
         .then(response => {
-          if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+          if (response.ok) {
+            return response.json()
+          } else throw Error(`Request rejected with status ${response.status}`)
         })
         .then(data => {
           const { status, result, message } = data
@@ -289,8 +301,8 @@ const Subject = ({
               </b>
               {subject.general
                 ? subject.general
-                  .split('\n')
-                  .map((paragraph, key) => <p key={key}>{paragraph}</p>)
+                    .split('\n')
+                    .map((paragraph, key) => <p key={key}>{paragraph}</p>)
                 : null}
             </Typography>
           </div>

@@ -20,12 +20,11 @@ const ReviewCard = ({ question, classes, dark, image, answer }) => {
         {question.text}
       </Typography>
       <FormControl component='fieldset' className={classes.formControl}>
-        {answer.optionID == find(question.optionList, { correct: true }).id ? (
-          <FormLabel>Απαντήσατε ΣΩΣΤΑ </FormLabel>
-        ) : (
-          <FormLabel>Απαντήσατε ΛΑΝΘΑΣΜΕΝΑ </FormLabel>
-        )}
-
+        <FormLabel>
+          {`Η ορθή απάντηση είναι: ${
+            find(question.optionList, { correct: true }).text
+          }`}
+        </FormLabel>
         {question.optionList.map((option, index) => {
           const selected = option.id === parseInt(answer.optionID)
           return (
@@ -34,20 +33,16 @@ const ReviewCard = ({ question, classes, dark, image, answer }) => {
               control={
                 <Checkbox
                   checked={selected}
-                  icon={
-                    option.correct ? (
+                  icon={<CircleUnchecked />}
+                  checkedIcon={
+                    answer.optionID ===
+                    parseInt(
+                      find(question.optionList, { correct: true }).id
+                    ) ? (
                       <CheckCircleTwoToneIcon className={classes.correct} />
                     ) : (
-                      <CircleUnchecked />
+                      <HighlightOffTwoToneIcon className={classes.incorrect} />
                     )
-                  }
-                  checkedIcon={
-                    answer.optionID ==
-                    find(question.optionList, { correct: true }).id ? (
-                      <CheckCircleTwoToneIcon className={classes.correct} />
-                      ) : (
-                        <HighlightOffTwoToneIcon className={classes.incorrect} />
-                  )
                   }
                   value={option.id.toString()}
                 />

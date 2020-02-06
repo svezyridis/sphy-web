@@ -19,6 +19,7 @@ import { Typography } from '@material-ui/core'
 import QuestionCard from '../quiz/QuestionCard'
 import { fetch } from 'whatwg-fetch'
 import { baseURL } from '../../general/constants'
+import LoadingDialog from '../quiz/LoadingDialog'
 
 const testsURL = baseURL + 'tests/'
 
@@ -28,6 +29,7 @@ const TestQuestion = ({
   toogleDrawer,
   account,
   deleteAccount,
+  addOrUpdateTest,
   selectOption,
   onSubmitTest,
   tests,
@@ -38,6 +40,8 @@ const TestQuestion = ({
   const controller = new window.AbortController()
   const signal = controller.signal
   const [remainingTime, setRemainingTime] = useState(null)
+  const [reason, setReason] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -52,7 +56,9 @@ const TestQuestion = ({
       const remainder = duration - timePassed
       if (remainder < 0) {
         setRemainingTime('Τέλος χρόνου')
-        if (!myTest.finished) { onSubmitTest(username, parseInt(testID)) }
+        if (!myTest.finished) {
+          onSubmitTest(username, parseInt(testID))
+        }
       }
       const seconds = remainder % 60
       const minutes = Math.floor(remainder / 60)
@@ -98,6 +104,7 @@ const TestQuestion = ({
     history.push(`/test/${testID}/${parseInt(questionIndex + 1) - 1}`)
 
   const onQuestionClick = index => history.push(`/test/${testID}/${index + 1}`)
+
   const submit = () => {
     const answers = myTest.myAnswers.map(answer => ({
       questionID: find(myTest.questions, { id: answer.questionID })
@@ -122,8 +129,11 @@ const TestQuestion = ({
       })
       .then(data => {
         console.log(data)
-        onSubmitTest(username, parseInt(testID))
-        history.push(`/reviewtest/${testID}/1`)
+        const { status, result, message } = data
+        if (status === 'success') {
+          onSubmitTest(username, parseInt(testID))
+          history.push('/tests')
+        }
       })
       .catch(error => {
         if (!controller.signal.aborted) {
@@ -134,6 +144,7 @@ const TestQuestion = ({
 
   return (
     <div className={classes.root}>
+      <LoadingDialog open={reason !== ''} reason={reason} />
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
       <HomeDrawer
         open={open}
@@ -184,7 +195,8 @@ const TestQuestion = ({
             <QuestionCard
               classes={classes}
               setOption={option =>
-                selectOption(username, myTest.id, question.id, option)}
+                selectOption(username, myTest.id, question.id, option)
+              }
               question={question}
               dark={dark}
               answer={answer}

@@ -121,8 +121,10 @@ const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
       signal: signal
     })
       .then(response => {
-      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
-    })
+        if (response.ok) {
+          return response.json()
+        } else throw Error(`Request rejected with status ${response.status}`)
+      })
       .then(data => {
         const { status, result, message } = data
         if (status === 'error') console.log(message)
@@ -141,7 +143,7 @@ const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
   }
   console.log('Outside:' + imageUploadCounter)
 
-  if(uploadComplete === false && imageUploadCounter === 0 ){
+  if (uploadComplete === false && imageUploadCounter === 0) {
     getSubjects()
     setUploadComplete(true)
   }

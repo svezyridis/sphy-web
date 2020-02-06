@@ -19,6 +19,7 @@ import find from 'lodash.find'
 import DeleteIcon from '@material-ui/icons/Delete'
 import createSubjectStyle from '../../styles/createSubjectStyle'
 import Fab from '@material-ui/core/Fab'
+import greekUtils from 'greek-utils'
 
 const customTextfieldStyle = makeStyles(theme => ({
   root: {
@@ -104,13 +105,23 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
     setImages(images => images.filter(image => image.file.name !== filename))
   }
 
+  const handleNameChange = e => {
+    let name = e.target.value
+    setName(e.target.value)
+    name = name.toLowerCase()
+    name = greekUtils.toGreeklish(name)
+    name = name.replace(/[^a-zA-Z ]/g, '')
+    name = name.split(' ').join('-')
+    setURI(name)
+  }
+
   const validateInput = () => {
     setErrors({
       ...errors,
       nameError: name === '',
       UriError: !/^[a-z0-9-]+$/.test(URI)
     })
-    if (!((name === '') || (!/^[a-z0-9-]+$/.test(URI)))) {
+    if (!(name === '' || !/^[a-z0-9-]+$/.test(URI))) {
       onCreate(name, URI, general, units, images)
     }
   }
@@ -130,14 +141,18 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
         <TextField
           error={errors.nameError}
           label='Όνομα'
-          helperText={errors.nameError ? 'To όνομα είναι κενό' : 'Το όνομα του νέου θέματος'}
+          helperText={
+            errors.nameError
+              ? 'To όνομα είναι κενό'
+              : 'Το όνομα του νέου θέματος'
+          }
           margin='normal'
           variant='outlined'
           value={name}
           className={classes.input}
           fullWidth
           autoFocus
-          onChange={e => setName(e.target.value)}
+          onChange={handleNameChange}
         />
         <TextField
           error={errors.UriError}
@@ -148,7 +163,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
           value={URI}
           fullWidth
           className={classes.input}
-          onChange={e => setURI(e.target.value)}
+          disabled
         />
         <TextField
           label='Γενικά'
@@ -210,8 +225,8 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
             </p>
           </Grid>
           <Grid item className={classes.imageList}>
-            {images.length > 0
-              ? <GridList cellHeight={180} className={classes.gridList}>
+            {images.length > 0 ? (
+              <GridList cellHeight={180} className={classes.gridList}>
                 {images.map((image, index) => {
                   return (
                     <GridListTile key={index}>
@@ -222,12 +237,15 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                           fullWidth
                           className={classes.label}
                           value={image.label ? image.label : ''}
-                          inputProps={{ style: { textAlign: 'center', fontSize: '18px' } }}
+                          inputProps={{
+                            style: { textAlign: 'center', fontSize: '18px' }
+                          }}
                           InputProps={{
                             classes: textFieldClasses
                           }}
                           onChange={e =>
-                            setLabel(image.file.name, e.target.value)}
+                            setLabel(image.file.name, e.target.value)
+                          }
                         />
                         <Grid container justify='flex-end'>
                           <Grid item>
@@ -247,7 +265,10 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                           </Grid>
                           <Grid item>
                             <Tooltip title='Διαγραφή εικόνας' color='primary'>
-                              <Fab onClick={() => deleteImage(image.file.name)} size='small'>
+                              <Fab
+                                onClick={() => deleteImage(image.file.name)}
+                                size='small'
+                              >
                                 <DeleteIcon fontSize='small' />
                               </Fab>
                             </Tooltip>
@@ -258,7 +279,12 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                   )
                 })}
               </GridList>
-              : <Typography align='center'> Δεν έχετε επιλέξει εικόνες</Typography>}
+            ) : (
+              <Typography align='center'>
+                {' '}
+                Δεν έχετε επιλέξει εικόνες
+              </Typography>
+            )}
           </Grid>
         </Grid>
       </DialogContent>
@@ -266,11 +292,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
         <Button onClick={onClose} color='primary' variant='outlined'>
           ΑΚΥΡΟ
         </Button>
-        <Button
-          onClick={validateInput}
-          color='primary'
-          variant='contained'
-        >
+        <Button onClick={validateInput} color='primary' variant='contained'>
           ΔΗΜΙΟΥΡΓΙΑ
         </Button>
       </DialogActions>

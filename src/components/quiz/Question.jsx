@@ -100,11 +100,26 @@ const Question = ({
             component='button'
             variant='body1'
             className={classNames(classes.link, dark && classes.dark)}
+            onClick={() => {
+              history.push('/quiz')
+            }}
           >
             <FormatListNumberedIcon className={classes.icon} />
-            Quiz
+            Αυτοαξιολόγηση
+          </Link>
+          <Link
+            component='button'
+            variant='body1'
+            className={classNames(classes.link, dark && classes.dark)}
+          >
+            <FormatListNumberedIcon className={classes.icon} />
+            Ερωτηματολόγιο
           </Link>
         </Breadcrumbs>
+        <Typography variant='h3' color='textPrimary' align='center'>
+          Αυτοαξιολόγηση
+        </Typography>
+
         <Grid
           container
           className={classes.questionGrid}

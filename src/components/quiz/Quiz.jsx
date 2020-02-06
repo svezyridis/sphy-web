@@ -61,7 +61,7 @@ const Quiz = ({
     categories[branch] = subjectCategories
   }
 
-  const getQuestions = (categories) => {
+  const getQuestions = categories => {
     const categoryIDs = categories.map(category => category.id)
     const params = { categoryIDs: categoryIDs }
     fetch(questionsURL + objectToQueryString(params), {
@@ -151,7 +151,7 @@ const Quiz = ({
             className={classNames(classes.link, dark && classes.dark)}
           >
             <FormatListNumberedIcon className={classes.icon} />
-            Quiz
+            Αυτοαξιολόγηση
           </Link>
         </Breadcrumbs>
 

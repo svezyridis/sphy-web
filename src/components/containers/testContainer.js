@@ -61,6 +61,9 @@ export const TestQuestionContainer = connect(
     },
     onSubmitTest (username, testID) {
       dispatch(completeTest(username, testID))
+    },
+    addOrUpdateTest (username, test) {
+      dispatch(addOrUpdateTest(username, test))
     }
   })
 )(TestQuestion)

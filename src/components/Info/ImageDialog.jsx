@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/styles'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import { Modal } from '@material-ui/core'
-import ReactImageMagnify from 'react-image-magnify'
+import PrismaZoom from 'react-prismazoom'
 
 const dialogStyle = makeStyles(theme => ({
   root: {
@@ -66,22 +66,9 @@ const ImageDialog = ({ open, images, index, onNext, onPrevious, onClose }) => {
             </Fab>
           </Grid>
           <Grid item>
-            <ReactImageMagnify
-              className={classes.image}
-              {...{
-                smallImage: {
-                  alt: images[index].label,
-                  isFluidWidth: true,
-                  src: img.src
-                },
-                enlargedImagePosition: 'over',
-                largeImage: {
-                  src: img.src,
-                  width: 3 * img.width,
-                  height: 3 * img.height
-                }
-              }}
-            />
+            <PrismaZoom>
+              <img src={img.src} alt={img.label} />
+            </PrismaZoom>
             <Typography align='center' variant='h6' className={classes.label}>
               {images[index].label}
             </Typography>

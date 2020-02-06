@@ -5,6 +5,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import { Typography } from '@material-ui/core'
+import greekUtils from 'greek-utils'
 
 const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
   const [name, setName] = useState('')
@@ -22,12 +23,21 @@ const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
       nameError: name === '',
       UriError: !/^[a-z0-9-]+$/.test(URI)
     })
-    if (!((name === '') || (!/^[a-z0-9-]+$/.test(URI)))) {
+    if (!(name === '' || !/^[a-z0-9-]+$/.test(URI))) {
       onCreate(name, URI)
     }
   }
 
   console.log(errors)
+  const handleNameChange = e => {
+    let name = e.target.value
+    setName(e.target.value)
+    name = name.toLowerCase()
+    name = greekUtils.toGreeklish(name)
+    name = name.replace(/[^a-zA-Z ]/g, '')
+    name = name.split(' ').join('-')
+    setURI(name)
+  }
 
   return (
     <Dialog open={open} onClose={onClose} onExit={cleanState}>
@@ -45,7 +55,7 @@ const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
           className={classes.input}
           fullWidth
           autoFocus
-          onChange={e => setName(e.target.value)}
+          onChange={handleNameChange}
         />
         <TextField
           error={errors.UriError}
@@ -56,18 +66,14 @@ const CreateNewCategoryDialog = ({ open, onCreate, onClose, classes }) => {
           value={URI}
           fullWidth
           className={classes.input}
-          onChange={e => setURI(e.target.value)}
+          disabled
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color='primary' variant='outlined'>
           ΑΚΥΡΟ
         </Button>
-        <Button
-          onClick={validateInput}
-          color='primary'
-          variant='contained'
-        >
+        <Button onClick={validateInput} color='primary' variant='contained'>
           ΔΗΜΙΟΥΡΓΙΑ
         </Button>
       </DialogActions>

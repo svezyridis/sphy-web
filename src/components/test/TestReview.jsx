@@ -56,11 +56,27 @@ const TestReview = ({
   }
 
   const userID = account.metadata.id
-  const questionsWithCorrectAnswer = myTest.questions.map(question => ({ questionID: question.id, optionID: find(question.optionList, { correct: true }).id }))
-  const userAnswers = myTest.answers.filter(answer => answer.userID === userID).map(answer => ({ questionID: answer.questionID, optionID: answer.choiceID }))
-  const correctUserAnswers = intersectionWith(questionsWithCorrectAnswer, userAnswers, isEqual)
-  const score = userAnswers.length > 0 ? ((correctUserAnswers.length / myTest.questions.length) * 100).toFixed(1) : -1
-
+  const questionsWithCorrectAnswer = myTest.questions.map(question => ({
+    questionID: question.id,
+    optionID: find(question.optionList, { correct: true }).id
+  }))
+  const userAnswers = myTest.answers
+    .filter(answer => answer.userID === userID)
+    .map(answer => ({
+      questionID: answer.questionID,
+      optionID: answer.choiceID
+    }))
+  const correctUserAnswers = intersectionWith(
+    questionsWithCorrectAnswer,
+    userAnswers,
+    isEqual
+  )
+  const score =
+    userAnswers.length > 0
+      ? ((correctUserAnswers.length / myTest.questions.length) * 100).toFixed(1)
+      : -1
+  console.log(myTest)
+  console.log(userID)
   const question = myTest.questions[questionIndex]
   let answer = find(userAnswers, { questionID: question.id })
   answer = { ...answer, optionID: answer.optionID.toString() }
@@ -73,7 +89,8 @@ const TestReview = ({
   const handleLeft = () =>
     history.push(`/reviewtest/${testID}/${parseInt(questionIndex + 1) - 1}`)
 
-  const onQuestionClick = index => history.push(`/reviewtest/${testID}/${index + 1}`)
+  const onQuestionClick = index =>
+    history.push(`/reviewtest/${testID}/${index + 1}`)
 
   return (
     <div className={classes.root}>
@@ -85,7 +102,13 @@ const TestReview = ({
         deleteAccount={deleteAccount}
         classes={classes}
         onReviewQuestionClick={onQuestionClick}
-        quiz={{ ...myTest, myAnswers: userAnswers.map(answer => ({ ...answer, optionID: answer.optionID.toString() })) }}
+        quiz={{
+          ...myTest,
+          myAnswers: userAnswers.map(answer => ({
+            ...answer,
+            optionID: answer.optionID.toString()
+          }))
+        }}
       />
       <div className={classNames(classes.rest, !open && classes.closed)}>
         <Breadcrumbs separator={<NavigateNextIcon fontSize='small' />}>
@@ -116,13 +139,10 @@ const TestReview = ({
         <Typography
           variant='h3'
           align='center'
-          className={
-            score > 50
-              ? classes.correct
-              : classes.incorrect
-          }
-        > {score >= 0 ? score + '%' : '-'}
-
+          className={score > 50 ? classes.correct : classes.incorrect}
+        >
+          {' '}
+          {score >= 0 ? score + '%' : '-'}
         </Typography>
         <Grid
           container
