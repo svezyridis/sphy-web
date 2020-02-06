@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
@@ -12,6 +12,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment'
 import find from 'lodash.find'
 import intersectionWith from 'lodash.intersectionwith'
 import isEqual from 'lodash.isequal'
+import findIndex from 'lodash.findindex'
 
 const useStyles = makeStyles({
   card: {
@@ -94,10 +95,13 @@ const UserTestCard = ({
     : 'Ανενεργό'
   const isActive = status === 'Ενεργό'
   const isComplete = status === 'Ολοκληρωμένο'
-  const isInactive = status === 'Ανενεργό'
   const [remainingTime, setRemainingTime] = useState(null)
   useEffect(() => {
-    if (test.finished) return
+    if (test.finished) {
+      setRemainingTime('Ολοκληρώθηκε')
+      return
+    }
+    if (findIndex(test.answers, { userID: userID }) !== -1) { expireTest(test) }
     const interval = setInterval(() => {
       if (!test.startedAt || !test.activationTime) {
         setRemainingTime(null)
@@ -170,7 +174,7 @@ const UserTestCard = ({
               : resumeButton(() => onResume(test), classes)
             : startButton(() => onStart(test), classes)
           : null}
-        {isComplete ? reviewButton(() => onReview(test), classes) : null}
+        {isComplete ? findIndex(test.answers, { userID: userID }) !== -1 ? reviewButton(() => onReview(test), classes) : 'Δεν λάβατε μέρος στο διαγώνισμα' : null}
       </CardActions>
     </Card>
   )

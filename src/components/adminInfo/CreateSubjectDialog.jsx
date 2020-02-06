@@ -231,7 +231,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                   return (
                     <GridListTile key={index}>
                       <div className={classes.tile}>
-                        <img src={image.src} className={classes.image} />
+                        <img src={image.src} className={classes.image} alt={image.label} />
                         <TextField
                           placeholder='  Προσθέστε περιγραφή'
                           fullWidth
@@ -244,8 +244,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
                             classes: textFieldClasses
                           }}
                           onChange={e =>
-                            setLabel(image.file.name, e.target.value)
-                          }
+                            setLabel(image.file.name, e.target.value)}
                         />
                         <Grid container justify='flex-end'>
                           <Grid item>

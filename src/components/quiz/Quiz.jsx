@@ -23,7 +23,6 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import LoadingDialog from './LoadingDialog'
 import { objectToQueryString } from '../../general/helperFunctions'
 
-const subjectsURL = baseURL + 'subject/'
 const questionsURL = baseURL + 'questions'
 const Quiz = ({
   dark,
@@ -34,7 +33,7 @@ const Quiz = ({
   quizes,
   deleteQuiz,
   createQuiz,
-  addQuestion,
+  addQuestions,
   categories,
   deleteCategory,
   addCategory,
@@ -47,12 +46,8 @@ const Quiz = ({
   var signal = controller.signal
 
   if (isEmpty(account)) {
-    console.log('account is empty')
-    var tempAccount = window.sessionStorage.getItem('account')
-    if (isEmpty(tempAccount)) {
-      history.push('/login')
-      return null
-    }
+    history.push('/login')
+    return null
   }
   const username = account.metadata.username
   const myQuiz = find(quizes, { username: username })
@@ -84,16 +79,13 @@ const Quiz = ({
           console.log(message)
           setLoading(false)
         } else {
-          createQuiz(username)
-          result.forEach(question => {
-            addQuestion(username, question)
-          })
+          addQuestions(username, result)
           setLoading(false)
           history.push('/question/1')
         }
       })
       .catch(error => {
-        deleteQuiz(username)
+        console.log(error)
         setLoading(false)
         if (!controller.signal.aborted) {
           console.error(error)
@@ -102,6 +94,7 @@ const Quiz = ({
   }
 
   const onQuizStart = () => {
+    createQuiz(username)
     const categoriesToFetch = categories.filter(category => category.checked)
     getQuestions(categoriesToFetch)
     setLoading(true)

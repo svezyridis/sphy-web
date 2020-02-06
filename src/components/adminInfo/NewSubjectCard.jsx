@@ -104,7 +104,6 @@ const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
   }
   const onCreate = (name, uri, general, units, images) => {
     console.log('creating subject')
-    console.log(images)
     fetch(subjectsURL + branch + '/' + category, {
       method: 'POST',
       credentials: 'include',
@@ -129,8 +128,6 @@ const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
         const { status, result, message } = data
         if (status === 'error') console.log(message)
         if (status === 'success') {
-          addSubject(result)
-          addImage(result.id, find(images, { default: true }).src)
           postImages(result.uri, images)
         }
       })

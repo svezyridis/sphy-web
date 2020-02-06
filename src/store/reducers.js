@@ -43,7 +43,13 @@ export const tests = (state = [], action) => {
           ...state,
           {
             username: action.username,
-            tests: [{ ...action.test, answers: [] }]
+            tests: [{
+              ...action.test,
+              myAnswers: action.test.questions.map(question => ({
+                questionID: question.id,
+                optionID: '-1'
+              }))
+            }]
           }
         ]
       }
@@ -162,7 +168,7 @@ export const quizes = (state = [], action) => {
       return isEmpty(find(state, { username: action.username }))
         ? [...state, quiz({}, action)]
         : state
-    case C.ADD_QUESTION:
+    case C.ADD_QUESTIONS:
       return state.map(userQuiz => quiz(userQuiz, action))
     case C.SELECT_OPTION:
       return state.map(userQuiz => quiz(userQuiz, action))
@@ -183,13 +189,14 @@ export const quiz = (state, action) => {
         questions: [],
         myAnswers: []
       }
-    case C.ADD_QUESTION:
+    case C.ADD_QUESTIONS:
       return state.username !== action.username
         ? state
         : {
           ...state,
-          questions: questions(state.questions, action),
-          myAnswers: answers(state.myAnswers, action)
+          questions: action.questions,
+          myAnswers: action.questions.map(question => ({ questionID: question.id, optionID: '-1' })),
+          startedAt: timestamp('YYYY-MM-DD HH:mm')
         }
     case C.SELECT_OPTION:
       return state.username !== action.username
@@ -197,13 +204,6 @@ export const quiz = (state, action) => {
         : {
           ...state,
           myAnswers: answers(state.myAnswers, action)
-        }
-    case C.ADD_QUESTION_IMAGE:
-      return state.username !== action.username
-        ? state
-        : {
-          ...state,
-          questions: questions(state.questions, action)
         }
     case C.COMPLETE_QUIZ:
       return state.username !== action.username
@@ -217,30 +217,8 @@ export const quiz = (state, action) => {
   }
 }
 
-const questions = (state, action) => {
-  switch (action.type) {
-    case C.ADD_QUESTION:
-      return isEmpty(find(state, { id: action.id }))
-        ? [...state, action.question]
-        : state
-    case C.ADD_QUESTION_IMAGE:
-      return state.map(question => {
-        console.log(question)
-        return question.id === action.questionID
-          ? { ...question, imageURL: action.url }
-          : { ...question, imageURL: action.url }
-      })
-    default:
-      return state
-  }
-}
-
 const answers = (state, action) => {
   switch (action.type) {
-    case C.ADD_QUESTION:
-      return isEmpty(find(state, { questionID: action.id }))
-        ? [...state, { questionID: action.id, optionID: '-1' }]
-        : state
     case C.SELECT_OPTION:
       return state.map(answer =>
         answer.questionID === action.questionID

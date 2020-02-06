@@ -15,16 +15,52 @@ import Typography from '@material-ui/core/Typography'
 import MaterialTable from 'material-table'
 import tableIcons from '../../styles/userTableIcons'
 import { fetch } from 'whatwg-fetch'
-import { baseURL } from '../../general/constants'
+import { baseURL, RANKS, ROLES } from '../../general/constants'
 import find from 'lodash.find'
+import CreateUnitDialog from './CreateUnitDialog'
+import TextField from '@material-ui/core/TextField'
+import Select from '@material-ui/core/Select'
+import MenuItem from '@material-ui/core/MenuItem'
 
 const columns = [
-  { title: 'ΑΜ', field: 'serialNumber' },
+  { title: 'ΑΜ', field: 'serialNumber', type: 'numeric' },
   { title: 'Όνομα', field: 'firstName' },
   { title: 'Επίθετο', field: 'lastName' },
   { title: 'username', field: 'username' },
-  { title: 'password', field: 'password' },
-  { title: 'Βαθμός', field: 'rank' },
+  {
+    title: 'password',
+    field: 'password',
+    editComponent: props => (
+      <TextField
+        type='password'
+        placeholder={props.columnDef.title}
+        value={props.value === undefined ? '' : props.value}
+        onChange={event => props.onChange(event.target.value)}
+        InputProps={{
+          style: {
+            fontSize: 13
+          }
+        }}
+      />
+    )
+  },
+  {
+    title: 'Βαθμός',
+    field: 'rank',
+    editComponent: props => (
+      <Select
+        value={props.value === undefined ? '' : props.value}
+        onChange={event => props.onChange(event.target.value)}
+        style={{
+          fontSize: 13
+        }}
+      >
+        {RANKS.map((rank, index) => (
+          <MenuItem key={index} value={rank}>{rank}</MenuItem>)
+        )}
+      </Select>
+    )
+  },
   { title: 'Μονάδα', field: 'unitID', lookup: {} },
   { title: 'Ρόλος', field: 'roleID', lookup: {} }
 ]
@@ -43,17 +79,13 @@ const UserManagement = ({
   const classes = homeStyle()
   const history = useHistory()
   const [users, setUsers] = useState([])
+  const [unitDialogOpen, setUnitDialogOpen] = useState(false)
   console.log(account)
   const controller = new window.AbortController()
   const signal = controller.signal
 
-  useEffect(() => {
-    return () => {
-      controller.abort()
-    }
-  }, [])
-
-  useEffect(() => {
+  const getRoles = () => {
+    const role = account.metadata.role
     fetch(rolesURL, {
       method: 'GET',
       credentials: 'include',
@@ -69,9 +101,10 @@ const UserManagement = ({
       .then(data => {
         console.log(data)
         if (data.status === 'success') {
-          const roles = data.result
+          let roles = data.result
           const columnToEdit = find(columns, { field: 'roleID' })
-          console.log(columnToEdit)
+          if (role === ROLES.TEACHER) { roles = roles.filter(role => role.role !== ROLES.ADMIN && role.role !== ROLES.UNIT_ADMIN) }
+          if (role === ROLES.TEACHER) { roles = roles.filter(role => role.role !== ROLES.ADMIN) }
           roles.forEach(role => {
             columnToEdit.lookup[parseInt(role.id)] = role.role
           })
@@ -82,7 +115,10 @@ const UserManagement = ({
           console.error(error)
         }
       })
+  }
 
+  const getUnits = () => {
+    const role = account.metadata.role
     fetch(unitsURL, {
       method: 'GET',
       credentials: 'include',
@@ -98,7 +134,8 @@ const UserManagement = ({
       .then(data => {
         console.log(data)
         if (data.status === 'success') {
-          const units = data.result
+          let units = data.result
+          if (role === ROLES.TEACHER || role === ROLES.UNIT_ADMIN) { units = units.filter(unit => unit.id === account.metadata.unitID) }
           const columnToEdit = find(columns, { field: 'unitID' })
           units.forEach(unit => {
             columnToEdit.lookup[parseInt(unit.id)] = unit.name
@@ -110,7 +147,8 @@ const UserManagement = ({
           console.error(error)
         }
       })
-
+  }
+  const getUsers = () => {
     fetch(usersURL, {
       method: 'GET',
       credentials: 'include',
@@ -140,6 +178,15 @@ const UserManagement = ({
           console.error(error)
         }
       })
+  }
+
+  useEffect(() => {
+    if (isEmpty(account)) {
+      return
+    }
+    getRoles()
+    getUnits()
+    getUsers()
     return () => {
       controller.abort()
     }
@@ -148,6 +195,34 @@ const UserManagement = ({
   if (isEmpty(account)) {
     history.push('/login')
     return null
+  }
+  if (account.metadata.role === ROLES.USER) {
+    history.push('/')
+    return null
+  }
+  const createUnit = (name) => {
+    fetch(unitsURL, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: name,
+      signal: signal
+    })
+      .then(response => {
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
+      .then(data => {
+        console.log(data)
+        if (data.status === 'success') {
+          const columnToEdit = find(columns, { field: 'unitID' })
+          columnToEdit.lookup[parseInt(data.result.id)] = name
+          setUnitDialogOpen(false)
+        } else console.log(data.message)
+      })
+      .catch(err => console.log(err))
   }
 
   const deleteUser = user =>
@@ -227,6 +302,7 @@ const UserManagement = ({
       />
       }
       <div className={classNames(classes.rest, !open && classes.closed)}>
+        <CreateUnitDialog open={unitDialogOpen} onClose={() => setUnitDialogOpen(false)} onCreate={(name) => createUnit(name)} classes={classes} />
         <Breadcrumbs>
           <Link
             component='button'
@@ -264,7 +340,7 @@ const UserManagement = ({
               icon: tableIcons.AddUnit,
               tooltip: 'Προσθήκη μονάδας',
               isFreeAction: true,
-              onClick: event => alert('You want to add a new unit')
+              onClick: () => setUnitDialogOpen(true)
             }
           ]}
           title='Χρήστες'

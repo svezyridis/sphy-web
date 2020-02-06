@@ -3,9 +3,8 @@ import {
   toogleDrawer,
   deleteAccount,
   createQuiz,
-  addQuestion,
+  addQuestions,
   deleteQuiz,
-  addQuestionImage,
   selectOption,
   setCategories,
   setChecked,
@@ -35,8 +34,8 @@ export const QuizContainer = connect(
     createQuiz (username) {
       dispatch(createQuiz(username))
     },
-    addQuestion (username, question) {
-      dispatch(addQuestion(username, question))
+    addQuestions (username, questions) {
+      dispatch(addQuestions(username, questions))
     },
     deleteQuiz (username) {
       dispatch(deleteQuiz(username))
@@ -73,9 +72,6 @@ export const QuestionContainer = connect(
     deleteQuiz (username) {
       dispatch(deleteQuiz(username))
     },
-    addQuestionImage (username, questionID, url) {
-      dispatch(addQuestionImage(username, questionID, url))
-    },
     selectOption (username, questionID, optionID) {
       dispatch(selectOption(username, questionID, optionID))
     },
@@ -101,9 +97,6 @@ export const ReviewContainer = connect(
     },
     deleteQuiz (username) {
       dispatch(deleteQuiz(username))
-    },
-    addQuestionImage (username, questionID, url) {
-      dispatch(addQuestionImage(username, questionID, url))
     },
     selectOption (username, questionID, optionID) {
       dispatch(selectOption(username, questionID, optionID))

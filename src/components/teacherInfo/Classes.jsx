@@ -42,7 +42,6 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
       editable: 'never',
       grouping: false,
       render: rowData => {
-        console.log(rowData)
         return rowData ? (
           <Badge color='secondary' badgeContent={rowData.noOfTests} showZero>
             <Button
@@ -140,7 +139,6 @@ const Classes = ({ open, toogleDrawer, account, deleteAccount, dark }) => {
   const createClass = className =>
     new Promise((resolve, reject) => {
       console.log(className)
-      const temp = [...classRooms]
       fetch(classesURL + className, {
         method: 'POST',
         credentials: 'include',

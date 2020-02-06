@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
@@ -14,12 +14,9 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import Fab from '@material-ui/core/Fab'
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded'
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
-import { baseURL } from '../../general/constants'
 import Grid from '@material-ui/core/Grid'
 import { Typography } from '@material-ui/core'
 import ReviewCard from './ReviewCard'
-
-const imagesURL = baseURL + 'image/'
 
 const Review = ({
   dark,
@@ -36,7 +33,6 @@ const Review = ({
   const classes = homeStyle()
   const questionIndex = match.params.questionIndex - 1
   const username = account.metadata.username
-  const [image, setImage] = useState(null)
   const myQuiz = find(quizes, { username: username })
 
   const question = myQuiz.questions[questionIndex]
@@ -149,7 +145,6 @@ const Review = ({
               setOption={option => selectOption(username, question.id, option)}
               question={question}
               dark={dark}
-              image={image}
               answer={answer}
             />
           </Grid>

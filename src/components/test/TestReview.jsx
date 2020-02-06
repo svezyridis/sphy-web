@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'

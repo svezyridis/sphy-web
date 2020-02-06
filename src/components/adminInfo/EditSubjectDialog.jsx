@@ -4,8 +4,6 @@ import TextField from '@material-ui/core/TextField'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
-import DialogTitle from '@material-ui/core/DialogTitle'
 import { Typography } from '@material-ui/core'
 import createSubjectStyle from '../../styles/createSubjectStyle'
 import Grid from '@material-ui/core/Grid'
@@ -15,7 +13,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import Fab from '@material-ui/core/Fab'
 import Tooltip from '@material-ui/core/Tooltip'
 import unavailableImage from '../../images/unavailable.png'
-import EditSubjectImageDialog2 from './EditSubjectImagesDialog2'
+import EditSubjectImageDialog from './EditSubjectImagesDialog'
 import { baseURL } from '../../general/constants'
 import { fetch } from 'whatwg-fetch'
 
@@ -27,8 +25,6 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
   const classes = createSubjectStyle()
   const [addImage, setAddImage] = useState(false)
   const [defaultImage, setDefaultImage] = useState(subject.defaultImage)
-  console.log(subject)
-  console.log(branch)
   var controller = new window.AbortController()
   var signal = controller.signal
 
@@ -69,7 +65,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
 
   if (addImage) {
     imageEditor = (
-      <EditSubjectImageDialog2
+      <EditSubjectImageDialog
         addImage={addImage}
         handleClose={handleClose}
         imageArray={subject.images}

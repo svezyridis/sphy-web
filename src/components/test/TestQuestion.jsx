@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import DefaultAppBar from '../DefaultAppBar'
 import Copyright from '../Copyright'
 import homeStyle from '../../styles/homeStyle'
@@ -112,6 +112,7 @@ const TestQuestion = ({
       choiceID:
         parseInt(answer.optionID) === -1 ? null : parseInt(answer.optionID)
     }))
+    setReason('Υποβολή απαντήσεων')
     fetch(testsURL + testID, {
       method: 'POST',
       credentials: 'include',
@@ -129,13 +130,52 @@ const TestQuestion = ({
       })
       .then(data => {
         console.log(data)
-        const { status, result, message } = data
+        const { status, message } = data
         if (status === 'success') {
           onSubmitTest(username, parseInt(testID))
-          history.push('/tests')
+          getTest()
+        } else {
+          setReason('')
+          console.log(message)
         }
       })
       .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+  }
+
+  const getTest = () => {
+    setReason('Λήψη αποτελεσμάτων')
+    fetch(testsURL + testID, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      signal: signal
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else throw Error(`Request rejected with status ${response.status}`)
+      })
+      .then(data => {
+        console.log(data)
+        const { status, result, message } = data
+        if (status === 'success') {
+          setReason('')
+          addOrUpdateTest(account.metadata.username, result)
+          history.push(`/reviewtest/${testID}/1`)
+        } else {
+          setReason('')
+          console.log(message)
+        }
+      })
+      .catch(error => {
+        setReason('')
         if (!controller.signal.aborted) {
           console.error(error)
         }
@@ -195,8 +235,7 @@ const TestQuestion = ({
             <QuestionCard
               classes={classes}
               setOption={option =>
-                selectOption(username, myTest.id, question.id, option)
-              }
+                selectOption(username, myTest.id, question.id, option)}
               question={question}
               dark={dark}
               answer={answer}

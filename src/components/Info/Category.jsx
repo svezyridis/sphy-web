@@ -67,6 +67,7 @@ const Category = ({
   }
 
   const getSubjects = () => {
+    console.log('getting subjects')
     fetch(subjectsURL + branch + '/' + category, {
       method: 'GET',
       credentials: 'include',

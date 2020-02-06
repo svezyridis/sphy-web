@@ -74,10 +74,9 @@ export const completeQuiz = username => ({
   username: username
 })
 
-export const addQuestion = (username, question) => ({
-  type: C.ADD_QUESTION,
-  id: question.id,
-  question: question,
+export const addQuestions = (username, questions) => ({
+  type: C.ADD_QUESTIONS,
+  questions: questions,
   username: username
 })
 
@@ -91,13 +90,6 @@ export const selectOption = (username, questionID, optionID) => ({
 export const deleteQuiz = username => ({
   type: C.DELETE_QUIZ,
   username: username
-})
-
-export const addQuestionImage = (username, questionID, url) => ({
-  type: C.ADD_QUESTION_IMAGE,
-  username: username,
-  questionID: questionID,
-  url: url
 })
 
 export const deleteCategory = id => ({

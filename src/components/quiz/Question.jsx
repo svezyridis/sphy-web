@@ -15,8 +15,6 @@ import Fab from '@material-ui/core/Fab'
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded'
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import QuestionCard from './QuestionCard'
-import { baseURL } from '../../general/constants'
-import { fetch } from 'whatwg-fetch'
 import Grid from '@material-ui/core/Grid'
 import { Typography } from '@material-ui/core'
 
@@ -34,22 +32,39 @@ const Question = ({
 }) => {
   const classes = homeStyle()
   const questionIndex = match.params.questionIndex - 1
+  const [time, setTime] = useState(null)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!myQuiz) {
+        setTime(null)
+        return
+      }
+      const timePassed = Math.floor(
+        (Date.now() - Date.parse(myQuiz.startedAt)) / 1000
+      )
+      const seconds = timePassed % 60
+      const minutes = Math.floor(timePassed / 60)
+      setTime(`Χρόνος: ${minutes}:${seconds}`)
+    }, 1000)
+    return () => {
+      clearInterval(interval)
+    }
+  }, [])
+
+  if (isEmpty(account)) {
+    history.push('/login')
+    return null
+  }
   const username = account.metadata.username
   const myQuiz = find(quizes, { username: username })
-  const question = myQuiz.questions[questionIndex]
 
   if (!myQuiz) {
     history.push('/quiz')
     return null
   }
-  if (isEmpty(account)) {
-    console.log('account is empty')
-    var tempAccount = window.sessionStorage.getItem('account')
-    if (isEmpty(tempAccount)) {
-      history.push('/login')
-      return null
-    }
-  }
+  const question = myQuiz.questions[questionIndex]
+
   if (questionIndex > myQuiz.questions.length - 1 || questionIndex < 0) {
     history.push('/question/1')
     return null
@@ -119,7 +134,7 @@ const Question = ({
         <Typography variant='h3' color='textPrimary' align='center'>
           Αυτοαξιολόγηση
         </Typography>
-
+        <Typography align='center'>{time}</Typography>
         <Grid
           container
           className={classes.questionGrid}

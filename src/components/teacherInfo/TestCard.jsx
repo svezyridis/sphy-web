@@ -8,16 +8,11 @@ import Typography from '@material-ui/core/Typography'
 import uniqWith from 'lodash.uniqwith'
 import classNames from 'classnames'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
-import { Tooltip, Fab, CardHeader } from '@material-ui/core'
+import { Tooltip, Fab } from '@material-ui/core'
 import timestamp from 'time-stamp'
-import { fetch } from 'whatwg-fetch'
-import { baseURL } from '../../general/constants'
 import TimerOffIcon from '@material-ui/icons/TimerOff'
-import LoadingDialog from '../quiz/LoadingDialog'
 import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteTestDialog from './DeleteTestDIalog'
-
-const testsURL = baseURL + 'tests/'
 
 const useStyles = makeStyles({
   card: {

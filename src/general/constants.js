@@ -11,7 +11,7 @@ export const actiontypes = {
   SET_CHECKED: 'SET_CHECKED',
   TOOGLE_DARK: 'TOOGLE_DARK',
   CREATE_QUIZ: 'CREATE_QUIZ',
-  ADD_QUESTION: 'ADD_QUESTION',
+  ADD_QUESTIONS: 'ADD_QUESTIONS',
   SELECT_OPTION: 'SELECT_OPTION',
   DELETE_QUIZ: 'DELETE_QUIZ',
   COMPLETE_QUIZ: 'COMPLETE_QUIZ',
@@ -29,3 +29,11 @@ export const actiontypes = {
 }
 export const baseURL = 'https://projectapi.ml/'
 // export const baseURL = 'http://localhost:8080/'
+
+export const RANKS = ['Στρατιώτης', 'Υποδεκανέας', 'Δεκανέας', 'Λοχίας', 'Επιλοχίας']
+export const ROLES = {
+  ADMIN: 'ADMIN',
+  TEACHER: 'TEACHER',
+  UNIT_ADMIN: 'UNIT_ADMIN',
+  USER: 'USER'
+}

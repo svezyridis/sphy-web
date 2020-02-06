@@ -1,11 +1,11 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import Divider from '@material-ui/core/Divider'
 import Drawer from '@material-ui/core/Drawer'
 import classNames from 'classnames'
 import IconButton from '@material-ui/core/IconButton'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import Typography from '@material-ui/core/Typography'
-import { titleCase } from '../../general/helperFunctions'
+import { titleCase, getTranslatedRole } from '../../general/helperFunctions'
 import { MainListItems } from './UserListItems'
 import { Button, Grid } from '@material-ui/core'
 import { useHistory } from 'react-router-dom'
@@ -24,7 +24,7 @@ const HomeDrawer = ({
   onSubmit,
   quiz
 }) => {
-  const { firstName, lastName, role, username } = account.metadata
+  const { firstName, lastName, role } = account.metadata
   const history = useHistory()
   const open = useSelector(state => state.open)
   const dispatch = useDispatch()
@@ -55,6 +55,9 @@ const HomeDrawer = ({
           {titleCase(`${firstName} ${lastName}`)}
         </Typography>
       </IconButton>
+      <Typography align='center'>
+        {getTranslatedRole(role)}
+      </Typography>
       <Divider />
       <MainListItems />
       {!isUser ? (

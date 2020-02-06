@@ -27,14 +27,6 @@ import { Divider } from '@material-ui/core'
 import ArrowForwardRoundedIcon from '@material-ui/icons/ArrowForwardRounded'
 import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded'
 import findIndex from 'lodash.findindex'
-import {
-  Magnifier,
-  GlassMagnifier,
-  SideBySideMagnifier,
-  PictureInPictureMagnifier,
-  MOUSE_ACTIVATION,
-  TOUCH_ACTIVATION
-} from 'react-image-magnifiers'
 
 const subjectsURL = baseURL + 'subject/'
 const imagesURL = baseURL + 'image/'
@@ -92,25 +84,27 @@ const Subject = ({
   }
 
   const nextSubjectHandler = () => {
-    var subjectFoundIndex = findIndex(subjects, { uri: subjectURI })
+    const subjectFoundIndex = findIndex(subjects, { uri: subjectURI })
+    let nextURI
     if (subjectFoundIndex === subjects.length - 1) {
-      var nextURI = subjects[0].uri
+      nextURI = subjects[0].uri
     } else {
-      var nextURI = subjects[subjectFoundIndex + 1].uri
+      nextURI = subjects[subjectFoundIndex + 1].uri
     }
-    var nextSubjectURI =
+    const nextSubjectURI =
       '/info/' + branch + '/' + category.toLowerCase() + '/' + nextURI
     history.push(nextSubjectURI)
   }
 
   const previousSubjectHandler = () => {
-    var subjectFoundIndex = findIndex(subjects, { uri: subjectURI })
+    const subjectFoundIndex = findIndex(subjects, { uri: subjectURI })
+    let nextURI
     if (subjectFoundIndex === 0) {
-      var nextURI = subjects[subjects.length - 1].uri
+      nextURI = subjects[subjects.length - 1].uri
     } else {
-      var nextURI = subjects[subjectFoundIndex - 1].uri
+      nextURI = subjects[subjectFoundIndex - 1].uri
     }
-    var nextSubjectURI =
+    const nextSubjectURI =
       '/info/' + branch + '/' + category.toLowerCase() + '/' + nextURI
     history.push(nextSubjectURI)
   }
@@ -301,8 +295,8 @@ const Subject = ({
               </b>
               {subject.general
                 ? subject.general
-                    .split('\n')
-                    .map((paragraph, key) => <p key={key}>{paragraph}</p>)
+                  .split('\n')
+                  .map((paragraph, key) => <p key={key}>{paragraph}</p>)
                 : null}
             </Typography>
           </div>

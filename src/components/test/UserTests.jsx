@@ -116,6 +116,7 @@ const UserTests = ({
 
   useEffect(() => {
     if (isEmpty(account)) return
+
     const username = account.metadata.username
     let classTests = find(tests, { username: username })
     classTests = classTests ? classTests.tests : []

@@ -87,7 +87,6 @@ const EditCategoryDialog = ({ open, onEdit, onClose, category }) => {
         console.log(error)
       })
   }
-  console.log(category)
 
   const validateInput = () => {
     setNameErrors(name === '')

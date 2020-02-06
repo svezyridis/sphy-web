@@ -55,7 +55,6 @@ const Weapon = ({
       category.image.subject +
       '/' +
       category.image.filename
-    console.log(imageUrl)
     addImage(category.id, imageUrl)
   }
   const getCategories = () => {
