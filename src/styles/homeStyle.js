@@ -62,6 +62,13 @@ const homeStyle = makeStyles(theme => ({
   img: {
     maxHeight: `${imageHeight}px`
   },
+  logo: {
+    maxHeight: `${80}px`
+  },
+  logoContainer: {
+    width: '50%',
+    marginLeft: '16%'
+  },
   toolbar: {
     paddingRight: 24 // keep right padding when drawer closed
   },

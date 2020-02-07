@@ -30,7 +30,7 @@ export const actiontypes = {
 export const baseURL = 'https://projectapi.ml/'
 // export const baseURL = 'http://localhost:8080/'
 
-export const RANKS = ['Στρατιώτης', 'Υποδεκανέας', 'Δεκανέας', 'Λοχίας', 'Επιλοχίας']
+export const RANKS = ['Στρατιώτης', 'Υδνεας', 'Δνεας', 'Λχιας', 'Επχιας', 'Αλχιας', 'Ανθστης', 'Ανθλγος', 'Υπλγος', 'Λγος', 'Τχης', 'Σχης']
 export const ROLES = {
   ADMIN: 'ADMIN',
   TEACHER: 'TEACHER',

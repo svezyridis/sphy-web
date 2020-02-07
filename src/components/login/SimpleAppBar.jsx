@@ -2,6 +2,7 @@ import React from 'react'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import logo from '../../images/ges_logo.png'
+import title from '../../images/banner_logo.png'
 import { makeStyles } from '@material-ui/styles'
 import { Typography } from '@material-ui/core'
 import { drawerWidth } from '../../styles/loginStyle'
@@ -16,6 +17,13 @@ const useStyles = makeStyles(theme => ({
   },
   appBar: {
     width: `calc(100% - ${drawerWidth}px)`
+  },
+  logo: {
+    maxHeight: `${80}px`
+  },
+  logoContainer: {
+    width: '50%',
+    marginLeft: '16%'
   }
 }))
 
@@ -28,9 +36,9 @@ const SimpleAppBar = () => {
         <div>
           <img src={logo} className={classes.img} alt='logo' />
         </div>
-        <Typography className={classes.title} variant='h5' align='center'>
-          fancy title
-        </Typography>
+        <div className={classes.logoContainer}>
+          <img src={title} alt='title' className={classes.logo} />
+        </div>
       </Toolbar>
     </AppBar>
   )

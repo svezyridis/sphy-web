@@ -5,6 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import MenuIcon from '@material-ui/icons/Menu'
 import classNames from 'classnames'
 import logo from '../images/ges_logo.png'
+import title from '../images/banner_logo.png'
 import homeStyle from '../styles/homeStyle'
 import Switch from '@material-ui/core/Switch'
 import { useSelector, useDispatch } from 'react-redux'
@@ -27,6 +28,9 @@ const DefaultAppBar = () => {
       <Toolbar className={classes.toolbar}>
         <div className={classes.imageSpacer}>
           <img src={logo} className={classes.img} alt='logo' />
+        </div>
+        <div className={classes.logoContainer}>
+          <img src={title} alt='title' className={classes.logo} />
         </div>
         <Switch
           checked={dark}

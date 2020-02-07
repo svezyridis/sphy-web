@@ -42,7 +42,12 @@ const columns = [
           }
         }}
       />
-    )
+    ),
+    render: rowData => <TextField
+      type='password'
+      disabled
+      value={rowData}
+                       />
   },
   {
     title: 'Βαθμός',
@@ -167,7 +172,6 @@ const UserManagement = ({
           setUsers(
             data.result.map(user => ({
               ...user,
-              password: '********',
               roleID: parseInt(user.roleID)
             }))
           )
