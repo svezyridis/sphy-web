@@ -18,7 +18,6 @@ const columns = [
 const UsersTable = ({ students, classID }) => {
   const classes = homeStyle()
   const [users, setUsers] = useState(students)
-  console.log(students)
   const editStudentsURL = baseURL + 'classes/' + classID + '/students/'
   const controller = new window.AbortController()
   const signal = controller.signal

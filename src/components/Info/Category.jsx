@@ -16,6 +16,7 @@ import HomeIcon from '@material-ui/icons/Home'
 import { titleCase, getBranchName } from '../../general/helperFunctions'
 import { baseURL } from '../../general/constants'
 import NewSubjectCard from '../adminInfo/NewSubjectCard'
+import LoadingDialog from '../quiz/LoadingDialog'
 
 const subjectsURL = baseURL + 'subject/'
 const imagesURL = baseURL + 'image/'
@@ -41,6 +42,7 @@ const Category = ({
   const category = match.params.category
   subjects = subjects.filter(subject => subject.category === category)
   const controller = new window.AbortController()
+  const [reason, setReason] = useState('')
   const signal = controller.signal
 
   const handleDelete = subject => {
@@ -67,7 +69,7 @@ const Category = ({
   }
 
   const getSubjects = () => {
-    console.log('getting subjects')
+    setReason('Γίνεται λήψη θεμάτων')
     fetch(subjectsURL + branch + '/' + category, {
       method: 'GET',
       credentials: 'include',
@@ -79,8 +81,10 @@ const Category = ({
       .then(data => {
         const { status, result, message } = data
         console.log(data)
-        if (status === 'error') setError(message)
-        else {
+        if (status === 'error') {
+          setReason('')
+          setError(message)
+        } else {
           setSubjects(result)
           result.forEach(async (subject, index) => {
             if (!(subject.defaultImage && subject.defaultImage.filename)) {
@@ -96,9 +100,11 @@ const Category = ({
               subject.defaultImage.filename
             addImage(subject.id, imageUrl)
           })
+          setReason('')
         }
       })
       .catch(error => {
+        setReason('')
         if (!controller.signal.aborted) {
           console.error(error)
         }
@@ -123,6 +129,7 @@ const Category = ({
 
   return (
     <div className={classes.root}>
+      <LoadingDialog open={reason !== ''} reason={reason} />
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
       <HomeDrawer
         open={open}

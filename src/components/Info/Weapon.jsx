@@ -18,6 +18,7 @@ import { baseURL } from '../../general/constants'
 import find from 'lodash.find'
 import isEqual from 'lodash.isequal'
 import NewCategoryCard from '../adminInfo/NewCategoryCard'
+import LoadingDialog from '../quiz/LoadingDialog'
 
 const categoriesURL = baseURL + 'categories/'
 const imagesURL = baseURL + 'image/'
@@ -40,6 +41,7 @@ const Weapon = ({
   var signal = controller.signal
   const classes = homeStyle()
   const [error, setError] = useState('')
+  const [reason, setReason] = useState('')
   const branch = match.params.weapon
 
   const getImageOfCategory = category => {
@@ -58,6 +60,7 @@ const Weapon = ({
     addImage(category.id, imageUrl)
   }
   const getCategories = () => {
+    setReason('Γίνεται λήψη κατηγοριών')
     fetch(categoriesURL + branch, {
       method: 'GET',
       credentials: 'include',
@@ -72,8 +75,10 @@ const Weapon = ({
       .then(data => {
         const { status, result, message } = data
         console.log(data)
-        if (status === 'error') setError(message)
-        else {
+        if (status === 'error') {
+          setReason('')
+          setError(message)
+        } else {
           // Compare new categories with stored ones and make the necessary changes
           const newCategories = []
           const categoriesToDelete = []
@@ -114,9 +119,11 @@ const Weapon = ({
           result.forEach(category => {
             getImageOfCategory(category)
           })
+          setReason('')
         }
       })
       .catch(error => {
+        setReason('')
         if (!controller.signal.aborted) {
           console.error(error)
         }
@@ -264,6 +271,7 @@ const Weapon = ({
 
   return (
     <div className={classes.root}>
+      <LoadingDialog open={reason !== ''} reason={reason} />
       <DefaultAppBar open={open} onClick={toogleDrawer} classes={classes} />
       <HomeDrawer
         open={open}

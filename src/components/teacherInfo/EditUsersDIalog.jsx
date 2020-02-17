@@ -41,6 +41,8 @@ const EditUsersDialog = ({ dialogOpen, onClose, addUsers, students }) => {
     { title: 'Μονάδα', field: 'unit', sorting: false }
   ]
 
+  const comparator = (userA, userB) => userA.id === userB.id
+
   const getUsers = () => {
     fetch(usersURL, {
       method: 'GET',
@@ -52,8 +54,8 @@ const EditUsersDialog = ({ dialogOpen, onClose, addUsers, students }) => {
       signal: signal
     })
       .then(response => {
-      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
-    })
+        if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+      })
       .then(data => {
         console.log(data)
         if (data.status === 'success') {
@@ -61,7 +63,8 @@ const EditUsersDialog = ({ dialogOpen, onClose, addUsers, students }) => {
             const { tableData, ...pureStudent } = student
             return pureStudent
           })
-          const usersNotInClass = differenceWith(data.result, students, isEqual)
+          const usersNotInClass = differenceWith(data.result, students, comparator)
+          console.log(usersNotInClass)
           setUsers(
             usersNotInClass.map(user => ({
               ...user,

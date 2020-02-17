@@ -47,7 +47,7 @@ const columns = [
       type='password'
       disabled
       value={rowData}
-                       />
+    />
   },
   {
     title: 'Βαθμός',
@@ -109,7 +109,7 @@ const UserManagement = ({
           let roles = data.result
           const columnToEdit = find(columns, { field: 'roleID' })
           if (role === ROLES.TEACHER) { roles = roles.filter(role => role.role !== ROLES.ADMIN && role.role !== ROLES.UNIT_ADMIN) }
-          if (role === ROLES.TEACHER) { roles = roles.filter(role => role.role !== ROLES.ADMIN) }
+          if (role === ROLES.UNIT_ADMIN) { roles = roles.filter(role => role.role !== ROLES.ADMIN) }
           roles.forEach(role => {
             columnToEdit.lookup[parseInt(role.id)] = role.role
           })
