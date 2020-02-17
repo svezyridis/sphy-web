@@ -55,6 +55,7 @@ const cardStyle = makeStyles(theme => ({
 
 const subjectsURL = baseURL + 'subject/'
 const imagesURL = baseURL + 'image/'
+const questionsURL = baseURL + 'questions/'
 
 const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
   const classes = cardStyle()
@@ -69,6 +70,18 @@ const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
   const [imageUploadCounter, setImageUploadCounter] = useState(0)
   const [imageUploadError, setImageUploadError] = useState(false)
   const [uploadComplete, setUploadComplete] = useState(true)
+
+  const postQuestions = (subjectURI, questions) => {
+    fetch(questionsURL + subjectURI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify(questions)
+    })
+  }
 
   const postImages = (subjectURI, imageArray) => {
     setImageUploadCounter(imageArray.length)
@@ -102,7 +115,7 @@ const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
     })
     setUploadComplete(false)
   }
-  const onCreate = (name, uri, general, units, images) => {
+  const onCreate = (name, uri, general, units, images, questions) => {
     console.log('creating subject')
     fetch(subjectsURL + branch + '/' + category, {
       method: 'POST',
@@ -129,6 +142,7 @@ const NewSubjectCard = ({ addSubject, addImage, getSubjects }) => {
         if (status === 'error') console.log(message)
         if (status === 'success') {
           postImages(result.uri, images)
+          postQuestions(result.uri, questions)
         }
       })
       .catch(error => {

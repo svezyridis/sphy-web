@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Dialog from '@material-ui/core/Dialog'
@@ -14,14 +14,21 @@ import Fab from '@material-ui/core/Fab'
 import Tooltip from '@material-ui/core/Tooltip'
 import unavailableImage from '../../images/unavailable.png'
 import EditSubjectImageDialog from './EditSubjectImagesDialog'
+import EditQuestionDialog from './EditQuestionDialog'
+import CreateQuestionDialog from './CreateQuestionDialog'
 import { baseURL } from '../../general/constants'
 import { fetch } from 'whatwg-fetch'
+import { objectToQueryString } from '../../general/helperFunctions'
 
 const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, branch }) => {
   const [name, setName] = useState(subject.name)
   const [URI, setURI] = useState(subject.uri)
   const [general, setGeneral] = useState(subject.general)
   const [units, setUnits] = useState(subject.units)
+  const [questionDelete, setQuestionDelete] = useState(false)
+  const [questionsToDelete, setQuestionsToDelete] = useState([])
+  const [originalQuestions, setOriginalQuestions] = useState([])
+  const [questionAdd, setQuestionAdd] = useState(false)
   const classes = createSubjectStyle()
   const [addImage, setAddImage] = useState(false)
   const [defaultImage, setDefaultImage] = useState(subject.defaultImage)
@@ -49,6 +56,32 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
       .catch(error => console.log(error))
   }
 
+  useEffect(() => {
+    fetch(baseURL + 'questions/' + subject.uri, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      signal: signal
+    }).then(response => {
+      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+    })
+      .then(data => {
+        const { status, result, message } = data
+        if (status === 'success')
+          {setOriginalQuestions(result)}
+        else
+          {console.log(message)}
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+  }, [])
+
   const imageEditorHandler = () => {
     setAddImage(true)
   }
@@ -57,11 +90,29 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
     setAddImage(false)
   }
 
+  const handleCloseQuestionDeleteDialog = () => {
+    setQuestionDelete(false)
+  }
+
+  const handleCloseQuestionAddDialog = () => {
+    setQuestionAdd(false)
+  }
+
   const defaultImageHandler = (image) => {
     setDefaultImage(image)
   }
 
-  var imageEditor = null
+  const questionDeleteHandler = () => {
+    setQuestionDelete(true)
+  }
+
+  const questionAddHandler = () => {
+    setQuestionAdd(true)
+  }
+
+  let imageEditor = null
+  let questionDeleteEditor = null
+  let questionAddEditor = null
 
   if (addImage) {
     imageEditor = (
@@ -77,6 +128,24 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
         branch={branch}
       />)
   }
+
+  if (questionDelete) {
+    questionDeleteEditor = (
+      <EditQuestionDialog
+        handleClose={handleCloseQuestionDeleteDialog}
+      />
+    )
+  }
+
+  if (questionAdd) {
+    questionAddEditor = (
+      <CreateQuestionDialog
+        handleClose={handleCloseQuestionAddDialog}
+        open
+      />
+    )
+  }
+
   return (
     <Dialog
       open={dialogOpen}
@@ -86,6 +155,8 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
       disableBackdropClick
     >
       {imageEditor}
+      {questionDeleteEditor}
+      {questionAddEditor}
       <Typography color='secondary' align='center' variant='h5'>
         Επεξεργασία θέματος
       </Typography>
@@ -134,33 +205,53 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
           className={classes.text}
           onChange={e => setUnits(e.target.value)}
         />
-        <Grid container alignItems='flex-end' spacing={1}>
+        <Grid container alignContent='space-between' alignItems='flex-end' spacing={5}>
           <Grid item>
-            <Typography variant='subtitle2'>Κεντρική εικόνα</Typography>
-            <Card className={classes.card}>
-              <CardMedia
-                className={classes.media}
-                image={subject.image ? subject.image : unavailableImage}
-                title={
-                  subject.defaultImage && subject.defaultImage.label
-                    ? subject.defaultImage.label
-                    : 'Δεν υπάρχει διαθέσιμη εικόνα'
-                }
-              />
-            </Card>
+            <Grid container alignItems='flex-end' spacing={1}>
+              <Grid item>
+                <Typography variant='subtitle2'>Φωτογραφία εξωφύλλου</Typography>
+                <Card className={classes.card}>
+                  <CardMedia
+                    className={classes.media}
+                    image={subject.image ? subject.image : unavailableImage}
+                    title={
+                      subject.defaultImage && subject.defaultImage.label
+                        ? subject.defaultImage.label
+                        : 'Δεν υπάρχει διαθέσιμη εικόνα'
+                    }
+                  />
+                </Card>
+              </Grid>
+              <Grid item>
+                <Tooltip title='Επεξεργασία εικόνων'>
+                  <Fab
+                    size='medium'
+                    onClick={imageEditorHandler}
+                    className={classes.fab}
+                  >
+                    <EditIcon color='secondary' />
+                  </Fab>
+                </Tooltip>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item>
-            <Tooltip title='Επεξεργασία εικόνων'>
-              <Fab
-                size='medium'
-                onClick={imageEditorHandler}
-                className={classes.fab}
-              >
-                <EditIcon color='secondary' />
-              </Fab>
-            </Tooltip>
+            <Grid container direction='column' spacing={3}>
+              <Grid item>
+                <Button variant='contained' color='primary' onClick={questionAddHandler}>
+                      ΠΡΟΣΘΗΚΗ ΝΕΩΝ ΕΡΩΤΗΣΕΩΝ
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button variant='contained' color='primary' onClick={questionDeleteHandler}>
+                      ΔΙΑΓΡΑΦΗ ΕΡΩΤΗΣΕΩΝ
+                </Button>
+              </Grid>
+            </Grid>
+
           </Grid>
         </Grid>
+
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color='primary' variant='outlined'>

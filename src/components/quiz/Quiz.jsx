@@ -102,7 +102,6 @@ const Quiz = ({
   const continueQuiz = () => console.log(history.push('/question/1'))
   const onDeleteQuiz = () => deleteQuiz(username)
   const reviewQuiz = () => console.log(history.push('/review/1'))
-  console.log(categories)
 
   return (
     <div className={classes.root}>

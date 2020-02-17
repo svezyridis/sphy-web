@@ -15,6 +15,7 @@ import LoadingDialog from '../quiz/LoadingDialog'
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked'
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked'
 import { fetch } from 'whatwg-fetch'
+import { IconButton, Tooltip } from '@material-ui/core'
 
 const cardStyle = makeStyles(theme => ({
   card: {
@@ -187,19 +188,27 @@ const EditSubjectImageDialog = (props) => {
                   disabled
                 />
               </div>
-              <DeleteForeverRoundedIcon
-                onClick={() => deleteImageHandler(image)}
-                size='small'
-              />
-              {image.id === props.defaultImage.id
-                ? <RadioButtonCheckedIcon
-                  size='small'
-                  onClick={() => props.defaultImageHandler(image)}
+              <Tooltip title='Διαγραφή φωτογραφίας'>
+                <IconButton size='small'>
+                  <DeleteForeverRoundedIcon
+                    onClick={() => deleteImageHandler(image)}
+                    size='small'
                   />
-                : <RadioButtonUncheckedIcon
-                  size='small'
-                  onClick={() => props.defaultImageHandler(image)}
-                  />}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title='Φωτογραφία εξωφύλλου'>
+                <IconButton size='small'>
+                  {image.id === props.defaultImage.id
+                    ? <RadioButtonCheckedIcon
+                      size='small'
+                      onClick={() => props.defaultImageHandler(image)}
+                    />
+                    : <RadioButtonUncheckedIcon
+                      size='small'
+                      onClick={() => props.defaultImageHandler(image)}
+                    />}
+                </IconButton>
+              </Tooltip>
             </GridListTile>
           ))}
 

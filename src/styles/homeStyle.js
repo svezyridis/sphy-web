@@ -115,7 +115,7 @@ const homeStyle = makeStyles(theme => ({
   rest: {
     width: `calc(100% - ${drawerWidth}px)`,
     position: 'relative',
-    marginTop: imageHeight * 1.6,
+    marginTop: 90,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen

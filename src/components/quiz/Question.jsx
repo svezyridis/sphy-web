@@ -24,6 +24,7 @@ const Question = ({
   toogleDrawer,
   account,
   deleteAccount,
+  deleteQuiz,
   selectOption,
   onSubmitQuiz,
   quizes,
@@ -60,6 +61,12 @@ const Question = ({
   const myQuiz = find(quizes, { username: username })
 
   if (!myQuiz) {
+    history.push('/quiz')
+    return null
+  }
+
+  if (myQuiz.questions.length === 0) {
+    deleteQuiz(username)
     history.push('/quiz')
     return null
   }

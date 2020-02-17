@@ -20,6 +20,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import createSubjectStyle from '../../styles/createSubjectStyle'
 import Fab from '@material-ui/core/Fab'
 import greekUtils from 'greek-utils'
+import CreateQuestionDialog from './CreateQuestionDialog'
 
 const customTextfieldStyle = makeStyles(theme => ({
   root: {
@@ -35,10 +36,12 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
   const [name, setName] = useState('')
   const [URI, setURI] = useState('')
   const [general, setGeneral] = useState('')
+  const [questionDialogOpen, setQuestionDialogOpen] = useState(false)
   const [units, setUnits] = useState('')
   const [errors, setErrors] = useState({ nameError: false, UriError: false })
   const classes = createSubjectStyle()
   const [images, setImages] = useState([])
+  const [questions, setQuestions] = useState([])
   const textFieldClasses = customTextfieldStyle()
 
   const onDrop = useCallback(
@@ -82,14 +85,14 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
   const {
     getRootProps,
     getInputProps,
-    open,
     acceptedFiles,
+    open,
     isDragActive
   } = useDropzone({
     // Disable click and keydown behavior
+    accept: 'image/*',
     noClick: true,
     noKeyboard: true,
-    accept: 'image/*',
     onDrop
   })
 
@@ -110,7 +113,7 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
     setName(e.target.value)
     name = name.toLowerCase()
     name = greekUtils.toGreeklish(name)
-    name = name.replace(/[^a-zA-Z ]/g, '')
+    name = name.replace(/[^a-z0-9A-Z ]/g, '')
     name = name.split(' ').join('-')
     setURI(name)
   }
@@ -122,10 +125,14 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
       UriError: !/^[a-z0-9-]+$/.test(URI)
     })
     if (!(name === '' || !/^[a-z0-9-]+$/.test(URI))) {
-      onCreate(name, URI, general, units, images)
+      onCreate(name, URI, general, units, images, questions)
     }
   }
-  console.log(errors)
+  const onSave = questions => {
+    console.log(questions)
+    setQuestions(questions)
+    setQuestionDialogOpen(false)
+  }
 
   return (
     <Dialog
@@ -134,6 +141,13 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
       classes={{ paper: classes.dialog }}
       disableBackdropClick
     >
+      <CreateQuestionDialog
+        open={questionDialogOpen}
+        onClose={() => setQuestionDialogOpen(false)}
+        classes={classes}
+        onSave={(questions) => onSave(questions)}
+        initialQuestions={questions}
+      />
       <Typography color='secondary' align='center' variant='h5'>
         Δημιουργία νέου θέματος
       </Typography>
@@ -189,6 +203,24 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
         />
         <Grid container spacing={3}>
           <Grid item>
+            <Card elevation={8} raised className={classes.card} onClick={() => setQuestionDialogOpen(true)}>
+              <CardMedia
+                className={classes.media}
+                image={addNewImage}
+                title='Προθέστε φωτογραφίες'
+              >
+                <Typography
+                  className={classes.mediaCaption}
+                  variant='caption'
+                  align='center'
+                >
+                     Προσθήκη ερωτήσεων
+                </Typography>
+              </CardMedia>
+            </Card>
+            {questions.length > 0 ? <Typography align='center'>{`Έχετε δημιουργήσει ${questions.length} ερωτήσεις`}</Typography> : null}
+          </Grid>
+          <Grid item className={classes.imageList}>
             <div
               {...getRootProps({
                 className: classNames(
@@ -198,92 +230,75 @@ const CreateSubjectDialog = ({ dialogOpen, onCreate, onClose }) => {
               })}
             >
               <input {...getInputProps()} />
-              <Card elevation={8} raised className={classes.card}>
-                <CardMedia
-                  className={classes.media}
-                  image={addNewImage}
-                  title='Προθέστε φωτογραφίες'
-                >
-                  <Typography
-                    className={classes.mediaCaption}
-                    variant='caption'
-                    align='center'
-                  >
-                    Σύρετε φωτογραφίες
-                  </Typography>
-                </CardMedia>
-              </Card>
+              {images.length > 0 ? (
+                <GridList cellHeight={180} className={classes.gridList}>
+                  {images.map((image, index) => {
+                    return (
+                      <GridListTile key={index}>
+                        <div className={classes.tile}>
+                          <img src={image.src} className={classes.image} alt={image.label} />
+                          <TextField
+                            placeholder='  Προσθέστε περιγραφή'
+                            fullWidth
+                            className={classes.label}
+                            value={image.label ? image.label : ''}
+                            inputProps={{
+                              style: { textAlign: 'center', fontSize: '18px' }
+                            }}
+                            InputProps={{
+                              classes: textFieldClasses
+                            }}
+                            onChange={e =>
+                              setLabel(image.file.name, e.target.value)}
+                          />
+                          <Grid container justify='flex-end'>
+                            <Grid item>
+                              <Tooltip title='Εικόνα εξοφύλλου'>
+                                <Fab
+                                  onClick={() => setDefaultImage(image)}
+                                  color='primary'
+                                  size='small'
+                                >
+                                  {image.default ? (
+                                    <CheckBoxIcon fontSize='small' />
+                                  ) : (
+                                    <CheckBoxOutlineBlankIcon fontSize='small' />
+                                  )}
+                                </Fab>
+                              </Tooltip>
+                            </Grid>
+                            <Grid item>
+                              <Tooltip title='Διαγραφή εικόνας' color='primary'>
+                                <Fab
+                                  onClick={() => deleteImage(image.file.name)}
+                                  size='small'
+                                >
+                                  <DeleteIcon fontSize='small' />
+                                </Fab>
+                              </Tooltip>
+                            </Grid>
+                          </Grid>
+                        </div>
+                      </GridListTile>
+                    )
+                  })}
+                </GridList>
+              ) : (
+                <Typography align='center'>
+                  {' '}
+                Σείρετε φωτογραφίες
+                </Typography>
+              )}
             </div>
             <p>
-              {'ή κλικ  '}
+              {'ή κάντε κλικ  '}
               <span>
-                <Button variant='outlined' onClick={open} color='primary'>
+                <Button variant='outlined' color='primary' onClick={open}>
                   ΕΔΩ
                 </Button>
                 {' για να επιλέξετε'}
               </span>
             </p>
-          </Grid>
-          <Grid item className={classes.imageList}>
-            {images.length > 0 ? (
-              <GridList cellHeight={180} className={classes.gridList}>
-                {images.map((image, index) => {
-                  return (
-                    <GridListTile key={index}>
-                      <div className={classes.tile}>
-                        <img src={image.src} className={classes.image} alt={image.label} />
-                        <TextField
-                          placeholder='  Προσθέστε περιγραφή'
-                          fullWidth
-                          className={classes.label}
-                          value={image.label ? image.label : ''}
-                          inputProps={{
-                            style: { textAlign: 'center', fontSize: '18px' }
-                          }}
-                          InputProps={{
-                            classes: textFieldClasses
-                          }}
-                          onChange={e =>
-                            setLabel(image.file.name, e.target.value)}
-                        />
-                        <Grid container justify='flex-end'>
-                          <Grid item>
-                            <Tooltip title='Εικόνα εξοφύλλου'>
-                              <Fab
-                                onClick={() => setDefaultImage(image)}
-                                color='primary'
-                                size='small'
-                              >
-                                {image.default ? (
-                                  <CheckBoxIcon fontSize='small' />
-                                ) : (
-                                  <CheckBoxOutlineBlankIcon fontSize='small' />
-                                )}
-                              </Fab>
-                            </Tooltip>
-                          </Grid>
-                          <Grid item>
-                            <Tooltip title='Διαγραφή εικόνας' color='primary'>
-                              <Fab
-                                onClick={() => deleteImage(image.file.name)}
-                                size='small'
-                              >
-                                <DeleteIcon fontSize='small' />
-                              </Fab>
-                            </Tooltip>
-                          </Grid>
-                        </Grid>
-                      </div>
-                    </GridListTile>
-                  )
-                })}
-              </GridList>
-            ) : (
-              <Typography align='center'>
-                {' '}
-                Δεν έχετε επιλέξει εικόνες
-              </Typography>
-            )}
           </Grid>
         </Grid>
       </DialogContent>

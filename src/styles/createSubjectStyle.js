@@ -53,12 +53,15 @@ const createSubjectStyle = makeStyles(theme => ({
   },
   card: {
     width: '300px',
-    height: '250px'
+    height: '250px',
+    borderStyle: 'dashed',
+    '&:hover': {
+      borderColor: 'darkred'
+    }
   },
   dropzone: {
-    border: '3px',
-    borderStyle: 'dashed',
-    display: 'inline-block'
+    height: '80%',
+    width: '100%'
   },
   dropzoneActive: {
     borderColor: 'green',
@@ -89,11 +92,13 @@ const createSubjectStyle = makeStyles(theme => ({
     borderColor: 'grey',
     borderRadius: '5px',
     width: 440,
-    height: 340,
-    padding: '2px',
+    height: 330,
     display: 'inline-block',
     flexWrap: 'wrap',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    '&:hover': {
+      cursor: 'pointer'
+    }
   },
   label: {
     color: 'white',
