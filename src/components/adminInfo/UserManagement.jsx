@@ -47,7 +47,7 @@ const columns = [
       type='password'
       disabled
       value={rowData}
-    />
+                       />
   },
   {
     title: 'Βαθμός',
@@ -256,9 +256,44 @@ const UserManagement = ({
         .catch(err => reject(err))
     })
 
+  const updateUser = (updatedUser) =>
+    new Promise((resolve, reject) => {
+      console.log(updatedUser)
+      const requestData = JSON.stringify({
+        serialNumber: updatedUser.serialNumber,
+        username: updatedUser.username,
+        password: updatedUser.password,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        roleID: updatedUser.roleID,
+        rank: updatedUser.rank,
+        unitID: updatedUser.unitID,
+        id: updatedUser.id
+      })
+      fetch(usersURL, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: requestData,
+        signal: signal
+      })
+        .then(response => {
+          if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+        })
+        .then(data => {
+          console.log(data)
+          if (data.status === 'success') {
+            getUsers()
+            resolve()
+          } else reject(data.message)
+        })
+        .catch(err => reject(err))
+    })
+
   const addNewUser = newUser => {
-    const temp = [...users]
-    temp.push({ ...newUser, password: '********' })
     const requestData = JSON.stringify({
       newUser: {
         serialNumber: newUser.serialNumber,
@@ -288,7 +323,7 @@ const UserManagement = ({
         .then(data => {
           console.log(data)
           if (data.status === 'success') {
-            setUsers(temp)
+            getUsers()
             resolve()
           } else reject(data.message)
         })
@@ -352,20 +387,7 @@ const UserManagement = ({
           data={users}
           editable={{
             onRowAdd: newData => addNewUser(newData),
-            onRowUpdate: (newData, oldData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  {
-                    const oldDataIndex = users.indexOf(oldData)
-                    setUsers(users =>
-                      users.map((row, index) =>
-                        index === oldDataIndex ? newData : row
-                      )
-                    )
-                  }
-                  resolve()
-                }, 1000)
-              }),
+            onRowUpdate: (newData, oldData) => updateUser(newData),
             onRowDelete: oldData => deleteUser(oldData)
           }}
           localization={{
