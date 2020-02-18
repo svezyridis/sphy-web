@@ -11,6 +11,8 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import Input from '@material-ui/core/Input'
 import Tooltip from '@material-ui/core/Tooltip'
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
 import { baseURL } from '../../general/constants'
 import { fetch } from 'whatwg-fetch'
 import find from 'lodash.find'
@@ -65,6 +67,8 @@ const EditQuestionDialog = ({ open, onClose, initialQuestions, subjectURI }) => 
   const classes = questionStyle()
   const [questions, dispatch] = useReducer(reducer, [])
   const [deleteQuestions, setDeleteQuestions] = useState([])
+  const [openQuestionDialog, setOpenQuestionDialog] = useState(false)
+  const [questionID, setQuestionID] = useState(-1)
   var controller = new window.AbortController()
   var signal = controller.signal
 
@@ -98,8 +102,7 @@ const EditQuestionDialog = ({ open, onClose, initialQuestions, subjectURI }) => 
       })
   }, [])
 
-  console.log(deleteQuestions)
-  const DeleteQuestionAlreadyRegistered = (id) => {
+  const deleteQuestionAlreadyRegistered = (id) => {
     fetch(baseURL + 'questions/' + id, {
       method: 'DELETE',
       credentials: 'include',
@@ -199,12 +202,52 @@ const EditQuestionDialog = ({ open, onClose, initialQuestions, subjectURI }) => 
     }
   }
 
+  const handleQuestionDialogClose = () => {
+    setOpenQuestionDialog(false);
+  }
+
+  const handleQuestionDialogOpen = (id) => {
+    setQuestionID(id)
+    setOpenQuestionDialog(true)
+  }
+
+  const test = () =>{
+    deleteQuestionAlreadyRegistered(questionID)
+    setQuestionID(-1)
+    setOpenQuestionDialog(false)
+  }
+
+
+  let questionDialog = null
+
+  if(openQuestionDialog){
+    questionDialog=(
+      <Dialog
+        open={openQuestionDialog}
+        onClose={handleQuestionDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Η ερώτηση θα διαγραφεί</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleQuestionDialogClose} color="primary">
+            ΑΚΥΡΟ
+          </Button>
+          <Button onClick={test} color="primary" autoFocus>
+            ΟΚ
+          </Button>
+        </DialogActions>
+      </Dialog>
+    )
+  }
+
   return (
     <Dialog open={open} onClose={onClose}>
       <Typography color='secondary' align='center' variant='h5'>
-        Δημιουργία ερωτήσεων
+        Eπεξεργασία ερωτήσεων
       </Typography>
       <DialogContent className={classes.content}>
+        {questionDialog}
         {deleteQuestions.map((question, index) => (
           <div key={index} className={classes.question}>
             <Input
@@ -218,7 +261,7 @@ const EditQuestionDialog = ({ open, onClose, initialQuestions, subjectURI }) => 
                 <InputAdornment position='end'>
                   <Tooltip title='Διαγραφή ερώτησης'>
                     <span>
-                      <IconButton size='small' onClick={() => DeleteQuestionAlreadyRegistered(question.id)}>
+                      <IconButton size='small' onClick={() => handleQuestionDialogOpen(question.id)}>
                         <DeleteOutlineIcon />
                       </IconButton>
                     </span>

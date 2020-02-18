@@ -25,10 +25,9 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
   const [URI, setURI] = useState(subject.uri)
   const [general, setGeneral] = useState(subject.general)
   const [units, setUnits] = useState(subject.units)
-  const [questionDelete, setQuestionDelete] = useState(false)
+  const [questionEdit, setQuestionEdit] = useState(false)
   const [questionsToDelete, setQuestionsToDelete] = useState([])
   const [originalQuestions, setOriginalQuestions] = useState([])
-  const [questionAdd, setQuestionAdd] = useState(false)
   const classes = createSubjectStyle()
   const [addImage, setAddImage] = useState(false)
   const [defaultImage, setDefaultImage] = useState(subject.defaultImage)
@@ -57,31 +56,6 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
   }
 
 
-  useEffect(() => {
-    fetch(baseURL + 'questions/' + subject.uri, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      signal: signal
-    }).then(response => {
-      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
-    })
-      .then(data => {
-        const { status, result, message } = data
-        if (status === 'success')
-          {setOriginalQuestions(result)}
-        else
-          {console.log(message)}
-      })
-      .catch(error => {
-        if (!controller.signal.aborted) {
-          console.error(error)
-        }
-      })
-  }, [])
 
   const imageEditorHandler = () => {
     setAddImage(true)
@@ -91,22 +65,21 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
     setAddImage(false)
   }
 
-  const handleCloseQuestionDeleteDialog = () => {
-    setQuestionDelete(false)
+  const handleCloseQuestionDialog = () => {
+    setQuestionEdit(false)
   }
 
   const defaultImageHandler = (image) => {
     setDefaultImage(image)
   }
 
-  const questionDeleteHandler = () => {
-    setQuestionDelete(true)
+  const questionEditHandler = () => {
+    setQuestionEdit(true)
   }
 
 
   let imageEditor = null
-  let questionDeleteEditor = null
-  let questionAddEditor = null
+  let questionEditor = null
 
   if (addImage) {
     imageEditor = (
@@ -123,12 +96,12 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
       />)
   }
 
-  if (questionDelete) {
-    questionDeleteEditor = (
+  if (questionEdit) {
+    questionEditor = (
       <EditQuestionDialog
-        handleClose={handleCloseQuestionDeleteDialog}
-        onClose={handleCloseQuestionDeleteDialog}
-        open={questionDelete}
+        handleClose={handleCloseQuestionDialog}
+        onClose={handleCloseQuestionDialog}
+        open={questionEdit}
         subjectURI={subject.uri}
       />
     )
@@ -144,7 +117,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
       disableBackdropClick
     >
       {imageEditor}
-      {questionDeleteEditor}
+      {questionEditor}
       <Typography color='secondary' align='center' variant='h5'>
         Επεξεργασία θέματος
       </Typography>
@@ -226,7 +199,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
           <Grid item>
             <Grid container direction='column' spacing={3}>
               <Grid item>
-                <Button variant='contained' color='primary' onClick={questionDeleteHandler}>
+                <Button variant='contained' color='primary' onClick={questionEditHandler}>
                       EΠΕΞΕΡΓΑΣΙΑ ΕΡΩΤΗΣΕΩΝ
                 </Button>
               </Grid>
