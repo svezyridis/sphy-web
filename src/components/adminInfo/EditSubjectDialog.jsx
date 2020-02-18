@@ -56,6 +56,7 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
       .catch(error => console.log(error))
   }
 
+
   useEffect(() => {
     fetch(baseURL + 'questions/' + subject.uri, {
       method: 'GET',
@@ -94,10 +95,6 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
     setQuestionDelete(false)
   }
 
-  const handleCloseQuestionAddDialog = () => {
-    setQuestionAdd(false)
-  }
-
   const defaultImageHandler = (image) => {
     setDefaultImage(image)
   }
@@ -106,9 +103,6 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
     setQuestionDelete(true)
   }
 
-  const questionAddHandler = () => {
-    setQuestionAdd(true)
-  }
 
   let imageEditor = null
   let questionDeleteEditor = null
@@ -133,18 +127,13 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
     questionDeleteEditor = (
       <EditQuestionDialog
         handleClose={handleCloseQuestionDeleteDialog}
+        onClose={handleCloseQuestionDeleteDialog}
+        open={questionDelete}
+        subjectURI={subject.uri}
       />
     )
   }
 
-  if (questionAdd) {
-    questionAddEditor = (
-      <CreateQuestionDialog
-        handleClose={handleCloseQuestionAddDialog}
-        open
-      />
-    )
-  }
 
   return (
     <Dialog
@@ -156,7 +145,6 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
     >
       {imageEditor}
       {questionDeleteEditor}
-      {questionAddEditor}
       <Typography color='secondary' align='center' variant='h5'>
         Επεξεργασία θέματος
       </Typography>
@@ -238,13 +226,8 @@ const EditSubjectDialog = ({ dialogOpen, onEdit, onClose, subject, getSubjects, 
           <Grid item>
             <Grid container direction='column' spacing={3}>
               <Grid item>
-                <Button variant='contained' color='primary' onClick={questionAddHandler}>
-                      ΠΡΟΣΘΗΚΗ ΝΕΩΝ ΕΡΩΤΗΣΕΩΝ
-                </Button>
-              </Grid>
-              <Grid item>
                 <Button variant='contained' color='primary' onClick={questionDeleteHandler}>
-                      ΔΙΑΓΡΑΦΗ ΕΡΩΤΗΣΕΩΝ
+                      EΠΕΞΕΡΓΑΣΙΑ ΕΡΩΤΗΣΕΩΝ
                 </Button>
               </Grid>
             </Grid>

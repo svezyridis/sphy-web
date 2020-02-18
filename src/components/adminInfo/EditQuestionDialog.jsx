@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react'
+import React, { useReducer, useEffect, useState } from 'react'
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
@@ -11,6 +11,9 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import Input from '@material-ui/core/Input'
 import Tooltip from '@material-ui/core/Tooltip'
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
+import { baseURL } from '../../general/constants'
+import { fetch } from 'whatwg-fetch'
+import find from 'lodash.find'
 
 const questionStyle = makeStyles(theme => ({
   options: {
@@ -58,12 +61,80 @@ const reducer = (state = [], action) => {
   }
 }
 
-const EditQuestionDialog = ({ open, onCreate, onClose, onSave, initialQuestions }) => {
+const EditQuestionDialog = ({ open, onClose, initialQuestions, subjectURI }) => {
   const classes = questionStyle()
-  const [questions, dispatch] = useReducer(reducer, initialQuestions)
+  const [questions, dispatch] = useReducer(reducer, [])
+  const [deleteQuestions, setDeleteQuestions] = useState([])
+  var controller = new window.AbortController()
+  var signal = controller.signal
+
   useEffect(() => {
     dispatch({ type: 'ADD_QUESTION', index: 0 })
   }, [])
+
+  useEffect(() => {
+    fetch(baseURL + 'questions/' + subjectURI, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      signal: signal
+    }).then(response => {
+      if (response.ok) { return response.json() } else throw Error(`Request rejected with status ${response.status}`)
+    })
+      .then(data => {
+        const { status, result, message } = data
+        if (status === 'success')
+          {setDeleteQuestions(result)}
+        else
+          {console.log(message)}
+      })
+      .catch(error => {
+        if (!controller.signal.aborted) {
+          console.error(error)
+        }
+      })
+  }, [])
+
+  console.log(deleteQuestions)
+  const DeleteQuestionAlreadyRegistered = (id) => {
+    fetch(baseURL + 'questions/' + id, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+    }).then(response =>
+      response.json().then(json => {
+        let question = find(deleteQuestions,{id : id})
+        let newArray = deleteQuestions.filter(o => o !== question)
+        setDeleteQuestions(newArray)
+        console.log(json)
+        return json
+      }))
+      .catch(error => console.log(error))
+  }
+
+  const postQuestions = (questions) => {
+    fetch(baseURL + 'questions/' + subjectURI, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify(questions)
+    }).then(response =>
+      response.json().then(json => {
+        console.log(json)
+        onClose()
+        return json
+      }))
+      .catch(error => console.log(error))
+  }
 
   const handleQuestionTextChange = (event, index) => {
     dispatch({
@@ -134,6 +205,41 @@ const EditQuestionDialog = ({ open, onCreate, onClose, onSave, initialQuestions 
         Δημιουργία ερωτήσεων
       </Typography>
       <DialogContent className={classes.content}>
+        {deleteQuestions.map((question, index) => (
+          <div key={index} className={classes.question}>
+            <Input
+              placeholder={`Ερώτηση ${index + 1}`}
+              type='text'
+              value={question.text}
+              fullWidth
+              margin='dense'
+              onChange={(event) => handleQuestionTextChange(event, question.index)}
+              endAdornment={
+                <InputAdornment position='end'>
+                  <Tooltip title='Διαγραφή ερώτησης'>
+                    <span>
+                      <IconButton size='small' onClick={() => DeleteQuestionAlreadyRegistered(question.id)}>
+                        <DeleteOutlineIcon />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+
+                </InputAdornment>
+              }
+            />
+            {question.optionList.map((option, optionIndex) => (
+              <Input
+                key={optionIndex}
+                className={classes.options}
+                placeholder={`Επιλογή ${optionIndex + 1}`}
+                type='text'
+                value={option.text}
+                onChange={(event) => handleOptionTextChange(event, question.index, option.index)}
+                disabled
+              />
+            ))}
+          </div>
+        ))}
         {questions.map((question, index) => (
           <div key={index} className={classes.question}>
             <Input
@@ -157,7 +263,7 @@ const EditQuestionDialog = ({ open, onCreate, onClose, onSave, initialQuestions 
                       <IconButton size='small' onClick={() => addQuestion(question.index + 1)}>
                         <AddIcon />
                       </IconButton>
-                    </Tooltip>
+                      </Tooltip>
                     : null}
                 </InputAdornment>
               }
@@ -190,7 +296,7 @@ const EditQuestionDialog = ({ open, onCreate, onClose, onSave, initialQuestions 
                         <IconButton size='small' onClick={() => addOption(question.index, option.index + 1)}>
                           <AddIcon />
                         </IconButton>
-                        </Tooltip>
+                      </Tooltip>
                       : null}
                   </InputAdornment>
                 }
@@ -198,13 +304,14 @@ const EditQuestionDialog = ({ open, onCreate, onClose, onSave, initialQuestions 
             ))}
           </div>
         ))}
+        
 
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color='primary' variant='outlined'>
           ΑΚΥΡΟ
         </Button>
-        <Button color='primary' variant='contained' onClick={() => onSave(questions)}>
+        <Button color='primary' variant='contained' onClick={() => postQuestions(questions)}>
           ΔΗΜΙΟΥΡΓΙΑ
         </Button>
       </DialogActions>
