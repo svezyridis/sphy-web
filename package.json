@@ -12,7 +12,7 @@
     "encodeurl": "^1.0.2",
     "greek-utils": "^1.2.2",
     "http-proxy-middleware": "^0.20.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash.difference": "^4.5.0",
     "lodash.differencewith": "^4.5.0",
     "lodash.find": "^4.6.0",
